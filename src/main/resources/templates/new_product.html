@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body>
+<h1>New product</h1>
+
+<form action="#" th:action="@{/product/save}" th:object="${product}" method="post">
+    <div class="form-group">
+        <label for="productName">Product name</label>
+        <input type="text" th:field="*{name}" class="form-control" id="productName" placeholder="Enter product name">
+    </div>
+    <div class="form-group">
+        <label for="productPrice">Product price</label>
+        <input type="text" th:field="*{price}" class="form-control" id="productPrice" placeholder="Enter product name">
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
