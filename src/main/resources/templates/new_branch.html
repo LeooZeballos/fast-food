@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body>
+<div th:replace="fragments :: header"></div>
+<h1>New branch</h1>
+<form action="#" th:action="@{/branch/save}" th:object="${branch}" method="post">
+    <div class="form-group">
+        <label for="branchName">Branch name</label>
+        <input type="text" th:field="*{name}" class="form-control" id="branchName" placeholder="Enter branch name">
+    </div>
+    <div class="form-group">
+        <label for="branchAddress">Branch address</label>
+        <input type="text" th:field="*{address.street}" class="form-control" id="branchAddress" placeholder="Enter product address">
+    </div>
+    <div class="form-group">
+        <label for="branchCity">Branch city</label>
+        <input type="text" th:field="*{address.city}" class="form-control" id="branchCity" placeholder="Enter product city">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</body>
+</html>

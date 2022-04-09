@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body>
+<div th:replace="fragments :: header"></div>
+<h1>Branches list</h1>
+<a class="btn btn-primary" id="createButton" th:href="@{/branch/new}">Create new branch</a>
+<br>
+<table class="table table-striped table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">City</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="branch : ${listBranches}">
+            <td th:text="${branch.id}"></td>
+            <td th:text="${branch.name}"></td>
+            <td th:text="${branch.address.street}"></td>
+            <td th:text="${branch.address.city}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{'/branch/edit/' + ${branch.id}}">Edit</a>
+                <a class="btn btn-danger" th:href="@{'/branch/delete/' + ${branch.id}}">Delete</a>
+            </td>
+        </tr>
+</table>
+</body>
+</html>

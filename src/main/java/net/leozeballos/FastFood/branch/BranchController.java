@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.branch;
 
+import net.leozeballos.FastFood.address.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +40,7 @@ public class BranchController {
     @RequestMapping("/branch/new")
     public String newBranch(Model model) {
         Branch branch = new Branch();
+        branch.setAddress(new Address());
         model.addAttribute("branch", branch);
         model.addAttribute("pageTitle", "New Branch");
         return "new_branch";
