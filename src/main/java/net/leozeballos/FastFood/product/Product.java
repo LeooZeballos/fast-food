@@ -1,6 +1,6 @@
 package net.leozeballos.FastFood.product;
 
-import net.leozeballos.FastFood.item.Item;
+import net.leozeballos.FastFood.interfaces.Item;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,4 +55,7 @@ public class Product implements Item {
         return "Product [name=" + name + ", price=" + price + ", id=" + id + "]";
     }
 
+    public double calculatePrice() {
+        return price;
+    }
 }

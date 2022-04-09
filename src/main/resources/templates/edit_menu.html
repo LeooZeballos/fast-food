@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body>
+<div th:replace="fragments :: header"></div>
+<h1>Edit menu</h1>
+<form action="#" th:action="@{/menu/save}" th:object="${menu}" method="post">
+    <div class="form-group">
+        <label for="id">Id</label>
+        <input type="text" class="form-control" id="id" name="id" th:field="*{id}"
+               th:readonly="${menu.id != null}">
+    </div>
+    <div class="form-group">
+        <label for="menuName">Menu name</label>
+        <input type="text" th:field="*{name}" class="form-control" id="menuName" placeholder="Enter product name">
+    </div>
+    <div class="form-group">
+        <label for="menuDiscount">Menu discount</label>
+        <input type="text" th:field="*{discount}" class="form-control" id="menuDiscount" placeholder="Enter menu discount (from 0.0 to 1.0)">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</body>
+</html>
