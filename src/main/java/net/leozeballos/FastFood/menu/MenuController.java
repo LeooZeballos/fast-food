@@ -38,6 +38,7 @@ public class MenuController {
     public ModelAndView editMenu(@PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("edit_menu");
         mav.addObject("menu", menuService.findById(id));
+        mav.addObject("productsList", productService.findAll());
         mav.addObject("pageTitle", "Edit Menu");
         return mav;
     }

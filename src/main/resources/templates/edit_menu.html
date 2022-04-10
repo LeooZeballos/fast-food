@@ -20,6 +20,17 @@
         <label for="menuDiscount">Menu discount</label>
         <input type="text" th:field="*{discount}" class="form-control" id="menuDiscount" placeholder="Enter menu discount (from 0.0 to 1.0)">
     </div>
+    <div class="form-group row">
+        <label class="col-form-label">Menu items</label>
+        <div class="col-form-label form-check">
+            <th:block th:each="product : ${productsList}">
+                <div>
+                    <input type="checkbox" th:field="*{products}" th:text="${product.name}"
+                           th:value="${product.id}" class="m-2" id="productIds">
+                </div>
+            </th:block>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 </body>

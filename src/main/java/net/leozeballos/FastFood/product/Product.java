@@ -1,18 +1,26 @@
 package net.leozeballos.FastFood.product;
 
-import net.leozeballos.FastFood.interfaces.Item;
+import net.leozeballos.FastFood.item.Item;
+import net.leozeballos.FastFood.menu.Menu;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class Product implements Item {
 
+    @Id
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 50)
     private String name;
+
+    @Column(nullable = false)
     private double price;
+
+    @ManyToMany(mappedBy = "products")
+    private Collection<Menu> menus;
 
     public Product() {
     }
@@ -22,7 +30,6 @@ public class Product implements Item {
         this.price = price;
     }
 
-    @Column(nullable = false, length = 50)
     public String getName() {
         return name;
     }
@@ -31,7 +38,6 @@ public class Product implements Item {
         this.name = name;
     }
 
-    @Column(nullable = false)
     public double getPrice() {
         return price;
     }
@@ -40,14 +46,20 @@ public class Product implements Item {
         this.price = price;
     }
 
-    @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Collection<Menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(Collection<Menu> menus) {
+        this.menus = menus;
     }
 
     @Override
@@ -58,4 +70,5 @@ public class Product implements Item {
     public double calculatePrice() {
         return price;
     }
+
 }

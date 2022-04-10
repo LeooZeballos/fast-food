@@ -1,18 +1,32 @@
 package net.leozeballos.FastFood.menu;
 
-import net.leozeballos.FastFood.interfaces.Item;
+import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.product.Product;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Menu implements Item {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, precision = 2, scale = 1)
     private double discount; // between 0 and 1
+
+    @Column(nullable = false, length = 50)
     private String name;
-    private List<Product> products;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "menu_product",
+            joinColumns = @JoinColumn(name = "menu_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> products = new HashSet<>();
 
     public Menu() {
     }
@@ -22,8 +36,6 @@ public class Menu implements Item {
         this.discount = discount;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -32,7 +44,6 @@ public class Menu implements Item {
         this.id = id;
     }
 
-    @Column(nullable = false, precision = 2, scale = 1)
     public double getDiscount() {
         return discount;
     }
@@ -41,7 +52,6 @@ public class Menu implements Item {
         this.discount = discount;
     }
 
-    @Column(nullable = false, length = 50)
     public String getName() {
         return name;
     }
@@ -50,14 +60,14 @@ public class Menu implements Item {
         this.name = name;
     }
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
+
 
     @Override
     public String toString() {
@@ -75,6 +85,14 @@ public class Menu implements Item {
             price += product.getPrice();
         }
         return price * (1 - discount);
+    }
+
+    public String getFormattedTotal() {
+        return "$" + String.format("%.2f", calculatePrice());
+    }
+
+    public String getFormattedDiscount() {
+        return String.format("%.0f", discount * 100) + "%";
     }
 
     public String listProducts() {

@@ -23,14 +23,10 @@
     <tr th:each="menu: ${listMenus}">
         <th th:text="${menu.id}" scope="row"></th>
         <td th:text="${menu.name}"></td>
-        <td th:text="${menu.calculatePrice()}"></td>
-        <td th:text="${menu.discount}"></td>
+        <td th:text="${menu.getFormattedTotal()}"></td>
+        <td th:text="${menu.getFormattedDiscount()}"></td>
         <td th:text="${menu.listProducts()}"></td>
         <td>
-            <!-- TODO: implement edit and delete product from menu
-            <a class="btn btn-primary" th:href="@{'/menu/addProduct/' + ${menu.id}}">Add product</a>
-            <a class="btn btn-success" th:href="@{'/menu/removeProduct/' + ${menu.id}}">Remove product</a>
-            -->
             <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
             <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
         </td>
