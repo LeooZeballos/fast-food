@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.interfaces;
+package net.leozeballos.FastFood.item;
 
 public interface Item {
     double calculatePrice();
