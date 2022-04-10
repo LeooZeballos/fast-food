@@ -21,7 +21,7 @@
     <tr th:each="product: ${listProducts}">
         <th scope="row" th:text="${product.id}">Product ID</th>
         <td th:text="${product.name}">Product Name</td>
-        <td th:text="${product.price}">Product Price</td>
+        <td th:text="${product.getFormattedPrice()}">Product Price</td>
         <td>
             <a class="btn btn-warning" th:href="@{'/product/edit/' + ${product.id}}">Edit</a>
             <a class="btn btn-danger" th:href="@{'/product/delete/' + ${product.id}}">Delete</a>

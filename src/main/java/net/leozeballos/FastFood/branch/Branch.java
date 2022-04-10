@@ -7,9 +7,15 @@ import javax.persistence.*;
 @Entity
 public class Branch {
 
-    Long id;
-    String name;
-    Address address;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Address address;
 
     public Branch() {}
 
@@ -18,8 +24,6 @@ public class Branch {
         this.address = address;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -28,7 +32,6 @@ public class Branch {
         this.id = id;
     }
 
-    @Column(nullable = false, length = 50)
     public String getName() {
         return name;
     }
@@ -37,7 +40,6 @@ public class Branch {
         this.name = name;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
     public Address getAddress() {
         return address;
     }

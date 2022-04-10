@@ -71,4 +71,8 @@ public class Product implements Item {
         return price;
     }
 
+    public String getFormattedPrice() {
+        return "$" + String.format("%.2f", price);
+    }
+
 }
