@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.order;
+package net.leozeballos.FastFood.foodorder;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

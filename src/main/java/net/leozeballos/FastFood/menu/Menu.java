@@ -109,12 +109,4 @@ public class Menu implements Item {
         return sb.toString();
     }
 
-    public boolean addProduct(Product product) {
-        return products.add(product);
-    }
-
-    public boolean removeProduct(Product product) {
-        return products.remove(product);
-    }
-
 }

@@ -1,6 +1,6 @@
 package net.leozeballos.FastFood.orderstate;
 
-import net.leozeballos.FastFood.order.FoodOrder;
+import net.leozeballos.FastFood.foodorder.FoodOrder;
 
 import javax.persistence.*;
 
@@ -19,7 +19,6 @@ public class FoodOrderState {
     protected String description;
 
     public FoodOrderState() {
-
     }
 
     public FoodOrderState(String name, String description) {

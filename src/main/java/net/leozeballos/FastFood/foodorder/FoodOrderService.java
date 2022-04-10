@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.order;
+package net.leozeballos.FastFood.foodorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

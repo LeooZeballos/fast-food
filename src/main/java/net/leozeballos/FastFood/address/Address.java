@@ -8,8 +8,14 @@ import javax.persistence.Id;
 @Entity
 public class Address {
 
+    @Id
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String street;
+
+    @Column(nullable = false, length = 100)
     private String city;
 
     public Address() {
@@ -20,8 +26,6 @@ public class Address {
         this.city = city;
     }
 
-    @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -30,7 +34,6 @@ public class Address {
         this.id = id;
     }
 
-    @Column(nullable = false, length = 100)
     public String getStreet() {
         return street;
     }
@@ -39,7 +42,6 @@ public class Address {
         this.street = street;
     }
 
-    @Column(nullable = false, length = 100)
     public String getCity() {
         return city;
     }

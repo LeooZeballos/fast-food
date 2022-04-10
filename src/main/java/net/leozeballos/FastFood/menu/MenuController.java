@@ -1,14 +1,11 @@
 package net.leozeballos.FastFood.menu;
 
-import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 @Controller
 public class MenuController {
@@ -65,7 +62,7 @@ public class MenuController {
     public String listMenus(Model model) {
         model.addAttribute("listMenus", menuService.findAll());
         model.addAttribute("pageTitle", "Menus List");
-        return "menus_list";
+        return "list_menu";
     }
 
 }

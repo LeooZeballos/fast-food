@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.order;
+package net.leozeballos.FastFood.foodorder;
 
 import net.leozeballos.FastFood.orderstate.FoodOrderState;
 

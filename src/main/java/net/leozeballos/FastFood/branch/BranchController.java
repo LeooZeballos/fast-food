@@ -59,7 +59,7 @@ public class BranchController {
     public String listBranches(Model model) {
         model.addAttribute("listBranches", branchService.findAll());
         model.addAttribute("pageTitle", "Branches List");
-        return "branches_list";
+        return "list_branch";
     }
 
 

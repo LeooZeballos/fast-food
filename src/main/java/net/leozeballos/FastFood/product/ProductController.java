@@ -56,7 +56,7 @@ public class ProductController {
     public String listProducts(Model model) {
         model.addAttribute("listProducts", productService.findAll());
         model.addAttribute("pageTitle", "Products List");
-        return "product_list";
+        return "list_product";
     }
 
 

@@ -1,7 +1,7 @@
 package net.leozeballos.FastFood.orderstate;
 
 
-import net.leozeballos.FastFood.order.FoodOrder;
+import net.leozeballos.FastFood.foodorder.FoodOrder;
 
 public class InPreparation extends FoodOrderState {
 
