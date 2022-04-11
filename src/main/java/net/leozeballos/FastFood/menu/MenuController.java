@@ -33,7 +33,7 @@ public class MenuController {
 
     @RequestMapping("/menu/edit/{id}")
     public ModelAndView editMenu(@PathVariable("id") Long id) {
-        ModelAndView mav = new ModelAndView("edit_menu");
+        ModelAndView mav = new ModelAndView("menu/edit_menu");
         mav.addObject("menu", menuService.findById(id));
         mav.addObject("productsList", productService.findAll());
         mav.addObject("pageTitle", "Edit Menu");
@@ -46,7 +46,7 @@ public class MenuController {
         model.addAttribute("menu", menu);
         model.addAttribute("productsList", productService.findAll());
         model.addAttribute("pageTitle", "New Menu");
-        return "new_menu";
+        return "menu/new_menu";
     }
 
     @RequestMapping("/menu/save")
@@ -62,7 +62,7 @@ public class MenuController {
     public String listMenus(Model model) {
         model.addAttribute("listMenus", menuService.findAll());
         model.addAttribute("pageTitle", "Menus List");
-        return "list_menu";
+        return "menu/list_menu";
     }
 
 }

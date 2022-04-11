@@ -31,7 +31,7 @@ public class BranchController {
 
     @RequestMapping("/branch/edit/{id}")
     public ModelAndView editBranch(@PathVariable("id") Long id) {
-        ModelAndView mav = new ModelAndView("edit_branch");
+        ModelAndView mav = new ModelAndView("branch/edit_branch");
         mav.addObject("branch", branchService.findById(id));
         mav.addObject("pageTitle", "Edit Branch");
         return mav;
@@ -43,7 +43,7 @@ public class BranchController {
         branch.setAddress(new Address());
         model.addAttribute("branch", branch);
         model.addAttribute("pageTitle", "New Branch");
-        return "new_branch";
+        return "branch/new_branch";
     }
 
     @RequestMapping("/branch/save")
@@ -59,7 +59,7 @@ public class BranchController {
     public String listBranches(Model model) {
         model.addAttribute("listBranches", branchService.findAll());
         model.addAttribute("pageTitle", "Branches List");
-        return "list_branch";
+        return "branch/list_branch";
     }
 
 
