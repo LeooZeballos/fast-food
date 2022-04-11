@@ -18,7 +18,8 @@ public class FoodOrder {
     @Column
     private java.sql.Timestamp paymentTimestamp;
 
-
+    @Enumerated(EnumType.STRING)
+    private FoodOrderState state;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "branch_id", nullable = false)
