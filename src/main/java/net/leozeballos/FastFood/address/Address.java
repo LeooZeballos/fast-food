@@ -16,13 +16,22 @@ import java.util.Objects;
 @Entity
 public class Address {
 
+    /**
+     * The unique identifier for this address.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The street address.
+     */
     @Column(nullable = false, length = 100)
     private String street;
 
+    /**
+     * The city.
+     */
     @Column(nullable = false, length = 100)
     private String city;
 
