@@ -5,34 +5,42 @@
 <head th:replace="fragments :: head"><title></title></head>
 <body class="bg-secondary bg-gradient">
 <div th:replace="fragments :: header"></div>
-<h1>Menus list</h1>
-<a class="btn btn-primary" id="createButton" th:href="@{/menu/new}">Create new menu</a>
-<br>
-<table class="table table-striped table-dark">
-    <thead>
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Total</th>
-        <th scope="col">Discount</th>
-        <th scope="col">Products</th>
-        <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="menu: ${listMenus}">
-        <th th:text="${menu.id}" scope="row"></th>
-        <td th:text="${menu.name}"></td>
-        <td th:text="${menu.getFormattedTotal()}"></td>
-        <td th:text="${menu.getFormattedDiscount()}"></td>
-        <td th:text="${menu.listProducts()}"></td>
-        <td>
-            <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
-            <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="container">
+    <div class="row">
+        <h1 class="col margin-top-bottom-auto">Menus list</h1>
+        <div class="col-md-auto margin-top-bottom-auto">
+            <a class="btn btn-primary" id="createButton" th:href="@{/menu/new}">Create new menu</a>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Total</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Products</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="menu: ${listMenus}">
+                <th th:text="${menu.id}" scope="row"></th>
+                <td th:text="${menu.name}"></td>
+                <td th:text="${menu.getFormattedTotal()}"></td>
+                <td th:text="${menu.getFormattedDiscount()}"></td>
+                <td th:text="${menu.listProducts()}"></td>
+                <td>
+                    <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
+                    <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div th:replace="fragments :: footer"></div>
 <div th:replace="fragments :: scripts"></div>
 </body>
 </html>

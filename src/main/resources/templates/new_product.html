@@ -5,18 +5,25 @@
 <head th:replace="fragments :: head"><title></title></head>
 <body class="bg-secondary bg-gradient">
 <div th:replace="fragments :: header"></div>
-<h1>New product</h1>
-<form action="#" th:action="@{/product/save}" th:object="${product}" method="post">
-    <div class="form-group">
-        <label for="productName">Product name</label>
-        <input type="text" th:field="*{name}" class="form-control" id="productName" placeholder="Enter product name">
+<div class="container">
+    <div class="row">
+        <h1 class="col margin-top-bottom-auto">New product</h1>
     </div>
-    <div class="form-group">
-        <label for="productPrice">Product price</label>
-        <input type="text" th:field="*{price}" class="form-control" id="productPrice" placeholder="Enter product name">
+    <div class="row">
+        <form class="col" action="#" th:action="@{/product/save}" th:object="${product}" method="post">
+            <div class="form-group">
+                <label for="productName">Product name</label>
+                <input type="text" th:field="*{name}" class="form-control" id="productName" placeholder="Enter product name">
+            </div>
+            <div class="form-group">
+                <label for="productPrice">Product price</label>
+                <input type="text" th:field="*{price}" class="form-control" id="productPrice" placeholder="Enter product name">
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Create</button>
-</form>
+</div>
+<div th:replace="fragments :: footer"></div>
 <div th:replace="fragments :: scripts"></div>
 </body>
 </html>

@@ -1,0 +1,23 @@
+html,
+body {
+    height: 100%;
+    display:flex;
+    flex-direction:column;
+}
+h1, small {
+    color: whitesmoke;
+}
+
+footer {
+    margin-top:auto;
+}
+
+.margin-top-bottom-auto {
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+#personalMail, #gitHubPage {
+    color: inherit;
+    text-decoration: none;
+}

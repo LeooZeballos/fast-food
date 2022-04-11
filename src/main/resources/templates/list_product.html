@@ -5,30 +5,38 @@
 <head th:replace="fragments :: head"><title></title></head>
 <body class="bg-secondary bg-gradient">
 <div th:replace="fragments :: header"></div>
-<h1>Products list</h1>
-<a class="btn btn-primary" id="createButton" th:href="@{/product/new}">Create new product</a>
-<br>
-<table class="table table-striped table-dark">
-    <thead>
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Price</th>
-        <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="product: ${listProducts}">
-        <th scope="row" th:text="${product.id}">Product ID</th>
-        <td th:text="${product.name}">Product Name</td>
-        <td th:text="${product.getFormattedPrice()}">Product Price</td>
-        <td>
-            <a class="btn btn-warning" th:href="@{'/product/edit/' + ${product.id}}">Edit</a>
-            <a class="btn btn-danger" th:href="@{'/product/delete/' + ${product.id}}">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="container">
+    <div class="row">
+        <h1 class="col margin-top-bottom-auto">Products list</h1>
+        <div class="col-md-auto margin-top-bottom-auto">
+            <a class="btn btn-primary" id="createButton" th:href="@{/product/new}">Create new product</a>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product: ${listProducts}">
+                <th scope="row" th:text="${product.id}">Product ID</th>
+                <td th:text="${product.name}">Product Name</td>
+                <td th:text="${product.getFormattedPrice()}">Product Price</td>
+                <td>
+                    <a class="btn btn-warning" th:href="@{'/product/edit/' + ${product.id}}">Edit</a>
+                    <a class="btn btn-danger" th:href="@{'/product/delete/' + ${product.id}}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div th:replace="fragments :: footer"></div>
 <div th:replace="fragments :: scripts"></div>
 </body>
 </html>

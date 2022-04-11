@@ -5,22 +5,29 @@
 <head th:replace="fragments :: head"><title></title></head>
 <body class="bg-secondary bg-gradient">
 <div th:replace="fragments :: header"></div>
-<h1>New branch</h1>
-<form action="#" th:action="@{/branch/save}" th:object="${branch}" method="post">
-    <div class="form-group">
-        <label for="branchName">Branch name</label>
-        <input type="text" th:field="*{name}" class="form-control" id="branchName" placeholder="Enter branch name">
+<div class="container">
+    <div class="row">
+        <h1 class="col margin-top-bottom-auto">New branch</h1>
     </div>
-    <div class="form-group">
-        <label for="branchAddress">Branch address</label>
-        <input type="text" th:field="*{address.street}" class="form-control" id="branchAddress" placeholder="Enter branch address">
+    <div class="row">
+        <form class="col" action="#" th:action="@{/branch/save}" th:object="${branch}" method="post">
+            <div class="form-group">
+                <label for="branchName">Branch name</label>
+                <input type="text" th:field="*{name}" class="form-control" id="branchName" placeholder="Enter branch name">
+            </div>
+            <div class="form-group">
+                <label for="branchAddress">Branch address</label>
+                <input type="text" th:field="*{address.street}" class="form-control" id="branchAddress" placeholder="Enter branch address">
+            </div>
+            <div class="form-group">
+                <label for="branchCity">Branch city</label>
+                <input type="text" th:field="*{address.city}" class="form-control" id="branchCity" placeholder="Enter branch city">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="branchCity">Branch city</label>
-        <input type="text" th:field="*{address.city}" class="form-control" id="branchCity" placeholder="Enter branch city">
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</div>
+<div th:replace="fragments :: footer"></div>
 <div th:replace="fragments :: scripts"></div>
 </body>
 </html>
