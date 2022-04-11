@@ -1,9 +1,19 @@
 package net.leozeballos.FastFood.branch;
 
+import lombok.*;
 import net.leozeballos.FastFood.address.Address;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Branch {
 
@@ -17,43 +27,16 @@ public class Branch {
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
-    public Branch() {}
-
-    public Branch(String name, Address address) {
-        this.name = name;
-        this.address = address;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Branch branch = (Branch) o;
+        return id != null && Objects.equals(id, branch.id);
     }
 
     @Override
-    public String toString() {
-        return "Branch{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address=" + address +
-                '}';
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
