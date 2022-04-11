@@ -20,6 +20,9 @@ import java.util.Set;
 @Entity
 public class Menu implements Item {
 
+    /**
+     * The unique identifier of the menu.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
