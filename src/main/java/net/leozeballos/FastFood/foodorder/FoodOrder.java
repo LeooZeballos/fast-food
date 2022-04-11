@@ -1,10 +1,20 @@
 package net.leozeballos.FastFood.foodorder;
 
+import lombok.*;
 import net.leozeballos.FastFood.branch.Branch;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class FoodOrder {
 
@@ -13,7 +23,7 @@ public class FoodOrder {
     private Long id;
 
     @Column(nullable = false)
-    private final java.sql.Timestamp creationTimestamp;
+    private final java.sql.Timestamp creationTimestamp = java.sql.Timestamp.valueOf(LocalDateTime.now());
 
     @Column
     private java.sql.Timestamp paymentTimestamp;
@@ -25,33 +35,16 @@ public class FoodOrder {
     @JoinColumn(name = "branch_id", nullable = false)
     private Branch branch;
 
-    public FoodOrder() {
-        this.creationTimestamp = java.sql.Timestamp.valueOf(LocalDateTime.now());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        FoodOrder foodOrder = (FoodOrder) o;
+        return id != null && Objects.equals(id, foodOrder.id);
     }
 
-    public FoodOrder(Branch branch) {
-        this();
-        this.branch = branch;
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public java.sql.Timestamp getCreationTimestamp() {
-        return creationTimestamp;
-    }
-
-    public java.sql.Timestamp getPaymentTimestamp() {
-        return paymentTimestamp;
-    }
-
-    public void setPaymentTimestamp(java.sql.Timestamp paymentTimestamp) {
-        this.paymentTimestamp = paymentTimestamp;
-    }
-
 }
