@@ -1,8 +1,9 @@
-package net.leozeballos.FastFood.orderstate;
+package net.leozeballos.FastFood.foodorderstate;
 
 import net.leozeballos.FastFood.foodorder.FoodOrder;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity
 public class Created extends FoodOrderState {
