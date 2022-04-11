@@ -17,13 +17,22 @@ import java.util.Objects;
 @Entity
 public class Branch {
 
+    /**
+     * The unique identifier of the branch.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The name of the branch.
+     */
     @Column(nullable = false, length = 50)
     private String name;
 
+    /**
+     * The address of the branch.
+     */
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
