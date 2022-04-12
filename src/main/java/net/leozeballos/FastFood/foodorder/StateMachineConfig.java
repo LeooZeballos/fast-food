@@ -27,7 +27,8 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<FoodOrderS
 
     @Override
     public void configure(StateMachineTransitionConfigurer<FoodOrderState, FoodOrderEvent> transitions) throws Exception {
-        transitions.withExternal().source(FoodOrderState.CREATED).target(FoodOrderState.CREATED).event(FoodOrderEvent.UPDATE).and()
+        transitions
+                .withExternal().source(FoodOrderState.CREATED).target(FoodOrderState.CREATED).event(FoodOrderEvent.UPDATE).and()
                 .withExternal().source(FoodOrderState.CREATED).target(FoodOrderState.INPREPARATION).event(FoodOrderEvent.STARTPREPARATION).and()
                 .withExternal().source(FoodOrderState.INPREPARATION).target(FoodOrderState.DONE).event(FoodOrderEvent.FINISHPREPARATION).and()
                 .withExternal().source(FoodOrderState.DONE).target(FoodOrderState.PAID).event(FoodOrderEvent.CONFIRMPAYMENT).and()

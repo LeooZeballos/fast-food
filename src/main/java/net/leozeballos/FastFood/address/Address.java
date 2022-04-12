@@ -45,4 +45,5 @@ public class Address {
     public int hashCode() {
         return getClass().hashCode();
     }
+    
 }
