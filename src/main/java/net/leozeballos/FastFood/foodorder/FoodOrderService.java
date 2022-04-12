@@ -1,19 +1,27 @@
 package net.leozeballos.FastFood.foodorder;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderEvent;
+import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderState;
+import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderStateChangeInterceptor;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class FoodOrderService {
 
-    private final FoodOrderRepository foodOrderRepository;
+    public static final String FOOD_ORDER_ID_HEADER = "food_order_id";
 
-    @Autowired
-    public FoodOrderService(FoodOrderRepository foodOrderRepository) {
-        this.foodOrderRepository = foodOrderRepository;
-    }
+    private final FoodOrderRepository foodOrderRepository;
+    private final StateMachineFactory<FoodOrderState, FoodOrderEvent> stateMachineFactory;
+    private final FoodOrderStateChangeInterceptor stateChangeInterceptor;
 
     public List<FoodOrder> findAll() {
         return foodOrderRepository.findAll();
@@ -37,6 +45,68 @@ public class FoodOrderService {
 
     public void deleteAll() {
         foodOrderRepository.deleteAll();
+    }
+
+    public void newFoodOrder(FoodOrder order) {
+        order.setState(FoodOrderState.CREATED);
+        foodOrderRepository.save(order);
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> update(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.UPDATE);
+        return stateMachine;
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> startPreparation(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.STARTPREPARATION);
+        return stateMachine;
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> finishPreparation(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.FINISHPREPARATION);
+        return stateMachine;
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> confirmPayment(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.CONFIRMPAYMENT);
+        return stateMachine;
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.CANCEL);
+        return stateMachine;
+    }
+
+    public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id) {
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        sendEvent(id, stateMachine, FoodOrderEvent.REJECT);
+        return stateMachine;
+    }
+
+    private void sendEvent(Long id, StateMachine<FoodOrderState, FoodOrderEvent> stateMachine, FoodOrderEvent event) {
+        Message<FoodOrderEvent> msg = MessageBuilder.withPayload(event)
+                .setHeader(FOOD_ORDER_ID_HEADER, id)
+                .build();
+        stateMachine.sendEvent(msg);
+    }
+
+    private StateMachine<FoodOrderState, FoodOrderEvent> build(Long id) {
+        FoodOrder order = foodOrderRepository.findById(id).orElse(null);
+        assert order != null;
+        StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(order.getId()));
+        stateMachine.stop();
+        stateMachine.getStateMachineAccessor()
+                .doWithAllRegions(sma -> {
+                    sma.addStateMachineInterceptor(stateChangeInterceptor);
+                    sma.resetStateMachine(new DefaultStateMachineContext<>(order.getState(), null, null, null));
+                });
+        stateMachine.start();
+        return stateMachine;
     }
 
 }

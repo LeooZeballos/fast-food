@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.foodorder;
+package net.leozeballos.FastFood.FoodOrderStateMachine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -36,4 +36,5 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<FoodOrderS
                 .withExternal().source(FoodOrderState.INPREPARATION).target(FoodOrderState.CANCELLED).event(FoodOrderEvent.CANCEL).and()
                 .withExternal().source(FoodOrderState.DONE).target(FoodOrderState.REJECTED).event(FoodOrderEvent.REJECT);
     }
+
 }
