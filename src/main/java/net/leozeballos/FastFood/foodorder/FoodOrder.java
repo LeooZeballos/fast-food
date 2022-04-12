@@ -1,7 +1,7 @@
 package net.leozeballos.FastFood.foodorder;
 
 import lombok.*;
-import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderState;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.branch.Branch;
 import org.hibernate.Hibernate;
 

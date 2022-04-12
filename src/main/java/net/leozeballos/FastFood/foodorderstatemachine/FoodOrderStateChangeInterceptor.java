@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.FoodOrderStateMachine;
+package net.leozeballos.FastFood.foodorderstatemachine;
 
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.foodorder.FoodOrder;

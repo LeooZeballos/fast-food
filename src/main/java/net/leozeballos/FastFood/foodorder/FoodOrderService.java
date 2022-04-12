@@ -1,9 +1,9 @@
 package net.leozeballos.FastFood.foodorder;
 
 import lombok.RequiredArgsConstructor;
-import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderEvent;
-import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderState;
-import net.leozeballos.FastFood.FoodOrderStateMachine.FoodOrderStateChangeInterceptor;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterceptor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;

@@ -1,4 +1,4 @@
-package net.leozeballos.FastFood.FoodOrderStateMachine;
+package net.leozeballos.FastFood.foodorderstatemachine;
 
 public enum FoodOrderState {
 
