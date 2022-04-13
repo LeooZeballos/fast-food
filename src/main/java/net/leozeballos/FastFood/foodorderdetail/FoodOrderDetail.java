@@ -26,15 +26,16 @@ public class FoodOrderDetail {
 
     /**
      * The price of the item that is being ordered at the time of the order.
+     * Equals item.calculatePrice() at the time of the order.
      */
     @Column(nullable = false, precision = 2, updatable = false)
     private double historicPrice;
 
     /**
-     * The amount of the item that is being ordered.
+     * The quantity of the item that is being ordered.
      */
     @Column(nullable = false)
-    private int amount;
+    private int quantity;
 
     /**
      * The item that is being ordered. Can be a product or a menu.
@@ -42,10 +43,18 @@ public class FoodOrderDetail {
     @Transient
     private Item item;
 
+    /**
+     * If the item is a product, this is the product.
+     * Converted from item to a product to get Hibernate to save it.
+     */
     @Convert(converter= Product.class)
     @Column(name="item_id_product")
     private Item itemProduct;
 
+    /**
+     * If the item is a menu, this is the menu.
+     * Converted from item to a menu to get Hibernate to save it.
+     */
     @Convert(converter= Menu.class)
     @Column(name="role_id_menu")
     private Item itemMenu;
@@ -63,8 +72,12 @@ public class FoodOrderDetail {
         return getClass().hashCode();
     }
 
+    /**
+     * Calculates the subtotal of the order detail.
+     * @return double The subtotal price of the order detail that is being ordered.
+     */
     public double calculateSubtotal() {
-        return historicPrice * amount;
+        return historicPrice * quantity;
     }
 
 }

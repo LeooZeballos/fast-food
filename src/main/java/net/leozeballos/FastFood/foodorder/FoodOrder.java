@@ -1,12 +1,15 @@
 package net.leozeballos.FastFood.foodorder;
 
 import lombok.*;
+import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.branch.Branch;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -49,6 +52,13 @@ public class FoodOrder {
     @JoinColumn(name = "branch_id", nullable = false)
     private Branch branch;
 
+    /**
+     * The food order details of the food order.
+     */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<FoodOrderDetail> foodOrderDetails = new ArrayList<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,6 +70,38 @@ public class FoodOrder {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    /**
+     * Returns the total price of the food order.
+     * @return double The total price of the food order
+     */
+    public double calculateTotal() {
+        double total = 0.0;
+        for (FoodOrderDetail foodOrderDetail : foodOrderDetails) {
+            total += foodOrderDetail.getQuantity() * foodOrderDetail.getItem().calculatePrice();
+        }
+        return total;
+    }
+
+    public void cancelOrder() {
+
+    }
+
+    public void confirmPayment() {
+
+    }
+
+    public void finishPreparation() {
+
+    }
+
+    public void reject() {
+
+    }
+
+    public void startPreparation() {
+
     }
 
 }
