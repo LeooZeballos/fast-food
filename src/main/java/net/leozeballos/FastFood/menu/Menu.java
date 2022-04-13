@@ -16,14 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Menu implements Item {
-
-    /**
-     * The unique identifier of the menu.
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Menu extends Item {
 
     /**
      * The discount of the menu. This is a percentage. For example, a discount of 10% would be represented as 0.1.
@@ -54,7 +47,7 @@ public class Menu implements Item {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Menu menu = (Menu) o;
-        return id != null && Objects.equals(id, menu.id);
+        return super.getId() != null && Objects.equals(super.getId(), menu.getId());
     }
 
     @Override

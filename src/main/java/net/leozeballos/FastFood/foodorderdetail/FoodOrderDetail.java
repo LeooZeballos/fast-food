@@ -40,24 +40,9 @@ public class FoodOrderDetail {
     /**
      * The item that is being ordered. Can be a product or a menu.
      */
-    @Transient
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private Item item;
-
-    /**
-     * If the item is a product, this is the product.
-     * Converted from item to a product to get Hibernate to save it.
-     */
-    @Convert(converter= Product.class)
-    @Column(name="item_id_product")
-    private Item itemProduct;
-
-    /**
-     * If the item is a menu, this is the menu.
-     * Converted from item to a menu to get Hibernate to save it.
-     */
-    @Convert(converter= Menu.class)
-    @Column(name="role_id_menu")
-    private Item itemMenu;
 
     @Override
     public boolean equals(Object o) {

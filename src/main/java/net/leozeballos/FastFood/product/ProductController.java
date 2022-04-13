@@ -59,5 +59,4 @@ public class ProductController {
         return "product/list_product";
     }
 
-
 }

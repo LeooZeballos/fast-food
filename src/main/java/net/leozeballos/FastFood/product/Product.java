@@ -2,11 +2,10 @@ package net.leozeballos.FastFood.product;
 
 import lombok.*;
 import net.leozeballos.FastFood.item.Item;
-import net.leozeballos.FastFood.menu.Menu;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import java.util.Collection;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Getter
@@ -15,14 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Product implements Item {
-
-    /**
-     * The unique identifier of the product.
-     */
-    @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
-    private Long id;
+public class Product extends Item {
 
     /**
      * The name of the product.
@@ -41,7 +33,7 @@ public class Product implements Item {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Product product = (Product) o;
-        return id != null && Objects.equals(id, product.id);
+        return super.getId() != null && Objects.equals(super.getId(), product.getId());
     }
 
     @Override

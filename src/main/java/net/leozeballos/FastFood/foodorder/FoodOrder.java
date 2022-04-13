@@ -5,6 +5,7 @@ import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.branch.Branch;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,13 +32,14 @@ public class FoodOrder {
      * The creation date and time of the food order.
      */
     @Column(nullable = false)
-    private final java.sql.Timestamp creationTimestamp = java.sql.Timestamp.valueOf(LocalDateTime.now());
+    @CreationTimestamp
+    private LocalDateTime creationTimestamp;
 
     /**
      * The payment date and time of the food order.
      */
     @Column
-    private java.sql.Timestamp paymentTimestamp;
+    private LocalDateTime paymentTimestamp;
 
     /**
      * The status of the food order.
@@ -82,26 +84,6 @@ public class FoodOrder {
             total += foodOrderDetail.getQuantity() * foodOrderDetail.getItem().calculatePrice();
         }
         return total;
-    }
-
-    public void cancelOrder() {
-
-    }
-
-    public void confirmPayment() {
-
-    }
-
-    public void finishPreparation() {
-
-    }
-
-    public void reject() {
-
-    }
-
-    public void startPreparation() {
-
     }
 
 }
