@@ -8,15 +8,12 @@
 <div class="container">
     <div class="row">
         <h1 class="col margin-top-bottom-auto">Edit product</h1>
-        <div class="col-md-auto margin-top-bottom-auto">
-            <a class="btn btn-primary" id="createButton" th:href="@{/product/new}">Create new product</a>
-        </div>
     </div>
     <div class="row">
         <form class="col" action="#" th:action="@{/product/save}" th:object="${product}" method="post">
             <div class="form-group">
                 <label for="productId">Product ID</label>
-                <input type="text" th:field="*{id}" class="form-control" id="productId" readonly>
+                <input type="text" th:field="*{id}" class="form-control" id="productId" value="0" readonly>
             </div>
             <div class="form-group">
                 <label for="productName">Product name</label>

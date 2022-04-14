@@ -8,9 +8,6 @@
 <div class="container">
     <div class="row">
         <h1 class="col margin-top-bottom-auto">Edit branch</h1>
-        <div class="col-md-auto margin-top-bottom-auto">
-            <a class="btn btn-primary" id="createButton" th:href="@{/product/new}">Create new product</a>
-        </div>
     </div>
     <div class="row">
         <form class="col" action="#" th:action="@{/branch/save}" th:object="${branch}" method="post">
