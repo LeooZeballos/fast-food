@@ -2,10 +2,7 @@ package net.leozeballos.FastFood.item;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -17,7 +14,7 @@ import javax.persistence.Inheritance;
 public abstract class Item {
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     public double calculatePrice(){

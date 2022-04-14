@@ -6,9 +6,8 @@ import net.leozeballos.FastFood.product.Product;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -40,7 +39,7 @@ public class Menu extends Item {
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     @ToString.Exclude
-    private Set<Product> products = new HashSet<>();
+    private List<Product> products;
 
     @Override
     public boolean equals(Object o) {
@@ -61,7 +60,7 @@ public class Menu extends Item {
      */
     public double calculatePrice() {
         double price = 0;
-        for (Product product : products) { price += product.getPrice(); }
+        for (Product product : products) { price += product.calculatePrice(); }
         return price * (1 - discount);
     }
 
