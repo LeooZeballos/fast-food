@@ -30,13 +30,15 @@
             </tr>
             <tr th:each="order : ${listFoodOrders}">
                 <th scope="row">${order.id}</th>
-                <td>${order.creationDate}</td>
-                <td>${order.paymentDate}</td>
-                <td>${order.items}</td>
+                <td>${order.creationTimestamp.toString()}</td>
+                <td>${order.paymentTimestamp.toString()}</td>
+                <td>${order.foodOrderDetails}</td>
                 <td>${order.calculateTotal()}</td>
                 <td>
+                    <!--
                     <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${order.id}}">Edit</a>
                     <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${order.id}}">Delete</a>
+                    -->
                 </td>
             </tr>
             </tbody>

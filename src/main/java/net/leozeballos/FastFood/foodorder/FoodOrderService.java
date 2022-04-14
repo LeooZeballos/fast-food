@@ -49,7 +49,6 @@ public class FoodOrderService {
 
     public void newFoodOrder(FoodOrder order) {
         order.setState(FoodOrderState.CREATED);
-        foodOrderRepository.save(order);
     }
 
     public StateMachine<FoodOrderState, FoodOrderEvent> update(Long id) {

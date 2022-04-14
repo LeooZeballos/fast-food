@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
@@ -11,7 +10,34 @@
         <h1 class="col margin-top-bottom-auto">New order</h1>
     </div>
     <div class="row">
-
+        <form class="col" action="#" th:action="@{/food_order/save}" th:object="${foodOrder}" method="post">
+            <div class="form-group">
+                <label for="orderBranch">Branch</label>
+                <select class="form-control" id="orderBranch" name="orderBranch" th:field="*{branch}">
+                    <option th:each="branch : ${branchesList}" th:value="${branch.id}" th:text="${branch.name}"></option>
+                </select>
+            </div>
+            <!--<table>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th><button type="submit" name="addRow" th:text="#{foodOrderDetails.addFoodOrderDetail}">Add row</button></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <tr th:each="foodOrderDetail: *{foodOrderDetails}">
+                    <td><input th:field="*{foodOrderDetail.item}" /></td>
+                    <td><input th:field="*{foodOrderDetail.quantity}" /></td>
+                </tr>
+                <td>
+                    <button type="submit" name="removeRow"
+                            th:value="${rowStat.index}" th:text="#{seedstarter.row.remove}">Remove row</button>
+                </td>
+                </tbody>
+            </table>-->
+        </form>
     </div>
 </div>
 <div th:replace="fragments :: footer"></div>

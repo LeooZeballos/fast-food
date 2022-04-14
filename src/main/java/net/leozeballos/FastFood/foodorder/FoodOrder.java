@@ -86,4 +86,12 @@ public class FoodOrder {
         return total;
     }
 
+    public void addFoodOrderDetail(FoodOrderDetail foodOrderDetail) {
+        foodOrderDetails.add(foodOrderDetail);
+    }
+
+    public void removeFoodOrderDetail(FoodOrderDetail foodOrderDetail) {
+        foodOrderDetails.remove(foodOrderDetail);
+    }
+
 }
