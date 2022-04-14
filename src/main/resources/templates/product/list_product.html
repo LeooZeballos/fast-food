@@ -23,6 +23,9 @@
             </tr>
             </thead>
             <tbody>
+            <tr th:if="${listProducts.isEmpty()}">
+                <td colspan="4"> No Products Available </td>
+            </tr>
             <tr th:each="product: ${listProducts}">
                 <th scope="row" th:text="${product.id}">Product ID</th>
                 <td th:text="${product.name}">Product Name</td>

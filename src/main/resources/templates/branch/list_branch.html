@@ -24,6 +24,9 @@
             </tr>
             </thead>
             <tbody>
+            <tr th:if="${listBranches.isEmpty()}">
+                <td colspan="5"> No Branches Available </td>
+            </tr>
             <tr th:each="branch : ${listBranches}">
                 <td th:text="${branch.id}"></td>
                 <td th:text="${branch.name}"></td>

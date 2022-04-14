@@ -13,6 +13,34 @@
         </div>
     </div>
     <div class="row">
+        <table class="table table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Creation date</th>
+                <th scope="col">Payment date</th>
+                <th scope="col">Items</th>
+                <th scope="col">Total</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${listFoodOrders.isEmpty()}">
+                <td colspan="6"> No Orders Available </td>
+            </tr>
+            <tr th:each="order : ${listFoodOrders}">
+                <th scope="row">${order.id}</th>
+                <td>${order.creationDate}</td>
+                <td>${order.paymentDate}</td>
+                <td>${order.items}</td>
+                <td>${order.calculateTotal()}</td>
+                <td>
+                    <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${order.id}}">Edit</a>
+                    <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${order.id}}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 <div th:replace="fragments :: footer"></div>

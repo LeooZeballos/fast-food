@@ -25,6 +25,9 @@
             </tr>
             </thead>
             <tbody>
+            <tr th:if="${listMenus.isEmpty()}">
+                <td colspan="6"> No Menus Available </td>
+            </tr>
             <tr th:each="menu: ${listMenus}">
                 <th th:text="${menu.id}" scope="row"></th>
                 <td th:text="${menu.name}"></td>
