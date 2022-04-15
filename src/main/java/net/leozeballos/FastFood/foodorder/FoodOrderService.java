@@ -47,10 +47,6 @@ public class FoodOrderService {
         foodOrderRepository.deleteAll();
     }
 
-    public void newFoodOrder(FoodOrder order) {
-        order.setState(FoodOrderState.CREATED);
-    }
-
     public StateMachine<FoodOrderState, FoodOrderEvent> update(Long id) {
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.UPDATE);

@@ -9,7 +9,7 @@
     <div class="row">
         <h1 class="col margin-top-bottom-auto">Orders list</h1>
         <div class="col-md-auto margin-top-bottom-auto">
-            <a class="btn btn-primary" id="createButton" th:href="@{/food_order/new}">Create new order</a>
+            <a class="btn btn-primary" id="createButton" th:href="@{/food_order/order}">Create new order</a>
         </div>
     </div>
     <div class="row">
@@ -17,6 +17,8 @@
             <thead>
             <tr>
                 <th scope="col">Id</th>
+                <th scope="col">Branch</th>
+                <th scope="col">State</th>
                 <th scope="col">Creation date</th>
                 <th scope="col">Payment date</th>
                 <th scope="col">Items</th>
@@ -29,11 +31,13 @@
                 <td colspan="6"> No Orders Available </td>
             </tr>
             <tr th:each="order : ${listFoodOrders}">
-                <th scope="row">${order.id}</th>
-                <td>${order.creationTimestamp.toString()}</td>
-                <td>${order.paymentTimestamp.toString()}</td>
-                <td>${order.foodOrderDetails}</td>
-                <td>${order.calculateTotal()}</td>
+                <th scope="row" th:text="${order.id}"></th>
+                <td th:text="${order.branch.name}"></td>
+                <td th:text="${order.getFormattedState()}"></td>
+                <td th:text="${order.getFormattedCreationTimestamp()}"></td>
+                <td th:text="${order.getFormattedPaymentTimestamp()}"></td>
+                <td th:text="${order.getFormattedFoodOrderDetails()}"></td>
+                <td th:text="${order.getFormattedTotal()}"></td>
                 <td>
                     <!--
                     <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${order.id}}">Edit</a>

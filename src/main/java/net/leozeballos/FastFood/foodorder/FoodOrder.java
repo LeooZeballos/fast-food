@@ -86,12 +86,32 @@ public class FoodOrder {
         return total;
     }
 
-    public void addFoodOrderDetail(FoodOrderDetail foodOrderDetail) {
-        foodOrderDetails.add(foodOrderDetail);
+    public String getFormattedCreationTimestamp() {
+        return creationTimestamp.toString();
     }
 
-    public void removeFoodOrderDetail(FoodOrderDetail foodOrderDetail) {
-        foodOrderDetails.remove(foodOrderDetail);
+    public String getFormattedPaymentTimestamp() {
+        // returns "Not set" if the payment timestamp is not set, otherwise returns the formatted payment timestamp
+        return paymentTimestamp == null ? "Not set" : paymentTimestamp.toString();
+    }
+
+    public String getFormattedFoodOrderDetails() {
+        // formats the food order details into a string for display, e.g. "1 x Burger, 1 x Fries"
+        StringBuilder formattedFoodOrderDetails = new StringBuilder();
+        for (FoodOrderDetail foodOrderDetail : foodOrderDetails) {
+            formattedFoodOrderDetails.append(foodOrderDetail.getQuantity()).append(" x ").append(foodOrderDetail.getItem().getName()).append(", ");
+        }
+        // removes the last comma and space
+        formattedFoodOrderDetails.delete(formattedFoodOrderDetails.length() - 2, formattedFoodOrderDetails.length());
+        return formattedFoodOrderDetails.toString();
+    }
+
+    public String getFormattedTotal() {
+        return "$" + String.format("%.2f", calculateTotal());
+    }
+
+    public String getFormattedState() {
+        return state.toString().substring(0, 1).toUpperCase() + state.toString().substring(1).toLowerCase();
     }
 
 }

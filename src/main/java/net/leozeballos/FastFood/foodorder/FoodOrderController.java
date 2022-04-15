@@ -1,71 +1,109 @@
 package net.leozeballos.FastFood.foodorder;
 
+import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.branch.BranchService;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
-import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetailCreationDto;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
+import net.leozeballos.FastFood.item.Item;
+import net.leozeballos.FastFood.menu.Menu;
+import net.leozeballos.FastFood.menu.MenuService;
+import net.leozeballos.FastFood.product.Product;
+import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.addAll;
 
 @Controller
 public class FoodOrderController {
 
     private final FoodOrderService foodOrderService;
     private final BranchService branchService;
+    private final MenuService menuService;
+    private final ProductService productService;
 
     @Autowired
-    public FoodOrderController(FoodOrderService foodOrderService, BranchService branchService) {
+    public FoodOrderController(FoodOrderService foodOrderService, BranchService branchService, MenuService menuService, ProductService productService) {
         this.foodOrderService = foodOrderService;
         this.branchService = branchService;
+        this.menuService = menuService;
+        this.productService = productService;
+    }
+
+    @ModelAttribute("branchesList")
+    public List<Branch> getBranches() {
+        return branchService.findAll();
+    }
+
+    @ModelAttribute("itemsList")
+    public List<Item> getItems() {
+        return populateItems();
+    }
+
+    @ModelAttribute("listFoodOrders")
+    public List<FoodOrder> getFoodOrders() {
+        return foodOrderService.findAll();
     }
 
     @RequestMapping("/food_order/list")
     public String listFoodOrders(Model model) {
-        model.addAttribute("listFoodOrders", foodOrderService.findAll());
         model.addAttribute("pageTitle", "Food Orders List");
         return "food_order/list_order";
     }
 
-    @RequestMapping("/food_order/new")
+    @RequestMapping("/food_order/order")
     public String newFoodOrder(Model model) {
         FoodOrder foodOrder = new FoodOrder();
-        foodOrder.addFoodOrderDetail(new FoodOrderDetail());
+        foodOrder.getFoodOrderDetails().add(new FoodOrderDetail());
         model.addAttribute("foodOrder", foodOrder);
-        model.addAttribute("branchesList", branchService.findAll());
-        return "food_order/new_order";
+        model.addAttribute("pageTitle", "New Food Order");
+        return "food_order/order";
     }
 
-    /*@RequestMapping(value="/food_order/new", params={"addRow"})
-    public String addRow(final SeedStarter seedStarter, final BindingResult bindingResult) {
-
-        seedStarter.getRows().add(new Row());
-        return "food_order/new_order";
+    @RequestMapping(value="/food_order/order", params={"addItem"})
+    public String addItem(final FoodOrder foodOrder, final BindingResult bindingResult) {
+        foodOrder.getFoodOrderDetails().add(new FoodOrderDetail());
+        return "food_order/order";
     }
 
-    @RequestMapping(value="/food_order/new", params={"removeRow"})
-    public String removeRow(
-            final SeedStarter seedStarter, final BindingResult bindingResult,
-            final HttpServletRequest req) {
-        final Integer rowId = Integer.valueOf(req.getParameter("removeRow"));
-        seedStarter.getRows().remove(rowId.intValue());
-        return "food_order/new_order";
-    }*/
+    @RequestMapping(value="/food_order/order", params={"removeItem"})
+    public String removeItem(@ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
+        if (foodOrder.getFoodOrderDetails().size() > 1) {
+            final Integer rowId = Integer.valueOf(req.getParameter("removeItem"));
+            foodOrder.getFoodOrderDetails().remove(rowId.intValue());
+        } else {
+            bindingResult.reject("error.foodOrder", "You must have at least one item");
+        }
+        return "food_order/order";
+    }
 
-    @RequestMapping("/food_order/save")
+    @RequestMapping(value="/food_order/order", params={"save"})
     public String saveFoodOrder(@ModelAttribute("foodOrder") FoodOrder foodOrder) throws RuntimeException {
         // if the foodOrder is new, set the status to "new"
         if (foodOrder.getState() == null) {
-            foodOrderService.newFoodOrder(foodOrder);
+            foodOrder.setState(FoodOrderState.CREATED);
         }
         // save the foodOrder
         if (foodOrderService.save(foodOrder) != null) {
-            return "redirect:/food_order/list_order";
+            return "redirect:/food_order/list";
         } else {
             throw new RuntimeException("Error saving order");
         }
     }
 
+    public List<Item> populateItems() {
+        ArrayList<Item> itemsList = new ArrayList<>();
+        itemsList.addAll(productService.findAll());
+        itemsList.addAll(menuService.findAll());
+        return itemsList;
+    }
 
 }

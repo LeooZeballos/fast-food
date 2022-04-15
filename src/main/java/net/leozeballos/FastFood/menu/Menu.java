@@ -24,12 +24,6 @@ public class Menu extends Item {
     private double discount;
 
     /**
-     * The name of the menu. String of length 1 to 50. Must be unique.
-     */
-    @Column(nullable = false, length = 50, unique = true)
-    private String name;
-
-    /**
      * The products that are in the menu. This is a many-to-many relationship.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)

@@ -18,12 +18,6 @@ import java.util.Objects;
 public class Product extends Item {
 
     /**
-     * The name of the product.
-     */
-    @Column(nullable = false, length = 50)
-    private String name;
-
-    /**
      * The price of the product.
      */
     @Column(nullable = false)
