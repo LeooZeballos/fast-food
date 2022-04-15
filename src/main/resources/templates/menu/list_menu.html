@@ -33,8 +33,8 @@
                 <td th:text="${menu.getFormattedDiscount()}"></td>
                 <td th:text="${menu.listProducts()}"></td>
                 <td>
-                    <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
-                    <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
+                    <a class="btn btn-primary btn-sm" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
                 </td>
             </tr>
             </tbody>

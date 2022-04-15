@@ -31,8 +31,8 @@
                 <td th:text="${branch.address.street}"></td>
                 <td th:text="${branch.address.city}"></td>
                 <td>
-                    <a class="btn btn-primary" th:href="@{'/branch/edit/' + ${branch.id}}">Edit</a>
-                    <a class="btn btn-danger" th:href="@{'/branch/delete/' + ${branch.id}}">Delete</a>
+                    <a class="btn btn-primary btn-sm" th:href="@{'/branch/edit/' + ${branch.id}}">Edit</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{'/branch/delete/' + ${branch.id}}">Delete</a>
                 </td>
             </tr>
         </table>
