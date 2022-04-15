@@ -46,4 +46,5 @@ public class Branch {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }
