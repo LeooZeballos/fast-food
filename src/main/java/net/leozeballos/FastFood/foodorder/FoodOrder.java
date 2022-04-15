@@ -11,10 +11,12 @@ import org.springframework.statemachine.StateMachine;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 @Getter
 @Setter
 @ToString
@@ -88,15 +90,26 @@ public class FoodOrder {
         return total;
     }
 
+    /**
+     * Returns the formatted creation timestamp.
+     * @return String The formatted creation timestamp
+     */
     public String getFormattedCreationTimestamp() {
-        return creationTimestamp.toString();
+        return creationTimestamp == null ? "Not set" : creationTimestamp.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
     }
 
+    /**
+     * Returns the formatted payment timestamp.
+     * @return String The formatted payment timestamp
+     */
     public String getFormattedPaymentTimestamp() {
-        // returns "Not set" if the payment timestamp is not set, otherwise returns the formatted payment timestamp
-        return paymentTimestamp == null ? "Not set" : paymentTimestamp.toString();
+        return paymentTimestamp == null ? "Not set" : paymentTimestamp.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
     }
 
+    /**
+     * Returns the formatted order details. E.g. "1 x Burger, 1 x Fries, 1 x Drink"
+     * @return String The formatted order details
+     */
     public String getFormattedFoodOrderDetails() {
         // formats the food order details into a string for display, e.g. "1 x Burger, 1 x Fries"
         StringBuilder formattedFoodOrderDetails = new StringBuilder();
@@ -108,10 +121,18 @@ public class FoodOrder {
         return formattedFoodOrderDetails.toString();
     }
 
+    /**
+     * Returns the formatted total.
+     * @return String The formatted total price. E.g. "Total: $10,00"
+     */
     public String getFormattedTotal() {
         return "$" + String.format("%.2f", calculateTotal());
     }
 
+    /**
+     * Returns the formatted state.
+     * @return String The formatted state
+     */
     public String getFormattedState() {
         return state.toString().substring(0, 1).toUpperCase() + state.toString().substring(1).toLowerCase();
     }
