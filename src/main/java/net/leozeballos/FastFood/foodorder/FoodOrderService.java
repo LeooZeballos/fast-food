@@ -11,6 +11,7 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,11 @@ public class FoodOrderService {
 
     public StateMachine<FoodOrderState, FoodOrderEvent> confirmPayment(Long id) {
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
+        FoodOrder foodOrder = foodOrderRepository.findById(id).orElse(null);
         sendEvent(id, stateMachine, FoodOrderEvent.CONFIRMPAYMENT);
+        assert foodOrder != null;
+        foodOrder.setPaymentTimestamp(LocalDateTime.now());
+        foodOrderRepository.save(foodOrder);
         return stateMachine;
     }
 

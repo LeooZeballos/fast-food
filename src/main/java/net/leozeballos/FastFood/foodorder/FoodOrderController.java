@@ -3,6 +3,7 @@ package net.leozeballos.FastFood.foodorder;
 import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.branch.BranchService;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
+import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.menu.Menu;
@@ -11,6 +12,7 @@ import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,10 +112,72 @@ public class FoodOrderController {
         }
         // save the foodOrder
         if (foodOrderService.save(foodOrder) != null) {
-            return "redirect:/food_order/list";
+            return "redirect:/food_order/list?type=created";
         } else {
             throw new RuntimeException("Error saving order");
         }
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id"})
+    public String editFoodOrder(Model model, @Param("id") Long id) {
+        FoodOrder foodOrder = foodOrderService.findById(id);
+        model.addAttribute("foodOrder", foodOrder);
+        model.addAttribute("pageTitle", "Edit Food Order");
+        return "food_order/edit";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "addItem"})
+    public String editAddItem(final FoodOrder foodOrder, final BindingResult bindingResult) {
+        foodOrder.getFoodOrderDetails().add(new FoodOrderDetail());
+        return "food_order/edit";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "removeItem"})
+    public String editRemoveItem(@ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
+        if (foodOrder.getFoodOrderDetails().size() > 1) {
+            final Integer rowId = Integer.valueOf(req.getParameter("removeItem"));
+            foodOrder.getFoodOrderDetails().remove(rowId.intValue());
+        } else {
+            bindingResult.reject("error.foodOrder", "You must have at least one item");
+        }
+        return "food_order/edit";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "save"})
+    public String saveEditedFoodOrder(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.update(foodOrder.getId());
+        foodOrderService.save(foodOrder);
+        return "redirect:/food_order/list?type=created";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "action=start_preparation"})
+    public String startPreparation(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.startPreparation(foodOrder.getId());
+        return "redirect:/food_order/list?type=in_preparation";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "action=cancel"})
+    public String cancel(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.cancel(foodOrder.getId());
+        return "redirect:/food_order/list?type=all";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "action=finish_preparation"})
+    public String finishPreparation(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.finishPreparation(foodOrder.getId());
+        return "redirect:/food_order/list?type=finished";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "action=confirm_payment"})
+    public String confirmPayment(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.confirmPayment(foodOrder.getId());
+        return "redirect:/food_order/list?type=all";
+    }
+
+    @RequestMapping(value="/food_order/edit", params={"id", "action=reject"})
+    public String reject(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
+        foodOrderService.reject(foodOrder.getId());
+        return "redirect:/food_order/list?type=all";
     }
 
     public List<Item> populateItems() {

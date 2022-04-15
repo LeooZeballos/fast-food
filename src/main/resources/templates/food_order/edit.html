@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body class="bg-secondary bg-gradient">
+<div th:replace="fragments :: header"></div>
+<div class="container">
+    <div class="row">
+        <h1 class="col margin-top-bottom-auto">Edit menu</h1>
+    </div>
+    <div class="row">
+        <form class="col" action="#" th:action="@{/food_order/edit}" th:object="${foodOrder}" method="post">
+            <div class="form-group">
+                <label for="foodOrderId">Id</label>
+                <input type="text" class="form-control" id="foodOrderId" name="foodOrderId" th:field="*{id}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="foodOrderState">State</label>
+                <input type="text" class="form-control" id="foodOrderState" name="foodOrderState" th:field="*{state}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="foodOrderCreationTimestamp">Creation timestamp</label>
+                <input type="text" class="form-control" id="foodOrderCreationTimestamp" name="foodOrderCreationTimestamp" th:field="*{creationTimestamp}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="orderBranch">Branch</label>
+                <select class="form-control" id="orderBranch" name="orderBranch" th:field="*{branch}">
+                    <option th:each="branch : ${branchesList}" th:value="${branch.id}" th:text="${branch.name}"></option>
+                </select>
+            </div>
+            <div>
+                <label>Order Details</label>
+                <table class="table table-striped table-dark">
+                    <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>
+                            <button type="submit" name="addItem" class="btn btn-primary">Add Item</button>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="foodOrderDetail, count: *{foodOrderDetails}">
+                        <td><select class="form-control" id="orderFoodDetItem" name="orderFoodDetItem" th:field="*{foodOrderDetails[__${count.index}__].item}">
+                            <option th:each="item : ${itemsList}" th:value="${item.id}" th:text="${item.name}"></option>
+                        </select></td>
+                        <td><input type="number" class="form-control" name="amount"
+                                   th:field="*{foodOrderDetails[__${count.index}__].quantity}"
+                                   th:value="${foodOrderDetail.quantity}"></td>
+                        <td><button type="submit" name="removeItem" th:value="${count.index}" class="btn btn-danger">Remove Item</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <button type="submit" name="save" class="btn btn-primary">Update order</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:replace="fragments :: footer"></div>
+<div th:replace="fragments :: scripts"></div>
+</body>
+</html>

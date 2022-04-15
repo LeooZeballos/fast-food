@@ -39,10 +39,12 @@
                 <td th:text="${order.getFormattedFoodOrderDetails()}"></td>
                 <td th:text="${order.getFormattedTotal()}"></td>
                 <td>
-                    <!--
-                    <a class="btn btn-primary" th:href="@{'/menu/edit/' + ${order.id}}">Edit</a>
-                    <a class="btn btn-danger" th:href="@{'/menu/delete/' + ${order.id}}">Delete</a>
-                    -->
+                    <a th:if="${order.getState().toString().equals('CREATED')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=start_preparation'}" class="btn btn-success btn-sm">Start Preparation</a>
+                    <a th:if="${order.getState().toString().equals('CREATED')}" th:href="@{'/food_order/edit?id=' + ${order.id}}" class="btn btn-warning btn-sm">Update</a>
+                    <a th:if="${order.getState().toString().equals('INPREPARATION')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=finish_preparation'}" class="btn btn-success btn-sm">Finish Preparation</a>
+                    <a th:if="${order.getState().toString().equals('CREATED') || order.getState().toString().equals('INPREPARATION')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=cancel'}" class="btn btn-danger btn-sm">Cancel</a>
+                    <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=confirm_payment'}" class="btn btn-success btn-sm">Confirm Payment</a>
+                    <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=reject'}" class="btn btn-danger btn-sm">Reject</a>
                 </td>
             </tr>
             </tbody>
