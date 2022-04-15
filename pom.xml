@@ -55,6 +55,23 @@
 			<version>1.18.22</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<!--suppress MavenModelInspection -->
+			<artifactId>hibernate-validator</artifactId>
+			<!--suppress MavenModelInspection -->
+			<version>7.0.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.6</version>
+		</dependency>
 	</dependencies>
 
 	<build>

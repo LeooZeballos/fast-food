@@ -5,8 +5,12 @@ import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.product.Product;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Objects;
 
 @Getter
@@ -35,7 +39,10 @@ public class FoodOrderDetail {
      * The quantity of the item that is being ordered.
      */
     @Column(nullable = false)
-    private int quantity;
+    @ColumnDefault(value = "1")
+    @Min(value = 1)
+    @Max(value = 99)
+    private Integer quantity;
 
     /**
      * The item that is being ordered. Can be a product or a menu.

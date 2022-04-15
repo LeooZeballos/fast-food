@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="fragments :: head"><title></title></head>
+<body class="bg-secondary bg-gradient">
+<header>
+    <div th:replace="fragments :: header"></div>
+</header>
+<main id="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto my-auto">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="text-danger mb-4">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            <span th:text="${error_status}"></span>
+                        </h1>
+                        <h2 th:text="${error_message}"></h2>
+                        <p class="text-muted">
+                            <span th:text="${error_description}"></span>
+                        </p>
+                        <a th:href="@{/}" class="btn btn-primary">
+                            <i class="fa fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments :: footer"></footer>
+<div th:replace="fragments :: scripts"></div>
+</body>
+</html>

@@ -88,19 +88,21 @@ public class FoodOrderController {
     }
 
     @RequestMapping(value="/food_order/order", params={"addItem"})
-    public String addItem(final FoodOrder foodOrder, final BindingResult bindingResult) {
+    public String addItem(Model model, final FoodOrder foodOrder, final BindingResult bindingResult) {
         foodOrder.getFoodOrderDetails().add(new FoodOrderDetail());
+        model.addAttribute("pageTitle", "New Food Order");
         return "food_order/order";
     }
 
     @RequestMapping(value="/food_order/order", params={"removeItem"})
-    public String removeItem(@ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
+    public String removeItem(Model model, @ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
         if (foodOrder.getFoodOrderDetails().size() > 1) {
             final Integer rowId = Integer.valueOf(req.getParameter("removeItem"));
             foodOrder.getFoodOrderDetails().remove(rowId.intValue());
         } else {
             bindingResult.reject("error.foodOrder", "You must have at least one item");
         }
+        model.addAttribute("pageTitle", "New Food Order");
         return "food_order/order";
     }
 
@@ -130,19 +132,21 @@ public class FoodOrderController {
     }
 
     @RequestMapping(value="/food_order/edit", params={"id", "addItem"})
-    public String editAddItem(final FoodOrder foodOrder, final BindingResult bindingResult) {
+    public String editAddItem(Model model, final FoodOrder foodOrder, final BindingResult bindingResult) {
         foodOrder.getFoodOrderDetails().add(new FoodOrderDetail());
+        model.addAttribute("pageTitle", "Edit Food Order");
         return "food_order/edit";
     }
 
     @RequestMapping(value="/food_order/edit", params={"id", "removeItem"})
-    public String editRemoveItem(@ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
+    public String editRemoveItem(Model model, @ModelAttribute final FoodOrder foodOrder, final BindingResult bindingResult, final HttpServletRequest req) {
         if (foodOrder.getFoodOrderDetails().size() > 1) {
             final Integer rowId = Integer.valueOf(req.getParameter("removeItem"));
             foodOrder.getFoodOrderDetails().remove(rowId.intValue());
         } else {
             bindingResult.reject("error.foodOrder", "You must have at least one item");
         }
+        model.addAttribute("pageTitle", "Edit Food Order");
         return "food_order/edit";
     }
 

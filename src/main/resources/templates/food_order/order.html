@@ -34,9 +34,8 @@
                             <td><select class="form-control" id="orderFoodDetItem" name="orderFoodDetItem" th:field="*{foodOrderDetails[__${count.index}__].item}">
                                 <option th:each="item : ${itemsList}" th:value="${item.id}" th:text="${item.name}"></option>
                             </select></td>
-                            <td><input type="number" class="form-control" name="amount"
-                                       th:field="*{foodOrderDetails[__${count.index}__].quantity}"
-                                       th:value="${foodOrderDetail.quantity}"></td>
+                            <td><input type="number" class="form-control" name="amount" th:default="1" th:min="1" th:max="50" th:placeholder="Amount"
+                                       th:field="*{foodOrderDetails[__${count.index}__].quantity}" th:required></td>
                             <td><button type="submit" name="removeItem" th:value="${count.index}" class="btn btn-danger">Remove Item</button></td>
                         </tr>
                     </tbody>
