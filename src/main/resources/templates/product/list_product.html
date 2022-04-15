@@ -16,7 +16,6 @@
         <table class="table table-striped table-dark">
             <thead>
             <tr>
-                <th scope="col">Id</th>
                 <th scope="col">Name</th>
                 <th scope="col">Price</th>
                 <th scope="col">Actions</th>
@@ -27,7 +26,6 @@
                 <td colspan="4"> No Products Available </td>
             </tr>
             <tr th:each="product: ${listProducts}">
-                <th scope="row" th:text="${product.id}">Product ID</th>
                 <td th:text="${product.name}">Product Name</td>
                 <td th:text="${product.getFormattedPrice()}">Product Price</td>
                 <td>

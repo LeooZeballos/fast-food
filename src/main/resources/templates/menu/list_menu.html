@@ -16,7 +16,6 @@
         <table class="table table-striped table-dark">
             <thead>
             <tr>
-                <th scope="col">Id</th>
                 <th scope="col">Name</th>
                 <th scope="col">Total</th>
                 <th scope="col">Discount</th>
@@ -29,7 +28,6 @@
                 <td colspan="6"> No Menus Available </td>
             </tr>
             <tr th:each="menu: ${listMenus}">
-                <th th:text="${menu.id}" scope="row"></th>
                 <td th:text="${menu.name}"></td>
                 <td th:text="${menu.getFormattedTotal()}"></td>
                 <td th:text="${menu.getFormattedDiscount()}"></td>
