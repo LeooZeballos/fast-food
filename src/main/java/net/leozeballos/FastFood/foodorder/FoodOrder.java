@@ -85,7 +85,7 @@ public class FoodOrder {
     public double calculateTotal() {
         double total = 0.0;
         for (FoodOrderDetail foodOrderDetail : foodOrderDetails) {
-            total += foodOrderDetail.getQuantity() * foodOrderDetail.getItem().calculatePrice();
+            total += foodOrderDetail.calculateSubtotal();
         }
         return total;
     }

@@ -111,6 +111,9 @@ public class FoodOrderController {
             foodOrder.setState(FoodOrderState.CREATED);
         }
         // save the foodOrder
+        for (FoodOrderDetail foodOrderDetail : foodOrder.getFoodOrderDetails()) {
+            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
+        }
         if (foodOrderService.save(foodOrder) != null) {
             return "redirect:/food_order/list?type=created";
         } else {
@@ -146,6 +149,9 @@ public class FoodOrderController {
     @RequestMapping(value="/food_order/edit", params={"id", "save"})
     public String saveEditedFoodOrder(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
         foodOrderService.update(foodOrder.getId());
+        for (FoodOrderDetail foodOrderDetail : foodOrder.getFoodOrderDetails()) {
+            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
+        }
         foodOrderService.save(foodOrder);
         return "redirect:/food_order/list?type=created";
     }

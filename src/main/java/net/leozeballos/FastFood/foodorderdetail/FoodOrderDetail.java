@@ -62,6 +62,9 @@ public class FoodOrderDetail {
      * @return double The subtotal price of the order detail that is being ordered.
      */
     public double calculateSubtotal() {
+        if (historicPrice == 0) {
+            this.setHistoricPrice(item.calculatePrice());
+        }
         return historicPrice * quantity;
     }
 
