@@ -28,7 +28,7 @@
             </thead>
             <tbody>
             <tr th:if="${listFoodOrders.isEmpty()}">
-                <td colspan="6"> No Orders Available </td>
+                <td colspan="8"> No Orders Available </td>
             </tr>
             <tr th:each="order : ${listFoodOrders}">
                 <th scope="row" th:text="${order.id}"></th>

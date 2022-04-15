@@ -10,6 +10,7 @@ import net.leozeballos.FastFood.menu.MenuService;
 import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,14 +49,29 @@ public class FoodOrderController {
         return populateItems();
     }
 
-    @ModelAttribute("listFoodOrders")
-    public List<FoodOrder> getFoodOrders() {
-        return foodOrderService.findAll();
-    }
-
-    @RequestMapping("/food_order/list")
+/*    @RequestMapping("/food_order/list")
     public String listFoodOrders(Model model) {
+        model.addAttribute("listFoodOrders", foodOrderService.findAll());
         model.addAttribute("pageTitle", "Food Orders List");
+        return "food_order/list_order";
+    }*/
+
+    @RequestMapping(value="/food_order/list", params={"type"})
+    public String listFoodOrdersInPreparation(Model model, @Param("type") String type) {
+        if (model != null) {
+            if (type.equals("created")) {
+                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.CREATED));
+            }else if (type.equals("in_preparation")) {
+                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.INPREPARATION));
+            } else if (type.equals("finished")) {
+                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.DONE));
+            } else if (type.equals("all")) {
+                model.addAttribute("listFoodOrders", foodOrderService.findAll());
+            } else {
+                model.addAttribute("listFoodOrders", new ArrayList<FoodOrder>());
+            }
+        }
+        model.addAttribute("pageTitle", "Orders In Preparation");
         return "food_order/list_order";
     }
 

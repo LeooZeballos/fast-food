@@ -11,6 +11,7 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -104,4 +105,9 @@ public class FoodOrderService {
         return stateMachine;
     }
 
+    public List<FoodOrder> findByState(FoodOrderState state) {
+        List<FoodOrder> orders = foodOrderRepository.findAll();
+        orders.removeIf(order -> order.getState() != state);
+        return orders;
+    }
 }

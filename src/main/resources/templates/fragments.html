@@ -30,9 +30,10 @@
                        aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-burger-glass"></i>📝Orders</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" th:href="@{/food_order/order}">New Order</a>
-                        <a class="dropdown-item" th:href="@{/food_order/list}">List of orders</a>
-                        <a class="dropdown-item" href="#">In preparation</a>
-                        <a class="dropdown-item" href="#">Payment</a>
+                        <a class="dropdown-item" th:href="@{/food_order/list?type=created}">List of orders</a>
+                        <a class="dropdown-item" th:href="@{/food_order/list?type=in_preparation}">In preparation</a>
+                        <a class="dropdown-item" th:href="@{/food_order/list?type=finished}">Payment</a>
+                        <a class="dropdown-item" th:href="@{/food_order/list?type=all}">All orders</a>
                     </div>
                 </li>
                 <li class="nav-item">
