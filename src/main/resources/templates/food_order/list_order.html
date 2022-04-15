@@ -45,6 +45,7 @@
                     <a th:if="${order.getState().toString().equals('CREATED') || order.getState().toString().equals('INPREPARATION')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=cancel'}" class="btn btn-danger btn-sm">Cancel</a>
                     <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=confirm_payment'}" class="btn btn-success btn-sm">Confirm Payment</a>
                     <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=reject'}" class="btn btn-danger btn-sm">Reject</a>
+                    <div th:if="${order.getState().toString().equals('CANCELLED') || order.getState().toString().equals('REJECTED') || order.getState().toString().equals('PAID')}">No actions available</div>
                 </td>
             </tr>
             </tbody>
