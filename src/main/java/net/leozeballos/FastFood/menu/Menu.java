@@ -52,6 +52,7 @@ public class Menu extends Item {
      * Calculates the price of the menu. This is the sum of the prices of all products in the menu times 1 - discount.
      * @return double The price of the menu.
      */
+    @Override
     public double calculatePrice() {
         double price = 0;
         for (Product product : products) { price += product.calculatePrice(); }
