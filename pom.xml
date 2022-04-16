@@ -35,11 +35,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>4.0.0-2</version>
@@ -57,9 +52,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<!--suppress MavenModelInspection -->
 			<artifactId>hibernate-validator</artifactId>
-			<!--suppress MavenModelInspection -->
 			<version>7.0.4.Final</version>
 		</dependency>
 		<dependency>
@@ -71,6 +64,18 @@
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>javax.el</artifactId>
 			<version>2.2.6</version>
+		</dependency>
+
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
