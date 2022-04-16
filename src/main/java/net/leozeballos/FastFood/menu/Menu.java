@@ -1,11 +1,20 @@
 package net.leozeballos.FastFood.menu;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.product.Product;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.util.List;
 import java.util.Objects;
 

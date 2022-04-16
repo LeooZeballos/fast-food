@@ -3,16 +3,12 @@ package net.leozeballos.FastFood.foodorder;
 import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.branch.BranchService;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
-import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.item.Item;
-import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuService;
-import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,11 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Collections.addAll;
 
 @Controller
 public class FoodOrderController {
@@ -51,13 +44,6 @@ public class FoodOrderController {
     public List<Item> getItems() {
         return populateItems();
     }
-
-/*    @RequestMapping("/food_order/list")
-    public String listFoodOrders(Model model) {
-        model.addAttribute("listFoodOrders", foodOrderService.findAll());
-        model.addAttribute("pageTitle", "Food Orders List");
-        return "food_order/list_order";
-    }*/
 
     @RequestMapping(value="/food_order/list", params={"type"})
     public String listFoodOrdersInPreparation(Model model, @Param("type") String type) {
