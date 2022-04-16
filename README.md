@@ -2,11 +2,11 @@
 [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/issues) [![GitHub forks](https://img.shields.io/github/forks/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/network) [![GitHub stars](https://img.shields.io/github/stars/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/stargazers) [![GitHub license](https://img.shields.io/github/license/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/blob/main/LICENSE)
 
 ## Table of contents
-* [General information](#General information)
+* [Information](#Information)
 * [Technologies](#Technologies)
 * [Features](#Features)
 
-## General information
+## Information
 Simple fast food app for taking orders and managing products, menus and branches.
 
 
