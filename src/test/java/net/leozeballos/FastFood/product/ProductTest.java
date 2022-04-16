@@ -2,13 +2,22 @@ package net.leozeballos.FastFood.product;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ProductTest {
 
     @Test
-    void canCreateUsingEmptyConstructor() {
+    void shouldCreateProductWithBuilder() {
+        Product product = Product.builder().build();
+        assertNotNull(product);
+    }
+
+    @Test
+    void shouldCreateProductUsingEmptyConstructor() {
         Product product = new Product();
+        assertNotNull(product);
         assertNull(product.getId());
         assertNull(product.getName());
         assertEquals(0.0, product.getPrice());
@@ -18,16 +27,17 @@ class ProductTest {
     void shouldCreateProductWithAttr() {
         Product product = new Product("Product", 1.0);
         assertNotNull(product);
+        assertNull(product.getId());
         assertEquals("Product", product.getName());
         assertEquals(1.0, product.getPrice());
     }
 
     @Test
     void shouldCreateProductWithAttrUsingBuilder() {
-        Product product = Product.builder().build();
+        Product product = Product.builder().price(1.0).build();
         product.setName("Product");
-        product.setPrice(1.0);
         assertNotNull(product);
+        assertNull(product.getId());
         assertEquals("Product", product.getName());
         assertEquals(1.0, product.getPrice());
     }

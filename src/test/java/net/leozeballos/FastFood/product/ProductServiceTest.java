@@ -31,26 +31,21 @@ class ProductServiceTest {
     }
 
     @Test
-    void findById() {
+    void canFindProductById() {
         // given
-        Product product = Product.builder().build();
-        product.setName("Test Product");
-        product.setPrice(10.0);
+        Long id = 1L;
 
         // when
-        underTest.findById(1L);
+        underTest.findById(id);
 
         // then
-        verify(productRepository).findById(1L);
-
+        verify(productRepository).findById(id);
     }
 
     @Test
     void canSaveProduct() {
         // given
         Product product = Product.builder().build();
-        product.setName("Test Product");
-        product.setPrice(10.0);
 
         // when
         underTest.save(product);
@@ -62,11 +57,9 @@ class ProductServiceTest {
     }
 
     @Test
-    void delete() {
+    void canDeleteProduct() {
         // given
         Product product = Product.builder().build();
-        product.setName("Test Product");
-        product.setPrice(10.0);
 
         // when
         underTest.delete(product);
@@ -78,21 +71,19 @@ class ProductServiceTest {
     }
 
     @Test
-    void deleteById() {
+    void canDeleteProductById() {
         // given
-        Product product = Product.builder().build();
-        product.setName("Test Product");
-        product.setPrice(10.0);
+        Long id = 1L;
 
         // when
-        underTest.deleteById(1L);
+        underTest.deleteById(id);
 
         // then
-        verify(productRepository).deleteById(1L);
+        verify(productRepository).deleteById(id);
     }
 
     @Test
-    void deleteAll() {
+    void canDeleteAllProducts() {
         // when
         underTest.deleteAll();
 
