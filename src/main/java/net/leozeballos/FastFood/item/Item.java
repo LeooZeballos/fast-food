@@ -23,6 +23,10 @@ public abstract class Item {
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
+    public Item(String name) {
+        this.name = name;
+    }
+
     public double calculatePrice(){
         return 0;
     }

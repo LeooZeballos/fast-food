@@ -1,17 +1,17 @@
 package net.leozeballos.FastFood.product;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.leozeballos.FastFood.item.Item;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -24,12 +24,17 @@ public class Product extends Item {
     @Column(nullable = false)
     private double price;
 
+    public Product(String name, double price) {
+        super(name);
+        this.price = price;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Product product = (Product) o;
-        return this.getId() != null && Objects.equals(this.getId(), product.getId());
+    public String toString() {
+        return "Product{" +
+                "name='" + getName() + '\'' +
+                ", price=" + getPrice() +
+                '}';
     }
 
     @Override

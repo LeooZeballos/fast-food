@@ -1,13 +1,10 @@
 package net.leozeballos.FastFood.product;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +14,6 @@ import static org.mockito.Mockito.verify;
 class ProductServiceTest {
 
     @Mock private ProductRepository productRepository;
-    private AutoCloseable autoCloseable;
     private ProductService underTest;
 
     @BeforeEach
@@ -34,9 +30,19 @@ class ProductServiceTest {
         verify(productRepository).findAll();
     }
 
-    @Disabled
     @Test
     void findById() {
+        // given
+        Product product = Product.builder().build();
+        product.setName("Test Product");
+        product.setPrice(10.0);
+
+        // when
+        underTest.findById(1L);
+
+        // then
+        verify(productRepository).findById(1L);
+
     }
 
     @Test
@@ -55,18 +61,43 @@ class ProductServiceTest {
         assertThat(captor.getValue()).isEqualTo(product);
     }
 
-    @Disabled
     @Test
     void delete() {
+        // given
+        Product product = Product.builder().build();
+        product.setName("Test Product");
+        product.setPrice(10.0);
+
+        // when
+        underTest.delete(product);
+
+        // then
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).delete(captor.capture());
+        assertThat(captor.getValue()).isEqualTo(product);
     }
 
-    @Disabled
     @Test
     void deleteById() {
+        // given
+        Product product = Product.builder().build();
+        product.setName("Test Product");
+        product.setPrice(10.0);
+
+        // when
+        underTest.deleteById(1L);
+
+        // then
+        verify(productRepository).deleteById(1L);
     }
 
-    @Disabled
     @Test
     void deleteAll() {
+        // when
+        underTest.deleteAll();
+
+        // then
+        verify(productRepository).deleteAll();
     }
+
 }
