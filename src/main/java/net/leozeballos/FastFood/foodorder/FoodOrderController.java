@@ -49,11 +49,11 @@ public class FoodOrderController {
     public String listFoodOrdersInPreparation(Model model, @Param("type") String type) {
         if (model != null) {
             if (type.equals("created")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.CREATED));
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.CREATED));
             }else if (type.equals("in_preparation")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.INPREPARATION));
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.INPREPARATION));
             } else if (type.equals("finished")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findByState(FoodOrderState.DONE));
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.DONE));
             } else if (type.equals("all")) {
                 model.addAttribute("listFoodOrders", foodOrderService.findAll());
             } else {

@@ -109,9 +109,7 @@ public class FoodOrderService {
         return stateMachine;
     }
 
-    public List<FoodOrder> findByState(FoodOrderState state) {
-        List<FoodOrder> orders = foodOrderRepository.findAll();
-        orders.removeIf(order -> order.getState() != state);
-        return orders;
+    public List<FoodOrder> findAllFoodOrdersByState(FoodOrderState state) {
+        return foodOrderRepository.findAllFoodOrdersByState(state);
     }
 }

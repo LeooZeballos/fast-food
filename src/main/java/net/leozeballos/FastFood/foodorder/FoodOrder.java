@@ -1,14 +1,9 @@
 package net.leozeballos.FastFood.foodorder;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.branch.Branch;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,16 +20,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 public class FoodOrder {
 
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
     /**
      * The unique identifier of the food order.
      */
@@ -76,14 +72,6 @@ public class FoodOrder {
     private List<FoodOrderDetail> foodOrderDetails = new ArrayList<>();
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        FoodOrder foodOrder = (FoodOrder) o;
-        return id != null && Objects.equals(id, foodOrder.id);
-    }
-
-    @Override
     public int hashCode() {
         return getClass().hashCode();
     }
@@ -105,7 +93,7 @@ public class FoodOrder {
      * @return String The formatted creation timestamp
      */
     public String getFormattedCreationTimestamp() {
-        return creationTimestamp == null ? "Not set" : creationTimestamp.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+        return creationTimestamp == null ? "Not set" : creationTimestamp.format(DATE_TIME_FORMATTER);
     }
 
     /**
@@ -113,7 +101,7 @@ public class FoodOrder {
      * @return String The formatted payment timestamp
      */
     public String getFormattedPaymentTimestamp() {
-        return paymentTimestamp == null ? "Not set" : paymentTimestamp.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+        return paymentTimestamp == null ? "Not set" : paymentTimestamp.format(DATE_TIME_FORMATTER);
     }
 
     /**

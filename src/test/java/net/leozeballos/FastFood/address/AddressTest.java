@@ -25,8 +25,8 @@ class AddressTest {
 
         // then
         assertNull(address.getId());
-        assertEquals("", address.getStreet());
-        assertEquals("", address.getCity());
+        assertNull(address.getStreet());
+        assertNull(address.getCity());
     }
 
     @Test
