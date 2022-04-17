@@ -29,6 +29,7 @@ Simple fast food app for taking orders and managing products, menus and branches
   * Update orders
   * Start preparing orders
   * Finish preparing orders
+  * Confirm payment
   * Cancel orders
   * Reject orders
 * CRUD for products
