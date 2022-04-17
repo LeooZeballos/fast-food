@@ -24,8 +24,10 @@ public class FoodOrderDetailService {
     }
 
     public FoodOrderDetail save(FoodOrderDetail foodOrderDetail) {
-        if (foodOrderDetail.getHistoricPrice() == 0) {
-            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
+        if (foodOrderDetail.getItem() != null) {
+            if (foodOrderDetail.getHistoricPrice() == 0) {
+                foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
+            }
         }
         return foodOrderDetailRepository.save(foodOrderDetail);
     }

@@ -1,12 +1,12 @@
 package net.leozeballos.FastFood.foodorderdetail;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import net.leozeballos.FastFood.item.Item;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
@@ -18,13 +18,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 public class FoodOrderDetail {
 
@@ -57,14 +57,6 @@ public class FoodOrderDetail {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Item item;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        FoodOrderDetail that = (FoodOrderDetail) o;
-        return id != null && Objects.equals(id, that.id);
-    }
 
     @Override
     public int hashCode() {

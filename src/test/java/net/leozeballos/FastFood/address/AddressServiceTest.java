@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,11 +32,14 @@ class AddressServiceTest {
 
     @Test
     void canFindAddressById() {
+        // given
+        Long id = 1L;
+
         // when
-        underTest.findById(1L);
+        underTest.findById(id);
 
         // then
-        verify(addressRepository).findById(1L);
+        verify(addressRepository).findById(id);
     }
 
     @Test
