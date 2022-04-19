@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.product;
 
+import net.leozeballos.FastFood.menu.MenuRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +15,12 @@ import static org.mockito.Mockito.verify;
 class ProductServiceTest {
 
     @Mock private ProductRepository productRepository;
+    @Mock private MenuRepository menuRepository;
     private ProductService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new ProductService(productRepository);
+        underTest = new ProductService(productRepository, menuRepository);
     }
 
     @Test
