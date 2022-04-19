@@ -27,6 +27,20 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
+    public void disableItem(Long id) {
+        Menu menu = menuRepository.findById(id).orElse(null);
+        assert menu != null;
+        menu.disable();
+        menuRepository.save(menu);
+    }
+
+    public void enableItem(Long id) {
+        Menu menu = menuRepository.findById(id).orElse(null);
+        assert menu != null;
+        menu.enable();
+        menuRepository.save(menu);
+    }
+
     public void delete(Menu menu) {
         menuRepository.delete(menu);
     }

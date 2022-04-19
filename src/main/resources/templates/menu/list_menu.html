@@ -20,6 +20,7 @@
                 <th scope="col">Total</th>
                 <th scope="col">Discount</th>
                 <th scope="col">Products</th>
+                <th scope="col">Active</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
@@ -32,9 +33,12 @@
                 <td th:text="${menu.getFormattedTotal()}"></td>
                 <td th:text="${menu.getFormattedDiscount()}"></td>
                 <td th:text="${menu.listProducts()}"></td>
+                <td><p th:if="${menu.isActive()}">✔</p><p th:if="${!menu.isActive()}">❌</p></td>
                 <td>
                     <a class="btn btn-primary btn-sm" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
-                    <a class="btn btn-danger btn-sm" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
+                    <a th:if="${!menu.isActive()}" class="btn btn-success btn-sm" th:href="@{'/menu/enable/' + ${menu.id}}">Enable</a>
+                    <a th:if="${menu.isActive()}" class="btn btn-danger btn-sm" th:href="@{'/menu/disable/' + ${menu.id}}">Disable</a>
+                    <a th:if="${!menu.isActive()}" class="btn btn-danger btn-sm" th:href="@{'/menu/delete/' + ${menu.id}}">Delete</a>
                 </td>
             </tr>
             </tbody>

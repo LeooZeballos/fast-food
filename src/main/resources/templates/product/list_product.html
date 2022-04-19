@@ -18,6 +18,7 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Price</th>
+                <th scope="col">Active</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
@@ -26,11 +27,14 @@
                 <td colspan="4"> No Products Available </td>
             </tr>
             <tr th:each="product: ${listProducts}">
-                <td th:text="${product.name}">Product Name</td>
-                <td th:text="${product.getFormattedPrice()}">Product Price</td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.getFormattedPrice()}"></td>
+                <td><p th:if="${product.isActive()}">✔</p><p th:if="${!product.isActive()}">❌</p></td>
                 <td>
                     <a class="btn btn-warning btn-sm" th:href="@{'/product/edit/' + ${product.id}}">Edit</a>
-                    <a class="btn btn-danger btn-sm" th:href="@{'/product/delete/' + ${product.id}}">Delete</a>
+                    <a th:if="${!product.isActive()}" class="btn btn-success btn-sm" th:href="@{'/product/enable/' + ${product.id}}">Enable</a>
+                    <a th:if="${product.isActive()}" class="btn btn-danger btn-sm" th:href="@{'/product/disable/' + ${product.id}}">Disable</a>
+                    <a th:if="${!product.isActive()}" class="btn btn-danger btn-sm" th:href="@{'/product/delete/' + ${product.id}}">Delete</a>
                 </td>
             </tr>
             </tbody>

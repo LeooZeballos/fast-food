@@ -31,6 +31,18 @@ public class ProductController {
         return "redirect:/product/list";
     }
 
+    @RequestMapping("/product/disable/{id}")
+    public String disableProduct(@PathVariable("id") Long id) {
+        productService.disableItem(id);
+        return "redirect:/product/list";
+    }
+
+    @RequestMapping("/product/enable/{id}")
+    public String enableProduct(@PathVariable("id") Long id) {
+        productService.enableItem(id);
+        return "redirect:/product/list";
+    }
+
     @RequestMapping("/product/edit/{id}")
     public ModelAndView editProduct(@PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("product/edit_product");

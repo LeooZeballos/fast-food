@@ -32,6 +32,12 @@ public abstract class Item {
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
+    /**
+     * If the item is active.
+     */
+    @Column(nullable = false)
+    private boolean isActive = true;
+
     public Item(String name) {
         this.name = name;
     }
@@ -40,4 +46,17 @@ public abstract class Item {
         return 0;
     }
 
+    /**
+     * Disable the item.
+     */
+    public void disable() {
+        this.isActive = false;
+    }
+
+    /**
+     * Enable the item.
+     */
+    public void enable() {
+        this.isActive = true;
+    }
 }

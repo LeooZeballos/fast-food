@@ -1,11 +1,16 @@
 package net.leozeballos.FastFood.menu;
 
+import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Controller
 public class MenuController {
@@ -17,6 +22,18 @@ public class MenuController {
     public MenuController(MenuService menuService, ProductService productService) {
         this.menuService = menuService;
         this.productService = productService;
+    }
+
+    @ModelAttribute("productsList")
+    public List<Product> getProducts() {
+        return populateProducts();
+    }
+
+    public List<Product> populateProducts() {
+        ArrayList<Product> productsList = new ArrayList<>(productService.findAll());
+        // remove disabled items
+        productsList.removeIf(product -> !product.isActive());
+        return productsList;
     }
 
     @GetMapping(value = "/menu/{id}", produces = "application/json")
@@ -31,11 +48,22 @@ public class MenuController {
         return "redirect:/menu/list";
     }
 
+    @RequestMapping("/menu/disable/{id}")
+    public String disableMenu(@PathVariable("id") Long id) {
+        menuService.disableItem(id);
+        return "redirect:/menu/list";
+    }
+
+    @RequestMapping("/menu/enable/{id}")
+    public String enableMenu(@PathVariable("id") Long id) {
+        menuService.enableItem(id);
+        return "redirect:/menu/list";
+    }
+
     @RequestMapping("/menu/edit/{id}")
     public ModelAndView editMenu(@PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("menu/edit_menu");
         mav.addObject("menu", menuService.findById(id));
-        mav.addObject("productsList", productService.findAll());
         mav.addObject("pageTitle", "Edit Menu");
         return mav;
     }
@@ -44,7 +72,6 @@ public class MenuController {
     public String newMenu(Model model) {
         Menu menu = new Menu();
         model.addAttribute("menu", menu);
-        model.addAttribute("productsList", productService.findAll());
         model.addAttribute("pageTitle", "New Menu");
         return "menu/new_menu";
     }

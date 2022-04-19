@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -180,6 +181,13 @@ public class FoodOrderController {
         ArrayList<Item> itemsList = new ArrayList<>();
         itemsList.addAll(productService.findAll());
         itemsList.addAll(menuService.findAll());
+        // remove disabled items
+        for (Iterator<Item> iterator = itemsList.iterator(); iterator.hasNext();) {
+            Item item = iterator.next();
+            if (!item.isActive()) {
+                iterator.remove();
+            }
+        }
         return itemsList;
     }
 

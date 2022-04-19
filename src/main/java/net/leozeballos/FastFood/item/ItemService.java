@@ -27,6 +27,20 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
+    public void disableItem(Long id) {
+        Item item = itemRepository.findById(id).orElse(null);
+        assert item != null;
+        item.disable();
+        itemRepository.save(item);
+    }
+
+    public void enableItem(Long id) {
+        Item item = itemRepository.findById(id).orElse(null);
+        assert item != null;
+        item.enable();
+        itemRepository.save(item);
+    }
+
     public void delete(Item item) {
         itemRepository.delete(item);
     }
