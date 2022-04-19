@@ -2,16 +2,15 @@ package net.leozeballos.FastFood.branch;
 
 import lombok.*;
 import net.leozeballos.FastFood.address.Address;
-import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -38,7 +37,8 @@ public class Branch {
     /**
      * The address of the branch.
      */
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Address address;
 
     @Override
