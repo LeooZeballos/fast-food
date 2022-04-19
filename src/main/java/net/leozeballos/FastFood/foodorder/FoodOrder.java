@@ -5,8 +5,6 @@ import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.branch.Branch;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,7 +63,6 @@ public class FoodOrder {
      */
     @ManyToOne(optional = false)
     @JoinColumn(name = "branch_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Branch branch;
 
     /**
@@ -73,7 +70,6 @@ public class FoodOrder {
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<FoodOrderDetail> foodOrderDetails = new ArrayList<>();
 
     @Override
