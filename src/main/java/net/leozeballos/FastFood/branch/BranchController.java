@@ -66,5 +66,4 @@ public class BranchController {
         return "branch/list_branch";
     }
 
-
 }

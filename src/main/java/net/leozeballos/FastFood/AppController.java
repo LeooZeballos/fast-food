@@ -11,4 +11,5 @@ public class AppController {
         model.addAttribute("pageTitle", "Home");
         return "index";
     }
+
 }
