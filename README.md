@@ -20,7 +20,7 @@ Simple fast food app for taking orders and managing products, menus and branches
 * Hibernate
 * JUnit
 * Mockito
-* MySQL
+* PostgreSQL
 * Maven
 
 ## Features
