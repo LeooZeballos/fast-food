@@ -35,8 +35,8 @@ COPY --from=0 target/*.jar app.jar
 # Exponemos el puerto 8080
 EXPOSE 8080
 # Variables de entorno para la base de datos
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://motty.db.elephantsql.com/nagdjcfz
-ENV SPRING_DATASOURCE_USERNAME=nagdjcfz
-ENV SPRING_DATASOURCE_PASSWORD=Ynroe1Yblx_4qwbbbjMuixdt7_uoTbOk
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://bldoxisp067kju94bnvm-postgresql.services.clever-cloud.com:5432/bldoxisp067kju94bnvm
+ENV SPRING_DATASOURCE_USERNAME=upfsrtgzacdlrmqoqgbt
+ENV SPRING_DATASOURCE_PASSWORD=qTWUyRl1tWujN3S8TdyT
 # Ejecutamos el jar
 ENTRYPOINT ["java","-Dspring.profiles.active=default","-jar","/app.jar"]
