@@ -1,42 +1,30 @@
-# Comenzamos con la imagen oficial de alpine jdk 8
-FROM openjdk:8-jdk-alpine
+# Use a multi-stage build for smaller final image
+# Stage 1: Build stage
+FROM maven:3.8.4-openjdk-8-slim AS build
+WORKDIR /app
 
-# Descargamos curl
-RUN apk add --no-cache curl tar bash procps
+# Copy and install dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Descargamos e instalamos Maven
-# 1- Versión de Maven
-ARG MAVEN_VERSION=3.8.6
-# 2- Directorio de trabajo
-ARG USER_HOME_DIR="/root"
-# 3- URL de descarga de Maven
-ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
-# 4- Creamos los directorios, descargamos maven, lo instalamos, removemos los archivos instalados y seteamos los links
-RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
-  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
-  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
-  && rm -f /tmp/apache-maven.tar.gz \
-  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-# 5- Definimos las variables de ambiente requeridas por Maven
-ENV MAVEN_HOME /usr/share/maven
-ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
-
-# Copiamos el pom.xml
-COPY mvnw pom.xml ./
-# Copiamos
+# Copy the source code and build the application
 COPY src ./src
-# Compilamos el código y generamos el jar sin tests
 RUN mvn package -DskipTests
 
-# Creamos la imagen final
-FROM openjdk:8-jdk-alpine
-# Copiamos el jar
-COPY --from=0 target/*.jar app.jar
-# Exponemos el puerto 8080
+# Stage 2: Final stage
+FROM openjdk:8-jre-alpine
+WORKDIR /app
+
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port
 EXPOSE 8080
-# Variables de entorno para la base de datos
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://bldoxisp067kju94bnvm-postgresql.services.clever-cloud.com:5432/bldoxisp067kju94bnvm
-ENV SPRING_DATASOURCE_USERNAME=upfsrtgzacdlrmqoqgbt
-ENV SPRING_DATASOURCE_PASSWORD=qTWUyRl1tWujN3S8TdyT
-# Ejecutamos el jar
-ENTRYPOINT ["java","-Dspring.profiles.active=default","-jar","/app.jar"]
+
+# Set environment variables for the database connection (container name, port, database name, username, password)
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/fastfood
+ENV SPRING_DATASOURCE_USERNAME=postgres
+ENV SPRING_DATASOURCE_PASSWORD=postgres
+
+# Run the application with the "docker" profile
+ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]

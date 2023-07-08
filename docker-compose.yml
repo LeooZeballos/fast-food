@@ -1,0 +1,27 @@
+version: '3'
+services:
+  app:
+    image: fastfood-api
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - fastfood_network
+
+  db:
+    image: postgres:latest
+    environment:
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/fastfood
+      - JDBC_DATABASE_USERNAME=postgres
+      - JDBC_DATABASE_PASSWORD=postgres
+    volumes:
+      - fastfood_data:/var/lib/postgresql/data
+    networks:
+      - fastfood_network
+
+networks:
+  fastfood_network:
+
+volumes:
+  fastfood_data:
