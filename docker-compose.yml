@@ -2,6 +2,10 @@ version: '3'
 services:
   app:
     image: fastfood-api
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://fast-food-db-1:5432/fastfood
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
       - 8080:8080
     depends_on:
@@ -12,9 +16,9 @@ services:
   db:
     image: postgres:latest
     environment:
-      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/fastfood
-      - JDBC_DATABASE_USERNAME=postgres
-      - JDBC_DATABASE_PASSWORD=postgres
+      - POSTGRES_DB=fastfood
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - fastfood_data:/var/lib/postgresql/data
     networks:

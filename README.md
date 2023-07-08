@@ -3,33 +3,13 @@
 [![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-Visual%20Studio%20Code-blue?logo=visual-studio-code)](https://open.vscode.dev/LeooZeballos/fast-food) [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/issues) [![GitHub forks](https://img.shields.io/github/forks/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/network) [![GitHub stars](https://img.shields.io/github/stars/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/stargazers) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of contents
-* [How to Install and Run the Project](#How-to-Install-and-Run-the-Project)
 * [General info](#General-info)
+* [How to Install and Run the Project](#How-to-Install-and-Run-the-Project)
 * [Technologies](#Technologies)
   * [Backend](#Backend)
   * [Frontend](#Frontend)
 * [Features](#Features)
 * [License](#License)
-
-
-## How to Install and Run the Project
-
-### Requirements
-
-* Java 8 or higher
-* Apache Maven 3.6.3 or higher
-* PostgreSQL 13 or higher with a database named `fastfood`
-
-### Steps
-1. Clone the repository
-```bash
-git clone https://github.com/LeooZeballos/fast-food-spring.git
-```
-2. Open the project in your terminal and run the following command
-```bash
-mvn spring-boot:run
-```
-3. Open your browser and go to http://localhost:8080/
 
 ## General info
 FastFood is a fast food application designed for efficient order management and effective administration of products, menus, and branches. Its development served as an opportunity for me to gain proficiency in utilizing Spring Boot, Spring JPA, and  Thymeleaf frameworks.
@@ -39,6 +19,43 @@ To ensure a robust and scalable backend, I employed PostgreSQL as the chosen dat
 Throughout the codebase, I have diligently added comprehensive comments to enhance code comprehension and maintainability. I have strived to make the code as readable as possible, enabling easy collaboration and future development. In terms of testing, I employed JUnit and Mockito frameworks, conducting unit tests to validate the functionality of services, and integration tests to ensure smooth operation of controllers.
 
 For the frontend aspect, Bootstrap was utilized, complemented by CSS for styling, resulting in a visually appealing and responsive user interface. By employing responsive design principles, I aimed to deliver an application that seamlessly adapts to different devices and screen sizes.
+
+## How to Install and Run the Project
+
+### Requirements
+
+* Java 8 or higher
+* Apache Maven
+* PostgreSQL with a database named `fastfood`
+
+### Steps
+1. Clone the repository
+```bash
+git clone https://github.com/LeooZeballos/fast-food.git
+```
+2. Open the project in your terminal and run the following command
+```bash
+mvn spring-boot:run
+```
+3. Open your browser and go to http://localhost:8080/
+
+### Docker
+
+Alternatively, you can run the project using Docker. To do so, follow these steps:
+
+1. Clone the repository
+```bash
+git clone https://github.com/LeooZeballos/fast-food.git
+```
+2. Build the image for the API.
+```bash
+docker build -t fastfood-api .
+```
+2. Open the project in your terminal and run the following command
+```bash
+docker-compose up -d
+```
+3. Open your browser and go to http://localhost:8080/
 
 ## Technologies
 

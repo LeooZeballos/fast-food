@@ -21,10 +21,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose the port
 EXPOSE 8080
 
-# Set environment variables for the database connection (container name, port, database name, username, password)
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/fastfood
-ENV SPRING_DATASOURCE_USERNAME=postgres
-ENV SPRING_DATASOURCE_PASSWORD=postgres
-
 # Run the application with the "docker" profile
 ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]
