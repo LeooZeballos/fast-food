@@ -1,6 +1,6 @@
 # FastFood
 
-[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-Visual%20Studio%20Code-blue?logo=visual-studio-code)](https://open.vscode.dev/LeooZeballos/fast-food) [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/issues) [![GitHub forks](https://img.shields.io/github/forks/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/network) [![GitHub stars](https://img.shields.io/github/stars/LeooZeballos/fast-food-spring)](https://github.com/LeooZeballos/fast-food-spring/stargazers) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-Visual%20Studio%20Code-blue?logo=visual-studio-code)](https://open.vscode.dev/LeooZeballos/fast-food) [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/issues) [![GitHub forks](https://img.shields.io/github/forks/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/network) [![GitHub stars](https://img.shields.io/github/stars/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/stargazers) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of contents
 * [General info](#General-info)
