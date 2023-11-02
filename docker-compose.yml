@@ -3,7 +3,7 @@ services:
   app:
     image: fastfood-api
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://fast-food-db-1:5432/fastfood
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/fastfood
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
