@@ -15,6 +15,12 @@ This file contains mandatory rules for all AI agents working on this codebase.
 5. **Report results.** Your final response must prove that all tests passed:
    `Tests run: X, Failures: 0, Errors: 0`
 
+## Advanced MCP & Debugging Capabilities
+
+- **Postgres MCP:** Use the `postgres` MCP server to directly query the database in the `db` container. This is preferred for verifying that JPA mappings match the live schema.
+- **Spring Actuator:** Use the `fetch` MCP or `curl` (via `run_shell_command`) to call `http://localhost:8080/actuator` endpoints (like `/beans`, `/mappings`, `/health`) to diagnose runtime issues or verify configurations.
+- **Actuator Skill:** Activate the `actuator` skill for expert guidance on debugging the Spring application state.
+
 ## Project Structure
 
 - `src/main/java/net/leozeballos/FastFood/` — main source
