@@ -17,6 +17,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/fastfood
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - GITHUB_PERSONAL_ACCESS_TOKEN
     depends_on:
       db:
         condition: service_healthy

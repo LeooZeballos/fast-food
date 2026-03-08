@@ -20,6 +20,9 @@
 	},
 	"forwardPorts": [8080, 5432, 5173, 9323],
 	"remoteUser": "vscode",
+	"remoteEnv": {
+		"GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_PERSONAL_ACCESS_TOKEN}"
+	},
 	"onCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.gemini && mkdir -p /home/vscode/.gemini && echo '{\"/workspace\": \"TRUST_FOLDER\"}' > /home/vscode/.gemini/trustedFolders.json",
 	"postCreateCommand": "cd frontend && pnpm install && npx playwright install"
 }
