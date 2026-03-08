@@ -11,6 +11,7 @@ import net.leozeballos.FastFood.product.Product;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -26,6 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@DiscriminatorValue("MENU")
 public class Menu extends Item {
 
     /**

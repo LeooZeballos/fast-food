@@ -8,7 +8,11 @@ import lombok.Setter;
 import net.leozeballos.FastFood.item.Item;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -16,12 +20,14 @@ import jakarta.persistence.Entity;
 @NoArgsConstructor
 @Builder
 @Entity
+@DiscriminatorValue("PRODUCT")
 public class Product extends Item {
 
     /**
      * The price of the product.
      */
     @Column(nullable = false)
+    @DecimalMin(value = "0.0")
     private double price;
 
     public Product(String name, double price) {

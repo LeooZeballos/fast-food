@@ -17,11 +17,13 @@
             </div>
             <div class="form-group">
                 <label for="productName">Product name</label>
-                <input type="text" th:field="*{name}" class="form-control" id="productName" placeholder="Enter product name">
+                <input type="text" th:field="*{name}" class="form-control" id="productName" placeholder="Enter product name" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
             <div class="form-group">
                 <label for="productPrice">Product price</label>
-                <input type="text" th:field="*{price}" class="form-control" id="productPrice" placeholder="Enter product name">
+                <input type="text" th:field="*{price}" class="form-control" id="productPrice" placeholder="Enter product price" th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>

@@ -1,7 +1,9 @@
 package net.leozeballos.FastFood.product;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,7 +60,11 @@ public class ProductController {
     }
 
     @RequestMapping("/product/save")
-    public String saveProduct(@ModelAttribute("product") Product product) throws RuntimeException {
+    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("pageTitle", product.getId() == null ? "New Product" : "Edit Product");
+            return product.getId() == null ? "product/new_product" : "product/edit_product";
+        }
         if (productService.save(product) != null) {
             return "redirect:/product/list";
         } else {

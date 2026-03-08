@@ -7,11 +7,16 @@ import lombok.Setter;
 import lombok.ToString;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -19,16 +24,19 @@ import jakarta.persistence.Inheritance;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Inheritance(strategy = jakarta.persistence.InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * The name of the item. String of length 1 to 50. Must be unique.
      */
+    @NotBlank(message = "Item name is required")
+    @Size(min = 1, max = 50, message = "Item name must be between 1 and 50 characters")
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
