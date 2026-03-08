@@ -3,17 +3,21 @@ package net.leozeballos.FastFood.foodorder;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterceptor;
+import net.leozeballos.FastFood.mapper.FoodOrderMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.statemachine.config.StateMachineFactory;
 
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FoodOrderServiceTest {
@@ -21,11 +25,14 @@ class FoodOrderServiceTest {
     @Mock private FoodOrderRepository foodOrderRepository;
     @Mock private StateMachineFactory<FoodOrderState, FoodOrderEvent> stateMachineFactory;
     @Mock private FoodOrderStateChangeInterceptor foodOrderStateChangeInterceptor;
+    @Mock private net.leozeballos.FastFood.branch.BranchService branchService;
+    @Mock private net.leozeballos.FastFood.item.ItemService itemService;
+    @Spy private FoodOrderMapper foodOrderMapper;
     private FoodOrderService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor);
+        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, foodOrderMapper);
     }
 
     @Test
@@ -41,6 +48,8 @@ class FoodOrderServiceTest {
     void canFindFoodOrderById() {
         // given
         Long id = 1L;
+        FoodOrder order = new FoodOrder();
+        when(foodOrderRepository.findById(id)).thenReturn(Optional.of(order));
 
         // when
         underTest.findById(id);
@@ -79,6 +88,7 @@ class FoodOrderServiceTest {
     void canDeleteFoodOrderById() {
         // given
         Long id = 1L;
+        when(foodOrderRepository.existsById(id)).thenReturn(true);
 
         // when
         underTest.deleteById(id);
@@ -96,38 +106,6 @@ class FoodOrderServiceTest {
         verify(foodOrderRepository).deleteAll();
     }
 
-    /*@Test
-    void canUpdateFoodOrder() {
-        // given
-        FoodOrder foodOrder = FoodOrder.builder().state(FoodOrderState.CREATED).build();
-
-        // when
-        underTest.update(foodOrder.getId());
-
-        // then
-        assertThat(foodOrder.getState()).isEqualTo(FoodOrderState.CREATED);
-    }
-
-    @Test
-    void canStartPreparationOfFoodOrder() {
-    }
-
-    @Test
-    void canFinishPreparationOfFoodOrder() {
-    }
-
-    @Test
-    void canConfirmPaymentOfFoodOrder() {
-    }
-
-    @Test
-    void canCancelFoodOrder() {
-    }
-
-    @Test
-    void canRejectFoodOrder() {
-    }*/
-
     @Test
     void canFindAllFoodOrdersByState() {
         // when
@@ -140,37 +118,38 @@ class FoodOrderServiceTest {
     @Test
     void canConvertToDTO() {
         // given
-        net.leozeballos.FastFood.branch.Branch branch = net.leozeballos.FastFood.branch.Branch.builder().name("Main Branch").build();
-        net.leozeballos.FastFood.product.Product product = net.leozeballos.FastFood.product.Product.builder().price(10.0).build();
+        net.leozeballos.FastFood.branch.Branch branch = new net.leozeballos.FastFood.branch.Branch();
+        branch.setName("Main Branch");
+        
+        net.leozeballos.FastFood.product.Product product = new net.leozeballos.FastFood.product.Product();
+        product.setPrice(10.0);
         product.setName("Product 1");
 
-        net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail detail = net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail.builder()
-                .id(1L)
-                .item(product)
-                .quantity(2)
-                .historicPrice(10.0)
-                .build();
+        net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail detail = new net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail();
+        detail.setId(1L);
+        detail.setItem(product);
+        detail.setQuantity(2);
+        detail.setHistoricPrice(10.0);
 
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        FoodOrder order = FoodOrder.builder()
-                .id(1L)
-                .branch(branch)
-                .creationTimestamp(now)
-                .state(FoodOrderState.CREATED)
-                .foodOrderDetails(java.util.List.of(detail))
-                .build();
+        FoodOrder order = new FoodOrder();
+        order.setId(1L);
+        order.setBranch(branch);
+        order.setCreationTimestamp(now);
+        order.setState(FoodOrderState.CREATED);
+        order.setFoodOrderDetails(java.util.List.of(detail));
 
         // when
-        FoodOrderDTO dto = underTest.convertToDTO(order);
+        FoodOrderDTO dto = foodOrderMapper.toDTO(order);
 
         // then
-        assertThat(dto.getId()).isEqualTo(1L);
-        assertThat(dto.getBranchName()).isEqualTo("Main Branch");
-        assertThat(dto.getCreationTimestamp()).isEqualTo(now);
-        assertThat(dto.getFormattedState()).isEqualTo("Created");
-        assertThat(dto.getTotal()).isEqualTo(20.0);
-        assertThat(dto.getFoodOrderDetails()).hasSize(1);
-        assertThat(dto.getFoodOrderDetails().get(0).getItemName()).isEqualTo("Product 1");
+        assertThat(dto.id()).isEqualTo(1L);
+        assertThat(dto.branchName()).isEqualTo("Main Branch");
+        assertThat(dto.creationTimestamp()).isEqualTo(now);
+        assertThat(dto.formattedState()).isEqualTo("Created");
+        assertThat(dto.total()).isEqualTo(20.0);
+        assertThat(dto.foodOrderDetails()).hasSize(1);
+        assertThat(dto.foodOrderDetails().get(0).itemName()).isEqualTo("Product 1");
     }
 
 }

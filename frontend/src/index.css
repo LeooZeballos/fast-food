@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 0 72.2% 50.6%; /* FastFood Red */
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 48 96% 53%; /* FastFood Yellow/Orange */
+    --secondary-foreground: 20 14.3% 4.1%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 48 96% 53%;
+    --accent-foreground: 20 14.3% 4.1%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 0 72.2% 50.6%;
+    --radius: 0.5rem;
+  }
+}

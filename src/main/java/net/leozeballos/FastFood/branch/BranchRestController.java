@@ -2,9 +2,11 @@ package net.leozeballos.FastFood.branch;
 
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.address.Address;
+import net.leozeballos.FastFood.mapper.BranchMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -13,6 +15,7 @@ import java.util.List;
 public class BranchRestController {
 
     private final BranchService branchService;
+    private final BranchMapper branchMapper;
 
     @GetMapping
     public List<BranchDTO> getAll() {
@@ -26,34 +29,31 @@ public class BranchRestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BranchDTO create(@RequestBody BranchDTO dto) {
+    public BranchDTO create(@Valid @RequestBody BranchDTO dto) {
         Branch branch = Branch.builder()
-                .name(dto.getName())
+                .name(dto.name())
                 .address(Address.builder()
-                        .city(dto.getCity())
-                        .street(dto.getStreet())
+                        .city(dto.city())
+                        .street(dto.street())
                         .build())
                 .build();
-        return branchService.convertToDTO(branchService.save(branch));
+        return branchMapper.toDTO(branchService.save(branch));
     }
 
     @PutMapping("/{id}")
-    public BranchDTO update(@PathVariable Long id, @RequestBody BranchDTO dto) {
+    public BranchDTO update(@PathVariable Long id, @Valid @RequestBody BranchDTO dto) {
         Branch branch = branchService.findById(id);
-        if (branch != null) {
-            branch.setName(dto.getName());
-            if (branch.getAddress() != null) {
-                branch.getAddress().setCity(dto.getCity());
-                branch.getAddress().setStreet(dto.getStreet());
-            } else {
-                branch.setAddress(Address.builder()
-                        .city(dto.getCity())
-                        .street(dto.getStreet())
-                        .build());
-            }
-            return branchService.convertToDTO(branchService.save(branch));
+        branch.setName(dto.name());
+        if (branch.getAddress() != null) {
+            branch.getAddress().setCity(dto.city());
+            branch.getAddress().setStreet(dto.street());
+        } else {
+            branch.setAddress(Address.builder()
+                    .city(dto.city())
+                    .street(dto.street())
+                    .build());
         }
-        return null;
+        return branchMapper.toDTO(branchService.save(branch));
     }
 
     @DeleteMapping("/{id}")

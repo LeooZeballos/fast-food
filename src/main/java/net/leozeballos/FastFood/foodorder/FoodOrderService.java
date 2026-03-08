@@ -1,12 +1,12 @@
 package net.leozeballos.FastFood.foodorder;
 
 import lombok.RequiredArgsConstructor;
+import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
-import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetailDTO;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterceptor;
-import net.leozeballos.FastFood.util.FormattingUtils;
+import net.leozeballos.FastFood.mapper.FoodOrderMapper;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
@@ -29,10 +29,13 @@ public class FoodOrderService {
     private final FoodOrderRepository foodOrderRepository;
     private final StateMachineFactory<FoodOrderState, FoodOrderEvent> stateMachineFactory;
     private final FoodOrderStateChangeInterceptor stateChangeInterceptor;
+    private final net.leozeballos.FastFood.branch.BranchService branchService;
+    private final net.leozeballos.FastFood.item.ItemService itemService;
+    private final FoodOrderMapper foodOrderMapper;
 
     public List<FoodOrderDTO> findAllDTO() {
-        return foodOrderRepository.findAll().stream()
-                .map(this::convertToDTO)
+        return foodOrderRepository.findAllWithDetails().stream()
+                .map(foodOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -42,12 +45,34 @@ public class FoodOrderService {
 
     public FoodOrderDTO findDTOById(Long id) {
         return foodOrderRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElse(null);
+                .map(foodOrderMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
     }
 
     public FoodOrder findById(Long id) {
-        return foodOrderRepository.findById(id).orElse(null);
+        return foodOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
+    }
+
+    @Transactional
+    public FoodOrder createOrder(CreateOrderDTO createOrderDTO) {
+        FoodOrder order = new FoodOrder();
+        order.setState(FoodOrderState.CREATED);
+        order.setBranch(branchService.findById(createOrderDTO.branchId()));
+        
+        List<FoodOrderDetail> details = createOrderDTO.items().stream()
+                .map(itemDTO -> {
+                    FoodOrderDetail detail = new FoodOrderDetail();
+                    var item = itemService.findById(itemDTO.itemId());
+                    detail.setItem(item);
+                    detail.setQuantity(itemDTO.quantity());
+                    detail.setHistoricPrice(item.calculatePrice());
+                    return detail;
+                })
+                .collect(Collectors.toList());
+        
+        order.setFoodOrderDetails(details);
+        return foodOrderRepository.save(order);
     }
 
     @Transactional
@@ -68,6 +93,9 @@ public class FoodOrderService {
     }
 
     public void deleteById(Long id) {
+        if (!foodOrderRepository.existsById(id)) {
+            throw new ResourceNotFoundException("FoodOrder not found with id: " + id);
+        }
         foodOrderRepository.deleteById(id);
     }
 
@@ -96,9 +124,8 @@ public class FoodOrderService {
     @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> confirmPayment(Long id) {
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
-        FoodOrder foodOrder = foodOrderRepository.findById(id).orElse(null);
+        FoodOrder foodOrder = findById(id);
         sendEvent(id, stateMachine, FoodOrderEvent.CONFIRMPAYMENT);
-        assert foodOrder != null;
         foodOrder.setPaymentTimestamp(LocalDateTime.now());
         foodOrderRepository.save(foodOrder);
         return stateMachine;
@@ -124,8 +151,7 @@ public class FoodOrderService {
     }
 
     private StateMachine<FoodOrderState, FoodOrderEvent> build(Long id) {
-        FoodOrder order = foodOrderRepository.findById(id).orElse(null);
-        assert order != null;
+        FoodOrder order = findById(id);
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(order.getId()));
         stateMachine.stopReactively().subscribe();
         stateMachine.getStateMachineAccessor()
@@ -139,35 +165,11 @@ public class FoodOrderService {
 
     public List<FoodOrderDTO> findAllFoodOrdersByStateDTO(FoodOrderState state) {
         return foodOrderRepository.findAllFoodOrdersByState(state).stream()
-                .map(this::convertToDTO)
+                .map(foodOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FoodOrder> findAllFoodOrdersByState(FoodOrderState state) {
         return foodOrderRepository.findAllFoodOrdersByState(state);
-    }
-
-    public FoodOrderDTO convertToDTO(FoodOrder order) {
-        return FoodOrderDTO.builder()
-                .id(order.getId())
-                .creationTimestamp(order.getCreationTimestamp())
-                .paymentTimestamp(order.getPaymentTimestamp())
-                .formattedState(FormattingUtils.formatState(order.getState()))
-                .branchName(order.getBranch() != null ? order.getBranch().getName() : "Unknown Branch")
-                .total(order.calculateTotal())
-                .foodOrderDetails(order.getFoodOrderDetails().stream()
-                        .map(this::convertToDetailDTO)
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    private FoodOrderDetailDTO convertToDetailDTO(FoodOrderDetail detail) {
-        return FoodOrderDetailDTO.builder()
-                .id(detail.getId())
-                .itemName(detail.getItem() != null ? detail.getItem().getName() : "Unknown Item")
-                .historicPrice(detail.getHistoricPrice())
-                .quantity(detail.getQuantity())
-                .subtotal(detail.calculateSubtotal())
-                .build();
     }
 }

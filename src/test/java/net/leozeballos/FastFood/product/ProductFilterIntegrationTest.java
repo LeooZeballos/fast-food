@@ -52,7 +52,7 @@ class ProductFilterIntegrationTest {
     void shouldFilterByName() {
         List<ProductDTO> results = productService.findAllDTO("burger", null, null);
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(ProductDTO::getName)
+        assertThat(results).extracting(ProductDTO::name)
                 .containsExactlyInAnyOrder("Burger", "Cheese Burger");
     }
 
@@ -60,7 +60,7 @@ class ProductFilterIntegrationTest {
     void shouldFilterByMaxPrice() {
         List<ProductDTO> results = productService.findAllDTO(null, 10.0, null);
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(ProductDTO::getName)
+        assertThat(results).extracting(ProductDTO::name)
                 .containsExactlyInAnyOrder("Burger", "Salad");
     }
 
@@ -68,7 +68,7 @@ class ProductFilterIntegrationTest {
     void shouldFilterByActiveStatus() {
         List<ProductDTO> results = productService.findAllDTO(null, null, true);
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(ProductDTO::getName)
+        assertThat(results).extracting(ProductDTO::name)
                 .containsExactlyInAnyOrder("Burger", "Cheese Burger");
     }
 
@@ -76,7 +76,7 @@ class ProductFilterIntegrationTest {
     void shouldCombineFilters() {
         List<ProductDTO> results = productService.findAllDTO("burger", 12.0, true);
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getName()).isEqualTo("Burger");
+        assertThat(results.get(0).name()).isEqualTo("Burger");
     }
 
     @Test

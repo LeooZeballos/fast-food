@@ -8,8 +8,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FoodOrderDetailServiceTest {
@@ -36,6 +39,8 @@ class FoodOrderDetailServiceTest {
     void canFindFoodOrderDetailById() {
         // given
         Long id = 1L;
+        FoodOrderDetail detail = new FoodOrderDetail();
+        when(foodOrderDetailRepository.findById(id)).thenReturn(Optional.of(detail));
 
         // when
         underTest.findById(id);
@@ -59,9 +64,10 @@ class FoodOrderDetailServiceTest {
     @Test
     void canSaveFoodOrderDetailWhenItemNotNull() {
         // given
-        FoodOrderDetail foodOrderDetail =  FoodOrderDetail.builder()
-                .item(Product.builder().price(10.0).build())
-                .build();
+        Product product = new Product();
+        product.setPrice(10.0);
+        FoodOrderDetail foodOrderDetail = new FoodOrderDetail();
+        foodOrderDetail.setItem(product);
 
         // when
         underTest.save(foodOrderDetail);
@@ -90,6 +96,7 @@ class FoodOrderDetailServiceTest {
     void canDeleteFoodOrderDetailById() {
         // given
         Long id = 1L;
+        when(foodOrderDetailRepository.existsById(id)).thenReturn(true);
 
         // when
         underTest.deleteById(id);

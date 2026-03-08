@@ -2,8 +2,10 @@ package net.leozeballos.FastFood.foodorder;
 
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
+import net.leozeballos.FastFood.mapper.FoodOrderMapper;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -12,6 +14,7 @@ import java.util.List;
 public class FoodOrderRestController {
 
     private final FoodOrderService foodOrderService;
+    private final FoodOrderMapper foodOrderMapper;
 
     @GetMapping
     public List<FoodOrderDTO> getAll(@RequestParam(required = false) String type) {
@@ -35,6 +38,12 @@ public class FoodOrderRestController {
     @GetMapping("/{id}")
     public FoodOrderDTO getOne(@PathVariable Long id) {
         return foodOrderService.findDTOById(id);
+    }
+
+    @PostMapping
+    public FoodOrderDTO create(@Valid @RequestBody CreateOrderDTO createOrderDTO) {
+        FoodOrder order = foodOrderService.createOrder(createOrderDTO);
+        return foodOrderMapper.toDTO(order);
     }
 
     @PostMapping("/{id}/start-preparation")

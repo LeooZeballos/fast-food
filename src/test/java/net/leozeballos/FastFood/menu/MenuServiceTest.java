@@ -1,24 +1,30 @@
 package net.leozeballos.FastFood.menu;
 
+import net.leozeballos.FastFood.mapper.MenuMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
     @Mock private MenuRepository menuRepository;
+    @Spy private MenuMapper menuMapper;
     private MenuService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new MenuService(menuRepository);
+        underTest = new MenuService(menuRepository, menuMapper);
     }
 
     @Test
@@ -34,6 +40,8 @@ class MenuServiceTest {
     void canFindMenuById() {
         // given
         Long id = 1L;
+        Menu menu = new Menu();
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menu));
 
         // when
         underTest.findById(id);
@@ -72,6 +80,7 @@ class MenuServiceTest {
     void canDeleteMenuById() {
         // given
         Long id = 1L;
+        when(menuRepository.existsById(id)).thenReturn(true);
 
         // when
         underTest.deleteById(id);
@@ -92,29 +101,31 @@ class MenuServiceTest {
     @Test
     void canConvertToDTO() {
         // given
-        net.leozeballos.FastFood.product.Product product1 = net.leozeballos.FastFood.product.Product.builder().price(10.0).build();
+        net.leozeballos.FastFood.product.Product product1 = new net.leozeballos.FastFood.product.Product();
         product1.setName("Product 1");
-        net.leozeballos.FastFood.product.Product product2 = net.leozeballos.FastFood.product.Product.builder().price(20.0).build();
+        product1.setPrice(10.0);
+        
+        net.leozeballos.FastFood.product.Product product2 = new net.leozeballos.FastFood.product.Product();
         product2.setName("Product 2");
+        product2.setPrice(20.0);
 
-        Menu menu = Menu.builder()
-                .discount(java.math.BigDecimal.valueOf(0.1))
-                .products(java.util.List.of(product1, product2))
-                .build();
+        Menu menu = new Menu();
+        menu.setDiscount(java.math.BigDecimal.valueOf(0.1));
+        menu.setProducts(java.util.List.of(product1, product2));
         menu.setId(1L);
         menu.setName("Menu 1");
         menu.enable();
 
         // when
-        MenuDTO dto = underTest.convertToDTO(menu);
+        MenuDTO dto = menuMapper.toDTO(menu);
 
         // then
-        assertThat(dto.getId()).isEqualTo(1L);
-        assertThat(dto.getName()).isEqualTo("Menu 1");
-        assertThat(dto.getPrice()).isEqualTo(27.0); // (10 + 20) * (1 - 0.1)
-        assertThat(dto.getDiscountPercentage()).isEqualTo(10.0);
-        assertThat(dto.getProductsList()).isEqualTo("Product 1, Product 2");
-        assertThat(dto.isActive()).isTrue();
+        assertThat(dto.id()).isEqualTo(1L);
+        assertThat(dto.name()).isEqualTo("Menu 1");
+        assertThat(dto.price()).isEqualTo(27.0); // (10 + 20) * (1 - 0.1)
+        assertThat(dto.discountPercentage()).isEqualTo(10.0);
+        assertThat(dto.productsList()).isEqualTo("Product 1, Product 2");
+        assertThat(dto.active()).isTrue();
     }
 
 }

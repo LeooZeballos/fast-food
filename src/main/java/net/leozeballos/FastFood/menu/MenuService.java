@@ -1,6 +1,7 @@
 package net.leozeballos.FastFood.menu;
 
-import net.leozeballos.FastFood.product.Product;
+import net.leozeballos.FastFood.error.ResourceNotFoundException;
+import net.leozeballos.FastFood.mapper.MenuMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,14 +11,16 @@ import java.util.stream.Collectors;
 public class MenuService {
 
     private final MenuRepository menuRepository;
+    private final MenuMapper menuMapper;
 
-    public MenuService(MenuRepository menuRepository) {
+    public MenuService(MenuRepository menuRepository, MenuMapper menuMapper) {
         this.menuRepository = menuRepository;
+        this.menuMapper = menuMapper;
     }
 
     public List<MenuDTO> findAllDTO() {
         return menuRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(menuMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -25,26 +28,9 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    public MenuDTO convertToDTO(Menu menu) {
-        String productsList = menu.getProducts().stream()
-                .map(Product::getName)
-                .collect(Collectors.joining(", "));
-        if (productsList.isEmpty()) {
-            productsList = "None";
-        }
-
-        return MenuDTO.builder()
-                .id(menu.getId())
-                .name(menu.getName())
-                .price(menu.calculatePrice())
-                .discountPercentage(menu.getDiscount().doubleValue() * 100)
-                .productsList(productsList)
-                .active(menu.isActive())
-                .build();
-    }
-
     public Menu findById(Long id) {
-        return menuRepository.findById(id).orElse(null);
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu not found with id: " + id));
     }
 
     public Menu save(Menu menu) {
@@ -52,15 +38,13 @@ public class MenuService {
     }
 
     public void disableItem(Long id) {
-        Menu menu = menuRepository.findById(id).orElse(null);
-        assert menu != null;
+        Menu menu = findById(id);
         menu.disable();
         menuRepository.save(menu);
     }
 
     public void enableItem(Long id) {
-        Menu menu = menuRepository.findById(id).orElse(null);
-        assert menu != null;
+        Menu menu = findById(id);
         menu.enable();
         menuRepository.save(menu);
     }
@@ -70,6 +54,9 @@ public class MenuService {
     }
 
     public void deleteById(Long id) {
+        if (!menuRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Menu not found with id: " + id);
+        }
         menuRepository.deleteById(id);
     }
 

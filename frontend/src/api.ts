@@ -54,6 +54,14 @@ export type FoodOrderDTO = {
   formattedFoodOrderDetails?: string;
 }
 
+export type CreateOrderDTO = {
+  branchId: number;
+  items: {
+    itemId: number;
+    quantity: number;
+  }[];
+}
+
 export const getBranches = async () => {
   const response = await api.get<BranchDTO[]>("/branches");
   return response.data;
@@ -130,6 +138,11 @@ export const cancelOrder = async (id: number) => {
 
 export const rejectOrder = async (id: number) => {
   const response = await api.post<FoodOrderDTO>(`/orders/${id}/reject`);
+  return response.data;
+};
+
+export const createOrder = async (order: CreateOrderDTO) => {
+  const response = await api.post<FoodOrderDTO>("/orders", order);
   return response.data;
 };
 

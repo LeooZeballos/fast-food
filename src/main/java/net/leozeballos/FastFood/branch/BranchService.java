@@ -1,5 +1,7 @@
 package net.leozeballos.FastFood.branch;
 
+import net.leozeballos.FastFood.error.ResourceNotFoundException;
+import net.leozeballos.FastFood.mapper.BranchMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,14 +11,16 @@ import java.util.stream.Collectors;
 public class BranchService {
 
     private final BranchRepository branchRepository;
+    private final BranchMapper branchMapper;
 
-    public BranchService(BranchRepository branchRepository) {
+    public BranchService(BranchRepository branchRepository, BranchMapper branchMapper) {
         this.branchRepository = branchRepository;
+        this.branchMapper = branchMapper;
     }
 
     public List<BranchDTO> findAllDTO() {
         return branchRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(branchMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -26,21 +30,13 @@ public class BranchService {
 
     public BranchDTO findByIdDTO(Long id) {
         return branchRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElse(null);
+                .map(branchMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id));
     }
 
     public Branch findById(Long id) {
-        return branchRepository.findById(id).orElse(null);
-    }
-
-    public BranchDTO convertToDTO(Branch branch) {
-        return BranchDTO.builder()
-                .id(branch.getId())
-                .name(branch.getName())
-                .street(branch.getAddress() != null ? branch.getAddress().getStreet() : "Unknown")
-                .city(branch.getAddress() != null ? branch.getAddress().getCity() : "Unknown")
-                .build();
+        return branchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id));
     }
 
     public Branch save(Branch branch) {
@@ -52,6 +48,9 @@ public class BranchService {
     }
 
     public void deleteById(Long id) {
+        if (!branchRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Branch not found with id: " + id);
+        }
         branchRepository.deleteById(id);
     }
 

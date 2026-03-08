@@ -1,23 +1,17 @@
 package net.leozeballos.FastFood.menu;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import net.leozeballos.FastFood.util.FormattingUtils;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class MenuDTO {
-    private Long id;
-    private String name;
-    private double price;
-    private double discountPercentage;
-    private String productsList;
-    private boolean active;
-
+public record MenuDTO(
+    Long id,
+    String name,
+    double price,
+    double discountPercentage,
+    String productsList,
+    boolean active
+) {
     public String getFormattedPrice() {
         return FormattingUtils.formatPrice(price);
     }

@@ -1,5 +1,7 @@
 package net.leozeballos.FastFood.product;
 
+import net.leozeballos.FastFood.error.ResourceNotFoundException;
+import net.leozeballos.FastFood.mapper.ProductMapper;
 import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuRepository;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,10 +16,12 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
+    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository, MenuRepository menuRepository) {
+    public ProductService(ProductRepository productRepository, MenuRepository menuRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.menuRepository = menuRepository;
+        this.productMapper = productMapper;
     }
 
     /**
@@ -41,7 +45,7 @@ public class ProductService {
                 .and(ProductSpecifications.isActive(active));
 
         return productRepository.findAll(spec).stream()
-                .map(this::convertToDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -49,17 +53,9 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public ProductDTO convertToDTO(Product product) {
-        return ProductDTO.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .active(product.isActive())
-                .build();
-    }
-
     public Product findById(Long id) {
-        return productRepository.findById(id).orElse(null);
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }
 
     public Product save(Product product) {
@@ -71,7 +67,7 @@ public class ProductService {
     }
 
     public void disableItem(Long id) {
-        Product product = productRepository.findById(id).orElse(null);
+        Product product = findById(id);
 
         // remove product from all menus that contain it
         ArrayList<Menu> menus = new ArrayList<>(menuRepository.findAll());
@@ -80,19 +76,20 @@ public class ProductService {
         }
 
         // disable product
-        assert product != null;
         product.disable();
         productRepository.save(product);
     }
 
     public void enableItem(Long id) {
-        Product product = productRepository.findById(id).orElse(null);
-        assert product != null;
+        Product product = findById(id);
         product.enable();
         productRepository.save(product);
     }
 
     public void deleteById(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
         productRepository.deleteById(id);
     }
 
