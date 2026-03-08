@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Configuration
-BACKEND_PORT=8080
-FRONTEND_PORT=5173
-BACKEND_HEALTH_URL="http://localhost:8080/actuator/health"
-FRONTEND_URL="http://localhost:5173"
+BACKEND_PORT=4080
+FRONTEND_PORT=4000
+BACKEND_HEALTH_URL="http://localhost:4080/actuator/health"
+FRONTEND_URL="http://localhost:4000"
 STATUS_FILE="/workspace/.gemini/service-status.txt"
 
 check_port() {
@@ -67,12 +67,12 @@ watch_status() {
 
 wait_for_backend() {
   echo "Waiting for Backend to be healthy..."
-  for i in {1..60}; do
+  for i in {1..120}; do
     if check_backend_health; then
       echo "Backend is ready!"
       return 0
     fi
-    sleep 2
+    sleep 0.5
   done
   echo "Backend failed to start in time."
   return 1
@@ -80,29 +80,37 @@ wait_for_backend() {
 
 wait_for_frontend() {
   echo "Waiting for Frontend to be healthy..."
-  for i in {1..30}; do
+  for i in {1..120}; do
     if check_frontend_health; then
       echo "Frontend is ready!"
       return 0
     fi
-    sleep 2
+    sleep 0.5
   done
   echo "Frontend failed to start in time."
   return 1
 }
 
 start_all() {
-  # Kill existing if any
-  fuser -k $BACKEND_PORT/tcp $FRONTEND_PORT/tcp > /dev/null 2>&1 || true
+  echo "Stopping existing services..."
+  # Use a more targeted kill
+  fuser -k 8080/tcp 5173/tcp 3000/tcp 4000/tcp 4080/tcp > /dev/null 2>&1 || true
+  sleep 2
 
-  echo "Starting Backend..."
-  mvn spring-boot:run > backend.log 2>&1 &
+  # Always re-build JAR if port changed
+  echo "Building JAR..."
+  mvn package -Dmaven.test.skip=true
 
-  echo "Starting Frontend..."
-  (cd frontend && pnpm dev) > frontend.log 2>&1 &
+  echo "Starting Backend (Port 4080)..."
+  nohup java -jar target/FastFood-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
+  sleep 2
 
-  # Start watcher in background if not running
-  $0 watch > /dev/null 2>&1 &
+  echo "Starting Frontend (Port 4000, forcing IPv4)..."
+  nohup sh -c "cd frontend && NODE_OPTIONS=\"--dns-result-order=ipv4first\" pnpm dev --host 0.0.0.0" > frontend/frontend.log 2>&1 &
+  sleep 2
+
+  # Start watcher
+  nohup bash "$0" watch > /dev/null 2>&1 &
 
   wait_for_backend
   wait_for_frontend

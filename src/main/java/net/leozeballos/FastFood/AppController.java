@@ -1,15 +1,14 @@
 package net.leozeballos.FastFood;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
 
-@Controller
+@RestController
 public class AppController {
-    @RequestMapping("/")
-    public String viewHomePage(Model model) {
-        model.addAttribute("pageTitle", "Home");
-        return "index";
-    }
 
+    @GetMapping("/api/v1/test")
+    public Map<String, String> test() {
+        return Map.of("status", "ok", "version", "v1");
+    }
 }
