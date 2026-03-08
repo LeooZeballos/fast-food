@@ -11,6 +11,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && usermod -aG docker vscode \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g @google/gemini-cli \
+    && npm install -g @google/gemini-cli pnpm \
+    # Install Playwright system dependencies
+    && npx playwright install-deps \
     && mkdir -p /home/vscode/.gemini \
     && chown -R vscode:vscode /home/vscode/.gemini

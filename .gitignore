@@ -6,6 +6,7 @@ target/
 /ComidaRapida.ldb
 /ComidaRapida.EAP
 /src/main/resources/application-local.properties
+.gemini/settings.json
 
 ### STS ###
 .apt_generated
@@ -34,3 +35,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### pnpm ###
+.pnpm-store

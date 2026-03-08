@@ -14,6 +14,17 @@ services:
     networks:
       - fastfood_network
 
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:80
+    depends_on:
+      - app
+    networks:
+      - fastfood_network
+
   db:
     image: postgres:16
     environment:

@@ -13,9 +13,15 @@ This file documents project-specific findings, architectural decisions, and conf
   - `test`: Uses H2 in-memory database.
 
 ## Architecture & Coding Standards
-- **Constructor Injection:** Use constructor injection instead of `@Autowired` on fields. Spring Boot automatically manages this if there is a single constructor.
-- **Spring Boot Version:** Upgraded to **3.4.4**. This version was selected as the most stable modern target that maintains compatibility with Lombok and Mockito (3.5.x introduced class-loading regressions in this specific environment).
-- **Price Formatting:** Logic in `FoodOrder.getFormattedTotal()` and `Product.getFormattedPrice()` must use `Locale.forLanguageTag("es-ES")` to ensure decimal commas are used, as required by the existing test suite.
+- **Decoupled Architecture**: The project is split into a Spring Boot backend (`/src`) and a Vite + React frontend (`/frontend`).
+- **REST API**: Backend controllers under `/api/v1` are `@RestController`s returning JSON DTOs.
+- **Frontend Stack**: Vite, React, TypeScript, Tailwind CSS, and Shadcn UI. Managed via `pnpm`.
+- **CORS**: Configured in `WebConfig.java` to allow `http://localhost:5173`.
+- **Constructor Injection**: Use constructor injection instead of `@Autowired` on fields. Spring Boot automatically manages this if there is a single constructor.
+- **Spring Boot Version**: Upgraded to **3.4.4**.
+- **Price Formatting**: Logic centralized in `FormattingUtils.java` using `Locale.forLanguageTag("es-ES")`.
+- **JPA Inheritance**: `Item` hierarchy uses `SINGLE_TABLE` strategy for performance.
+- **Global Error Handling**: Centralized in `GlobalExceptionHandler.java` using `@ControllerAdvice`.
 
 ## Testing Strategy
 - **Integration Tests:** Files like `FastFoodApplicationTests` must use `@ActiveProfiles("test")` and `@TestPropertySource` to override system environment variables (like `SPRING_DATASOURCE_URL`) to ensure they run against H2 rather than attempting to connect to the external PostgreSQL service.
