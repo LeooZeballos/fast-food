@@ -1,0 +1,19 @@
+{
+	"name": "Java 21 & PostgreSQL",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-spring-boot",
+				"vscjava.vscode-spring-initializr",
+				"vscjava.vscode-spring-boot-dashboard"
+			]
+		}
+	},
+	"forwardPorts": [8080, 5432],
+	"remoteUser": "vscode",
+	"onCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.gemini && mkdir -p /home/vscode/.gemini && echo '{\"/workspace\": \"TRUST_FOLDER\"}' > /home/vscode/.gemini/trustedFolders.json"
+}

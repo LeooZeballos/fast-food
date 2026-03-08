@@ -2,14 +2,12 @@ package net.leozeballos.FastFood.menu;
 
 import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.product.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -18,7 +16,6 @@ public class MenuController {
     private final MenuService menuService;
     private final ProductService productService;
 
-    @Autowired
     public MenuController(MenuService menuService, ProductService productService) {
         this.menuService = menuService;
         this.productService = productService;

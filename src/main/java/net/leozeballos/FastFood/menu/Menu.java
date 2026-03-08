@@ -9,12 +9,13 @@ import lombok.ToString;
 import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.product.Product;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Menu extends Item {
      * The discount of the menu. This is a percentage. For example, a discount of 10% would be represented as 0.1.
      */
     @Column(nullable = false, precision = 2, scale = 1)
-    private double discount;
+    private BigDecimal discount;
 
     /**
      * The products that are in the menu. This is a many-to-many relationship.
@@ -43,6 +44,7 @@ public class Menu extends Item {
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     @ToString.Exclude
+    @Builder.Default
     private List<Product> products = new ArrayList<>();
 
     @Override
@@ -58,7 +60,7 @@ public class Menu extends Item {
     public double calculatePrice() {
         double price = 0;
         for (Product product : products) { price += product.calculatePrice(); }
-        return price * (1 - discount);
+        return price * (1 - discount.doubleValue());
     }
 
     /**
@@ -74,7 +76,7 @@ public class Menu extends Item {
      * @return String The formatted discount percentage of the menu.
      */
     public String getFormattedDiscount() {
-        return String.format("%.0f", discount * 100) + "%";
+        return String.format("%.0f", discount.doubleValue() * 100) + "%";
     }
 
     /**

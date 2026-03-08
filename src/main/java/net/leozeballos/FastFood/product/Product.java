@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.leozeballos.FastFood.item.Item;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -56,7 +57,7 @@ public class Product extends Item {
      * @return String Product's price formatted
      */
     public String getFormattedPrice() {
-        return "$" + String.format("%.2f", price);
+        return "$" + String.format(Locale.forLanguageTag("es-ES"), "%.2f", price);
     }
 
 }

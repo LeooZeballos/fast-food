@@ -1,6 +1,5 @@
 package net.leozeballos.FastFood.foodorderdetail;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +9,6 @@ public class FoodOrderDetailService {
 
     private final FoodOrderDetailRepository foodOrderDetailRepository;
 
-    @Autowired
     public FoodOrderDetailService(FoodOrderDetailRepository foodOrderDetailRepository) {
         this.foodOrderDetailRepository = foodOrderDetailRepository;
     }

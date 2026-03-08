@@ -3,7 +3,7 @@ package net.leozeballos.FastFood.branch;
 import lombok.*;
 import net.leozeballos.FastFood.address.Address;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

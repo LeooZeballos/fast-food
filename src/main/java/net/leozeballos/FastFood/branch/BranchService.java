@@ -1,6 +1,5 @@
 package net.leozeballos.FastFood.branch;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +9,6 @@ public class BranchService {
 
     BranchRepository branchRepository;
 
-    @Autowired
     public BranchService(BranchRepository branchRepository) {
         this.branchRepository = branchRepository;
     }

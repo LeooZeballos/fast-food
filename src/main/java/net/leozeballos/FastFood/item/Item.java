@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
 
 @Getter
 @Setter
@@ -19,7 +19,7 @@ import javax.persistence.Inheritance;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Inheritance(strategy = javax.persistence.InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = jakarta.persistence.InheritanceType.TABLE_PER_CLASS)
 public abstract class Item {
 
     @Id

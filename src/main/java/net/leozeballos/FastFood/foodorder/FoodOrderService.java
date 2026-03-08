@@ -10,6 +10,7 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -92,20 +93,20 @@ public class FoodOrderService {
         Message<FoodOrderEvent> msg = MessageBuilder.withPayload(event)
                 .setHeader(FOOD_ORDER_ID_HEADER, id)
                 .build();
-        stateMachine.sendEvent(msg);
+        stateMachine.sendEvent(Mono.just(msg)).subscribe();
     }
 
     private StateMachine<FoodOrderState, FoodOrderEvent> build(Long id) {
         FoodOrder order = foodOrderRepository.findById(id).orElse(null);
         assert order != null;
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(order.getId()));
-        stateMachine.stop();
+        stateMachine.stopReactively().subscribe();
         stateMachine.getStateMachineAccessor()
                 .doWithAllRegions(sma -> {
                     sma.addStateMachineInterceptor(stateChangeInterceptor);
-                    sma.resetStateMachine(new DefaultStateMachineContext<>(order.getState(), null, null, null));
+                    sma.resetStateMachineReactively(new DefaultStateMachineContext<>(order.getState(), null, null, null)).subscribe();
                 });
-        stateMachine.start();
+        stateMachine.startReactively().subscribe();
         return stateMachine;
     }
 

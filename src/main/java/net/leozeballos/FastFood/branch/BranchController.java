@@ -1,7 +1,6 @@
 package net.leozeballos.FastFood.branch;
 
 import net.leozeballos.FastFood.address.Address;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ public class BranchController {
 
     BranchService branchService;
 
-    @Autowired
     public BranchController(BranchService branchService) {
         this.branchService = branchService;
     }

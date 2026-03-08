@@ -1,6 +1,6 @@
 # Use a multi-stage build for smaller final image
 # Stage 1: Build stage
-FROM maven:3.8.4-openjdk-8-slim AS build
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
 # Copy and install dependencies
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Final stage
-FROM openjdk:8-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy the JAR file from the build stage

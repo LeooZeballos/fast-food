@@ -2,11 +2,9 @@ package net.leozeballos.FastFood.product;
 
 import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -15,7 +13,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
 
-    @Autowired
     public ProductService(ProductRepository productRepository, MenuRepository menuRepository) {
         this.productRepository = productRepository;
         this.menuRepository = menuRepository;
