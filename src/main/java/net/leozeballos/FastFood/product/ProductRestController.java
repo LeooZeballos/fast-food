@@ -15,8 +15,11 @@ public class ProductRestController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductDTO> getAll() {
-        return productService.findAllDTO();
+    public List<ProductDTO> getAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Boolean active) {
+        return productService.findAllDTO(name, maxPrice, active);
     }
 
     @GetMapping("/{id}")

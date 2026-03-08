@@ -2,6 +2,7 @@ package net.leozeballos.FastFood.product;
 
 import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,8 +20,27 @@ public class ProductService {
         this.menuRepository = menuRepository;
     }
 
+    /**
+     * Find all products as DTOs, without filters.
+     * @return List of ProductDTOs.
+     */
     public List<ProductDTO> findAllDTO() {
-        return productRepository.findAll().stream()
+        return findAllDTO(null, null, null);
+    }
+
+    /**
+     * Find all products as DTOs with dynamic filtering.
+     * @param name Optional partial name match (case-insensitive).
+     * @param maxPrice Optional maximum price filter.
+     * @param active Optional active status filter.
+     * @return Filtered list of ProductDTOs.
+     */
+    public List<ProductDTO> findAllDTO(String name, Double maxPrice, Boolean active) {
+        Specification<Product> spec = Specification.where(ProductSpecifications.hasName(name))
+                .and(ProductSpecifications.isPriceLessThan(maxPrice))
+                .and(ProductSpecifications.isActive(active));
+
+        return productRepository.findAll(spec).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

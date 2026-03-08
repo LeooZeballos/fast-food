@@ -11,6 +11,11 @@ This file documents project-specific findings, architectural decisions, and conf
 - **Active Profiles:**
   - `dev` (default): Uses PostgreSQL.
   - `test`: Uses H2 in-memory database.
+- **Service Management:**
+  - Use `.gemini/service-check.sh status` to check service status.
+  - Backend: `mvn spring-boot:run &> backend.log & .gemini/service-check.sh wait-backend`
+  - Frontend: `cd frontend && pnpm dev & .gemini/service-check.sh wait-frontend`
+  - This ensures services run in the background with reliable health checks.
 
 ## Architecture & Coding Standards
 - **Decoupled Architecture**: The project is split into a Spring Boot backend (`/src`) and a Vite + React frontend (`/frontend`).

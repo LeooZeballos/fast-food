@@ -6,9 +6,9 @@ import {
   finishPreparation, 
   confirmPayment, 
   cancelOrder, 
-  rejectOrder,
-  FoodOrderDTO 
+  rejectOrder
 } from "@/api";
+import type { FoodOrderDTO } from "@/api";
 import {
   Table,
   TableBody,

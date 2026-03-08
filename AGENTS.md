@@ -5,14 +5,27 @@ This file contains mandatory rules for all AI agents working on this codebase.
 ## Mandatory Workflow
 
 1. **Read before writing.** Always read a file with `read_file` before modifying it.
-2. **Test after every change.** After ANY code modification, you MUST run tests. The project is running inside WSL/Linux, so use the native Maven command:
+2. **Service Management.** Before starting or using the services, ALWAYS check their status:
+   ```bash
+   .gemini/service-check.sh status
    ```
+   If you need to start the backend, use:
+   ```bash
+   mvn spring-boot:run &> backend.log & .gemini/service-check.sh wait-backend
+   ```
+   If you need to start the frontend, use:
+   ```bash
+   cd frontend && pnpm dev & .gemini/service-check.sh wait-frontend
+   ```
+   ALWAYS use background execution (`&`) with a health-check wait to prevent the CLI from hanging.
+3. **Test after every change.** After ANY code modification, you MUST run tests. The project is running inside WSL/Linux, so use the native Maven command:
+   ```bash
    mvn clean test
    ```
    using the `run_command` tool.
-3. **CRITICAL RULE: NEVER STOP IF TESTS FAIL.** Your task is NOT DONE if ANY tests are failing. It doesn't matter if the failures were pre-existing or caused by you. You MUST autonomously fix ALL test failures (Failures: 0, Errors: 0) before you are allowed to stop working or report completion.
-4. **Iterate.** Read the failing test output, edit the code to fix the root cause, and run `mvn clean test` again. Repeat this loop until ALL tests pass.
-5. **Report results.** Your final response must prove that all tests passed:
+4. **CRITICAL RULE: NEVER STOP IF TESTS FAIL.** Your task is NOT DONE if ANY tests are failing. It doesn't matter if the failures were pre-existing or caused by you. You MUST autonomously fix ALL test failures (Failures: 0, Errors: 0) before you are allowed to stop working or report completion.
+5. **Iterate.** Read the failing test output, edit the code to fix the root cause, and run `mvn clean test` again. Repeat this loop until ALL tests pass.
+6. **Report results.** Your final response must prove that all tests passed:
    `Tests run: X, Failures: 0, Errors: 0`
 
 ## Advanced MCP & Debugging Capabilities

@@ -33,7 +33,7 @@ public class Menu extends Item {
     /**
      * The discount of the menu. This is a percentage. For example, a discount of 10% would be represented as 0.1.
      */
-    @Column(nullable = false, precision = 2, scale = 1)
+    @Column(nullable = true, precision = 2, scale = 1)
     private BigDecimal discount;
 
     /**

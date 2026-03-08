@@ -4,14 +4,14 @@ const api = axios.create({
   baseURL: "http://localhost:8080/api/v1",
 });
 
-export interface BranchDTO {
+export type BranchDTO = {
   id?: number;
   name: string;
   street: string;
   city: string;
 }
 
-export interface ProductDTO {
+export type ProductDTO = {
   id?: number;
   name: string;
   price: number;
@@ -19,7 +19,7 @@ export interface ProductDTO {
   formattedPrice?: string;
 }
 
-export interface MenuDTO {
+export type MenuDTO = {
   id?: number;
   name: string;
   price: number;
@@ -30,7 +30,7 @@ export interface MenuDTO {
   formattedDiscount?: string;
 }
 
-export interface FoodOrderDetailDTO {
+export type FoodOrderDetailDTO = {
   id?: number;
   itemName: string;
   historicPrice: number;
@@ -40,7 +40,7 @@ export interface FoodOrderDetailDTO {
   formattedSubtotal?: string;
 }
 
-export interface FoodOrderDTO {
+export type FoodOrderDTO = {
   id?: number;
   creationTimestamp: string;
   paymentTimestamp?: string;

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBranches, deleteBranch, BranchDTO } from "@/api";
+import { getBranches, deleteBranch } from "@/api";
+import type { BranchDTO } from "@/api";
 import {
   Table,
   TableBody,

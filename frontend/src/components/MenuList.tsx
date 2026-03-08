@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMenus, deleteMenu, toggleMenuStatus, MenuDTO } from "@/api";
+import { getMenus, deleteMenu, toggleMenuStatus } from "@/api";
+import type { MenuDTO } from "@/api";
 import {
   Table,
   TableBody,

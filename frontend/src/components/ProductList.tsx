@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProducts, deleteProduct, toggleProductStatus, ProductDTO } from "@/api";
+import { getProducts, deleteProduct, toggleProductStatus } from "@/api";
+import type { ProductDTO } from "@/api";
 import {
   Table,
   TableBody,
