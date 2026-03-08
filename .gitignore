@@ -1,5 +1,9 @@
 HELP.md
 target/
+*.log
+.DS_Store
+.pnpm-store/
+.pnpm-debug.log
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
