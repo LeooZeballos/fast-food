@@ -18,10 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -32,7 +30,6 @@ import java.util.Locale;
 @Entity
 public class FoodOrder {
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
     /**
      * The unique identifier of the food order.
      */
@@ -89,53 +86,6 @@ public class FoodOrder {
             total += foodOrderDetail.calculateSubtotal();
         }
         return total;
-    }
-
-    /**
-     * Returns the formatted creation timestamp.
-     * @return String The formatted creation timestamp
-     */
-    public String getFormattedCreationTimestamp() {
-        return creationTimestamp == null ? "Not set" : creationTimestamp.format(DATE_TIME_FORMATTER);
-    }
-
-    /**
-     * Returns the formatted payment timestamp.
-     * @return String The formatted payment timestamp
-     */
-    public String getFormattedPaymentTimestamp() {
-        return paymentTimestamp == null ? "Not set" : paymentTimestamp.format(DATE_TIME_FORMATTER);
-    }
-
-    /**
-     * Returns the formatted order details. E.g. "1 x Burger, 1 x Fries, 1 x Drink"
-     * @return String The formatted order details
-     */
-    public String getFormattedFoodOrderDetails() {
-        // formats the food order details into a string for display, e.g. "1 x Burger, 1 x Fries"
-        StringBuilder formattedFoodOrderDetails = new StringBuilder();
-        for (FoodOrderDetail foodOrderDetail : foodOrderDetails) {
-            formattedFoodOrderDetails.append(foodOrderDetail.getQuantity()).append(" x ").append(foodOrderDetail.getItem().getName()).append(", ");
-        }
-        // removes the last comma and space
-        formattedFoodOrderDetails.delete(formattedFoodOrderDetails.length() - 2, formattedFoodOrderDetails.length());
-        return formattedFoodOrderDetails.toString();
-    }
-
-    /**
-     * Returns the formatted total.
-     * @return String The formatted total price. E.g. "Total: $10,00"
-     */
-    public String getFormattedTotal() {
-        return "$" + String.format(Locale.forLanguageTag("es-ES"), "%.2f", calculateTotal());
-    }
-
-    /**
-     * Returns the formatted state.
-     * @return String The formatted state
-     */
-    public String getFormattedState() {
-        return state.toString().substring(0, 1).toUpperCase() + state.toString().substring(1).toLowerCase();
     }
 
 }

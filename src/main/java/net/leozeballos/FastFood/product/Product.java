@@ -9,7 +9,6 @@ import net.leozeballos.FastFood.item.Item;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -50,14 +49,6 @@ public class Product extends Item {
     @Override
     public double calculatePrice() {
         return price;
-    }
-
-    /**
-     * Formats the Product's price. Example: $1.00
-     * @return String Product's price formatted
-     */
-    public String getFormattedPrice() {
-        return "$" + String.format(Locale.forLanguageTag("es-ES"), "%.2f", price);
     }
 
 }

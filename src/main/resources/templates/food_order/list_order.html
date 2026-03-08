@@ -30,20 +30,20 @@
                 <td colspan="8"> No Orders Available </td>
             </tr>
             <tr th:each="order : ${listFoodOrders}">
-                <td th:text="${order.branch.name}"></td>
-                <td th:text="${order.getFormattedState()}"></td>
-                <td th:text="${order.getFormattedCreationTimestamp()}"></td>
-                <td th:text="${order.getFormattedPaymentTimestamp()}"></td>
-                <td th:text="${order.getFormattedFoodOrderDetails()}"></td>
-                <td th:text="${order.getFormattedTotal()}"></td>
+                <td th:text="${order.branchName}"></td>
+                <td th:text="${order.state}"></td>
+                <td th:text="${order.formattedCreationTimestamp}"></td>
+                <td th:text="${order.formattedPaymentTimestamp}"></td>
+                <td th:text="${order.formattedFoodOrderDetails}"></td>
+                <td th:text="${order.formattedTotal}"></td>
                 <td>
-                    <a th:if="${order.getState().toString().equals('CREATED')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=start_preparation'}" class="btn btn-success btn-sm">Start Preparation</a>
-                    <a th:if="${order.getState().toString().equals('CREATED')}" th:href="@{'/food_order/edit?id=' + ${order.id}}" class="btn btn-warning btn-sm">Update</a>
-                    <a th:if="${order.getState().toString().equals('INPREPARATION')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=finish_preparation'}" class="btn btn-success btn-sm">Finish Preparation</a>
-                    <a th:if="${order.getState().toString().equals('CREATED') || order.getState().toString().equals('INPREPARATION')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=cancel'}" class="btn btn-danger btn-sm">Cancel</a>
-                    <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=confirm_payment'}" class="btn btn-success btn-sm">Confirm Payment</a>
-                    <a th:if="${order.getState().toString().equals('DONE')}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=reject'}" class="btn btn-danger btn-sm">Reject</a>
-                    <div th:if="${order.getState().toString().equals('CANCELLED') || order.getState().toString().equals('REJECTED') || order.getState().toString().equals('PAID')}">No actions available</div>
+                    <a th:if="${order.state == 'CREATED'}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=start_preparation'}" class="btn btn-success btn-sm">Start Preparation</a>
+                    <a th:if="${order.state == 'CREATED'}" th:href="@{'/food_order/edit?id=' + ${order.id}}" class="btn btn-warning btn-sm">Update</a>
+                    <a th:if="${order.state == 'INPREPARATION'}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=finish_preparation'}" class="btn btn-success btn-sm">Finish Preparation</a>
+                    <a th:if="${order.state == 'CREATED' || order.state == 'INPREPARATION'}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=cancel'}" class="btn btn-danger btn-sm">Cancel</a>
+                    <a th:if="${order.state == 'DONE'}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=confirm_payment'}" class="btn btn-success btn-sm">Confirm Payment</a>
+                    <a th:if="${order.state == 'DONE'}" th:href="@{'/food_order/edit?id=' + ${order.id} + '&action=reject'}" class="btn btn-danger btn-sm">Reject</a>
+                    <div th:if="${order.state == 'CANCELLED' || order.state == 'REJECTED' || order.state == 'PAID'}">No actions available</div>
                 </td>
             </tr>
             </tbody>

@@ -68,9 +68,10 @@ public class ProductController {
 
     @RequestMapping("/product/list")
     public String listProducts(Model model) {
-        model.addAttribute("listProducts", productService.findAll());
-        model.addAttribute("pageTitle", "Products List");
+        model.addAttribute("listProducts", productService.findAllDTO());
+        model.addAttribute("pageTitle", "Products list");
         return "product/list_product";
     }
+
 
 }

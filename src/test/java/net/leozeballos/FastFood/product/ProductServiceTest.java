@@ -93,4 +93,24 @@ class ProductServiceTest {
         verify(productRepository).deleteAll();
     }
 
+    @Test
+    void canConvertToDTO() {
+        // given
+        Product product = Product.builder()
+                .price(10.0)
+                .build();
+        product.setId(1L);
+        product.setName("Product 1");
+        product.enable();
+
+        // when
+        ProductDTO dto = underTest.convertToDTO(product);
+
+        // then
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getName()).isEqualTo("Product 1");
+        assertThat(dto.getPrice()).isEqualTo(10.0);
+        assertThat(dto.isActive()).isTrue();
+    }
+
 }

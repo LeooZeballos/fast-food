@@ -63,38 +63,4 @@ public class Menu extends Item {
         return price * (1 - discount.doubleValue());
     }
 
-    /**
-     * Formats the total price of the menu. Example: $5.00
-     * @return String The formatted total price of the menu.
-     */
-    public String getFormattedTotal() {
-        return "$" + String.format("%.2f", calculatePrice());
-    }
-
-    /**
-     * Formats the discount of the menu. Example: 0.1 -> 10%
-     * @return String The formatted discount percentage of the menu.
-     */
-    public String getFormattedDiscount() {
-        return String.format("%.0f", discount.doubleValue() * 100) + "%";
-    }
-
-    /**
-     * Returns a list of all products in the menu separated by a comma. Returns "None" if the menu is empty.
-     * @return String The list of all products in the menu.
-     */
-    public String listProducts() {
-        // Lists all products in the menu separated by a comma without the last comma
-        StringBuilder sb = new StringBuilder();
-        for (Product product : products) {
-            sb.append(product.getName()).append(", ");
-        }
-        if (sb.length() > 0) {
-            sb.delete(sb.length() - 2, sb.length());
-        } else {
-            sb.append("None");
-        }
-        return sb.toString();
-    }
-
 }

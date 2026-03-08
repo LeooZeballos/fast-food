@@ -48,15 +48,15 @@ public class FoodOrderController {
     public String listFoodOrdersInPreparation(Model model, @Param("type") String type) {
         if (model != null) {
             if (type.equals("created")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.CREATED));
-            }else if (type.equals("in_preparation")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.INPREPARATION));
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByStateDTO(FoodOrderState.CREATED));
+            } else if (type.equals("in_preparation")) {
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByStateDTO(FoodOrderState.INPREPARATION));
             } else if (type.equals("finished")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByState(FoodOrderState.DONE));
+                model.addAttribute("listFoodOrders", foodOrderService.findAllFoodOrdersByStateDTO(FoodOrderState.DONE));
             } else if (type.equals("all")) {
-                model.addAttribute("listFoodOrders", foodOrderService.findAll());
+                model.addAttribute("listFoodOrders", foodOrderService.findAllDTO());
             } else {
-                model.addAttribute("listFoodOrders", new ArrayList<FoodOrder>());
+                model.addAttribute("listFoodOrders", new ArrayList<FoodOrderDTO>());
             }
         }
         model.addAttribute("pageTitle", "Orders In Preparation");
@@ -93,14 +93,6 @@ public class FoodOrderController {
 
     @RequestMapping(value="/food_order/order", params={"save"})
     public String saveFoodOrder(@ModelAttribute("foodOrder") FoodOrder foodOrder) throws RuntimeException {
-        // if the foodOrder is new, set the status to "new"
-        if (foodOrder.getState() == null) {
-            foodOrder.setState(FoodOrderState.CREATED);
-        }
-        // save the foodOrder
-        for (FoodOrderDetail foodOrderDetail : foodOrder.getFoodOrderDetails()) {
-            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
-        }
         if (foodOrderService.save(foodOrder) != null) {
             return "redirect:/food_order/list?type=created";
         } else {
@@ -138,9 +130,6 @@ public class FoodOrderController {
     @RequestMapping(value="/food_order/edit", params={"id", "save"})
     public String saveEditedFoodOrder(@ModelAttribute("foodOrder") FoodOrder foodOrder) {
         foodOrderService.update(foodOrder.getId());
-        for (FoodOrderDetail foodOrderDetail : foodOrder.getFoodOrderDetails()) {
-            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
-        }
         foodOrderService.save(foodOrder);
         return "redirect:/food_order/list?type=created";
     }

@@ -84,9 +84,10 @@ public class MenuController {
 
     @RequestMapping("/menu/list")
     public String listMenus(Model model) {
-        model.addAttribute("listMenus", menuService.findAll());
-        model.addAttribute("pageTitle", "Menus List");
+        model.addAttribute("listMenus", menuService.findAllDTO());
+        model.addAttribute("pageTitle", "Menus list");
         return "menu/list_menu";
     }
+
 
 }

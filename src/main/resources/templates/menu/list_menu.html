@@ -30,10 +30,10 @@
             </tr>
             <tr th:each="menu: ${listMenus}">
                 <td th:text="${menu.name}"></td>
-                <td th:text="${menu.getFormattedTotal()}"></td>
-                <td th:text="${menu.getFormattedDiscount()}"></td>
-                <td th:text="${menu.listProducts()}"></td>
-                <td><p th:if="${menu.isActive()}">✔</p><p th:if="${!menu.isActive()}">❌</p></td>
+                <td th:text="${menu.formattedPrice}"></td>
+                <td th:text="${menu.formattedDiscount}"></td>
+                <td th:text="${menu.productsList}"></td>
+                <td><p th:if="${menu.active}">✔</p><p th:if="${!menu.active}">❌</p></td>
                 <td>
                     <a class="btn btn-primary btn-sm" th:href="@{'/menu/edit/' + ${menu.id}}">Edit</a>
                     <a th:if="${!menu.isActive()}" class="btn btn-success btn-sm" th:href="@{'/menu/enable/' + ${menu.id}}">Enable</a>

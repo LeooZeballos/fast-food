@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -18,8 +19,23 @@ public class ProductService {
         this.menuRepository = menuRepository;
     }
 
+    public List<ProductDTO> findAllDTO() {
+        return productRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public ProductDTO convertToDTO(Product product) {
+        return ProductDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .active(product.isActive())
+                .build();
     }
 
     public Product findById(Long id) {

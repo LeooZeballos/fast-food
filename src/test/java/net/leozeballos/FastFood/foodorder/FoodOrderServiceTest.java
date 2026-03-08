@@ -137,4 +137,40 @@ class FoodOrderServiceTest {
         verify(foodOrderRepository).findAllFoodOrdersByState(FoodOrderState.CREATED);
     }
 
+    @Test
+    void canConvertToDTO() {
+        // given
+        net.leozeballos.FastFood.branch.Branch branch = net.leozeballos.FastFood.branch.Branch.builder().name("Main Branch").build();
+        net.leozeballos.FastFood.product.Product product = net.leozeballos.FastFood.product.Product.builder().price(10.0).build();
+        product.setName("Product 1");
+
+        net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail detail = net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail.builder()
+                .id(1L)
+                .item(product)
+                .quantity(2)
+                .historicPrice(10.0)
+                .build();
+
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        FoodOrder order = FoodOrder.builder()
+                .id(1L)
+                .branch(branch)
+                .creationTimestamp(now)
+                .state(FoodOrderState.CREATED)
+                .foodOrderDetails(java.util.List.of(detail))
+                .build();
+
+        // when
+        FoodOrderDTO dto = underTest.convertToDTO(order);
+
+        // then
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getBranchName()).isEqualTo("Main Branch");
+        assertThat(dto.getCreationTimestamp()).isEqualTo(now);
+        assertThat(dto.getFormattedState()).isEqualTo("Created");
+        assertThat(dto.getTotal()).isEqualTo(20.0);
+        assertThat(dto.getFoodOrderDetails()).hasSize(1);
+        assertThat(dto.getFoodOrderDetails().get(0).getItemName()).isEqualTo("Product 1");
+    }
+
 }
