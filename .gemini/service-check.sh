@@ -102,7 +102,7 @@ start_all() {
   mvn package -Dmaven.test.skip=true
 
   echo "Starting Backend (Port 4080)..."
-  nohup java -jar target/FastFood-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
+  nohup java -Dspring.profiles.active=dev -Duser.timezone=UTC -jar target/FastFood-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
   sleep 2
 
   echo "Starting Frontend (Port 4000, forcing IPv4)..."

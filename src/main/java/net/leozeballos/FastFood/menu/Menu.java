@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import net.leozeballos.FastFood.item.Item;
-import net.leozeballos.FastFood.product.Product;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,17 +36,17 @@ public class Menu extends Item {
     private BigDecimal discount;
 
     /**
-     * The products that are in the menu. This is a many-to-many relationship.
+     * The items that are in the menu. This can be Products or other Menus.
      */
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "menu_product",
+            name = "menu_item",
             joinColumns = @JoinColumn(name = "menu_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
+            inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     @ToString.Exclude
     @Builder.Default
-    private List<Product> products = new ArrayList<>();
+    private List<Item> items = new ArrayList<>();
 
     @Override
     public int hashCode() {
@@ -55,13 +54,13 @@ public class Menu extends Item {
     }
 
     /**
-     * Calculates the price of the menu. This is the sum of the prices of all products in the menu times 1 - discount.
+     * Calculates the price of the menu recursively.
      * @return double The price of the menu.
      */
     @Override
     public double calculatePrice() {
         double price = 0;
-        for (Product product : products) { price += product.calculatePrice(); }
+        for (Item item : items) { price += item.calculatePrice(); }
         return price * (1 - discount.doubleValue());
     }
 

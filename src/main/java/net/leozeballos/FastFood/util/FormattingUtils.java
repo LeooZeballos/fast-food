@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.util;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -7,19 +8,20 @@ import java.util.Locale;
 public class FormattingUtils {
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
-    public static final Locale ES_LOCALE = Locale.forLanguageTag("es-ES");
+    public static final Locale US_LOCALE = Locale.US;
+    private static final NumberFormat CURRENCY_FORMATTER = NumberFormat.getCurrencyInstance(US_LOCALE);
 
     private FormattingUtils() {
         // Private constructor to prevent instantiation
     }
 
     /**
-     * Formats a price value. Example: $10,00
+     * Formats a price value. Example: $10.00
      * @param price the price to format
      * @return the formatted price string
      */
     public static String formatPrice(double price) {
-        return "$" + String.format(ES_LOCALE, "%.2f", price);
+        return CURRENCY_FORMATTER.format(price);
     }
 
     /**

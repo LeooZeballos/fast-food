@@ -15,6 +15,7 @@ export type ProductDTO = {
   id?: number;
   name: string;
   price: number;
+  icon?: string;
   active: boolean;
   formattedPrice?: string;
 }
@@ -25,6 +26,7 @@ export type MenuDTO = {
   price: number;
   discountPercentage: number;
   productsList: string;
+  icon?: string;
   active: boolean;
   formattedPrice?: string;
   formattedDiscount?: string;
@@ -98,6 +100,11 @@ export const toggleProductStatus = async ({ id, active }: { id: number; active: 
 
 export const getMenus = async () => {
   const response = await api.get<MenuDTO[]>("/menus");
+  return response.data;
+};
+
+export const createMenu = async (menu: Partial<MenuDTO>) => {
+  const response = await api.post<MenuDTO>("/menus", menu);
   return response.data;
 };
 

@@ -24,7 +24,7 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Item {
 
@@ -39,6 +39,12 @@ public abstract class Item {
     @Size(min = 1, max = 50, message = "Item name must be between 1 and 50 characters")
     @Column(nullable = false, length = 50, unique = true)
     private String name;
+
+    /**
+     * The icon identifier for the item (e.g., 'burger', 'drink').
+     */
+    @Column(length = 30)
+    private String icon;
 
     /**
      * If the item is active.

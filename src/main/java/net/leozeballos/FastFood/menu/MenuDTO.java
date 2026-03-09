@@ -10,6 +10,7 @@ public record MenuDTO(
     double price,
     double discountPercentage,
     String productsList,
+    String icon,
     boolean active
 ) {
     public String getFormattedPrice() {

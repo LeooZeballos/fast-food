@@ -18,9 +18,10 @@ public class MenuMapper {
                 .name(menu.getName())
                 .price(menu.calculatePrice())
                 .discountPercentage(menu.getDiscount().doubleValue() * 100)
-                .productsList(menu.getProducts().stream()
-                        .map(net.leozeballos.FastFood.product.Product::getName)
+                .productsList(menu.getItems().stream()
+                        .map(net.leozeballos.FastFood.item.Item::getName)
                         .collect(Collectors.joining(", ")))
+                .icon(menu.getIcon())
                 .active(menu.isActive())
                 .build();
     }

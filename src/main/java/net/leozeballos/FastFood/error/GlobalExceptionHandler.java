@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -57,11 +56,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object handleValidationExceptions(MethodArgumentNotValidException ex, Model model, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> 
+        ex.getBindingResult().getFieldErrors().forEach(error ->
             errors.put(error.getField(), error.getDefaultMessage())
         );
         log.error("Validation failed: {}", errors);
-        
+
         if (isApiRequest(request)) {
             ErrorResponseDTO body = ErrorResponseDTO.builder()
                     .timestamp(LocalDateTime.now())
@@ -83,10 +82,10 @@ public class GlobalExceptionHandler {
     public Object handleGlobalException(Exception ex, Model model, WebRequest request) {
         log.error("Internal Server Error: ", ex);
         if (isApiRequest(request)) {
-            return buildJsonResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", 
+            return buildJsonResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
                 "The server encountered an unexpected error.", request);
         }
-        populateErrorModel(model, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", 
+        populateErrorModel(model, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
             "The server encountered an unexpected error.", request.getDescription(false));
         return "error";
     }

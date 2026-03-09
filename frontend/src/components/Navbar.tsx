@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Utensils, ClipboardList, Store, Package, Menu as MenuIcon, ShoppingCart } from "lucide-react";
+import { ClipboardList, ShoppingCart, ShieldCheck, Menu as MenuIcon } from "lucide-react";
 import type { View } from "../App";
 
 interface NavbarProps {
@@ -19,7 +19,7 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
             className="flex items-center cursor-pointer text-2xl font-black tracking-tighter italic uppercase"
             onClick={() => onViewChange("take-order")}
           >
-            <span className="mr-2 not-italic">🍟</span>
+            <span className="mr-2 not-italic">🍔</span>
             <span>FastFood<span className="text-secondary">App</span></span>
           </div>
 
@@ -50,39 +50,15 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
             </button>
 
             <button
-              onClick={() => onViewChange("products")}
+              onClick={() => onViewChange("admin")}
               className={`flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all ${
-                activeView === "products" 
+                activeView === "admin" 
                 ? "bg-secondary text-secondary-foreground shadow-inner" 
                 : "hover:bg-white/10"
               }`}
             >
-              <Package className="w-4 h-4 mr-2" />
-              <span>PRODUCTS</span>
-            </button>
-
-            <button
-              onClick={() => onViewChange("menus")}
-              className={`flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all ${
-                activeView === "menus" 
-                ? "bg-secondary text-secondary-foreground shadow-inner" 
-                : "hover:bg-white/10"
-              }`}
-            >
-              <Utensils className="w-4 h-4 mr-2" />
-              <span>MENUS</span>
-            </button>
-
-            <button
-              onClick={() => onViewChange("branches")}
-              className={`flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all ${
-                activeView === "branches" 
-                ? "bg-secondary text-secondary-foreground shadow-inner" 
-                : "hover:bg-white/10"
-              }`}
-            >
-              <Store className="w-4 h-4 mr-2" />
-              <span>BRANCHES</span>
+              <ShieldCheck className="w-4 h-4 mr-2" />
+              <span>ADMIN PANEL</span>
             </button>
           </div>
 
@@ -100,42 +76,33 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-[#343a40] border-t border-gray-700 pb-3 pt-2 px-2 space-y-1">
+        <div className="md:hidden bg-primary border-t border-white/10 pb-3 pt-2 px-2 space-y-1">
+          <button
+            onClick={() => {
+              onViewChange("take-order");
+              setIsMenuOpen(false);
+            }}
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10 w-full text-left"
+          >
+            Take Order
+          </button>
           <button
             onClick={() => {
               onViewChange("orders");
               setIsMenuOpen(false);
             }}
-            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700 w-full text-left"
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10 w-full text-left"
           >
             Orders
           </button>
           <button
             onClick={() => {
-              onViewChange("products");
+              onViewChange("admin");
               setIsMenuOpen(false);
             }}
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 w-full text-left"
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10 w-full text-left"
           >
-            Products
-          </button>
-          <button
-            onClick={() => {
-              onViewChange("menus");
-              setIsMenuOpen(false);
-            }}
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 w-full text-left"
-          >
-            Menus
-          </button>
-          <button
-            onClick={() => {
-              onViewChange("branches");
-              setIsMenuOpen(false);
-            }}
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 w-full text-left"
-          >
-            Branches
+            Admin Panel
           </button>
         </div>
       )}

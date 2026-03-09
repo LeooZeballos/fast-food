@@ -28,10 +28,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Play, CheckCircle, CreditCard, XCircle, RotateCcw } from "lucide-react";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
 
 export function OrderList() {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(() => localStorage.getItem("orderListFilter") || "all");
   const queryClient = useQueryClient();
+
+  const handleFilterChange = (value: string) => {
+    setFilter(value);
+    localStorage.setItem("orderListFilter", value);
+  };
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["orders", filter],
@@ -62,14 +68,16 @@ export function OrderList() {
     }
   };
 
-  if (isLoading) return <div>Loading orders...</div>;
+  if (isLoading) {
+    return <TableSkeleton title="Orders Management" columnCount={6} showButton={false} />;
+  }
 
   return (
     <Card className="w-full max-w-5xl mx-auto mt-8">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-2xl font-bold">Orders Management</CardTitle>
         <div className="w-[180px]">
-          <Select value={filter} onValueChange={setFilter}>
+          <Select value={filter} onValueChange={handleFilterChange}>
             <SelectTrigger>
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>

@@ -111,7 +111,7 @@ class MenuServiceTest {
 
         Menu menu = new Menu();
         menu.setDiscount(java.math.BigDecimal.valueOf(0.1));
-        menu.setProducts(java.util.List.of(product1, product2));
+        menu.setItems(java.util.List.of(product1, product2));
         menu.setId(1L);
         menu.setName("Menu 1");
         menu.enable();

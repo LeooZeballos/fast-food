@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.menu;
 
+import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.product.Product;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +14,12 @@ class MenuTest {
 
     @Test
     void shouldCreateMenuWithBuilder() {
-        Menu menu = Menu.builder().discount(BigDecimal.valueOf(0.1)).products(new ArrayList<>()).build();
+        Menu menu = Menu.builder().discount(BigDecimal.valueOf(0.1)).items(new ArrayList<>()).build();
         assertNotNull(menu);
         assertNull(menu.getId());
         assertNull(menu.getName());
         assertEquals(BigDecimal.valueOf(0.1), menu.getDiscount());
-        assertEquals(0, menu.getProducts().size());
+        assertEquals(0, menu.getItems().size());
     }
 
     @Test
@@ -28,7 +29,7 @@ class MenuTest {
         assertNull(menu.getId());
         assertNull(menu.getName());
         assertNull(menu.getDiscount());
-        assertEquals(0, menu.getProducts().size());
+        assertEquals(0, menu.getItems().size());
     }
 
     @Test
@@ -52,11 +53,11 @@ class MenuTest {
         Product product1 = Product.builder().price(10.0).build();
         Product product2 = Product.builder().price(20.0).build();
         Product product3 = Product.builder().price(30.0).build();
-        List<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
-        menu.setProducts(products);
+        List<Item> items = new ArrayList<>();
+        items.add(product1);
+        items.add(product2);
+        items.add(product3);
+        menu.setItems(items);
 
         // when
         double price = menu.calculatePrice();
@@ -80,23 +81,23 @@ class MenuTest {
     }
 
     @Test
-    void canGetProducts() {
+    void canGetItems() {
         // given
         Menu menu = Menu.builder().build();
         Product product1 = Product.builder().price(10.0).build();
         Product product2 = Product.builder().price(20.0).build();
         Product product3 = Product.builder().price(30.0).build();
-        List<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
-        menu.setProducts(products);
+        List<Item> items = new ArrayList<>();
+        items.add(product1);
+        items.add(product2);
+        items.add(product3);
+        menu.setItems(items);
 
         // when
-        List<Product> products1 = menu.getProducts();
+        List<Item> items1 = menu.getItems();
 
         // then
-        assertEquals(products, products1);
+        assertEquals(items, items1);
     }
 
     @Test
@@ -112,22 +113,22 @@ class MenuTest {
     }
 
     @Test
-    void canSetProducts() {
+    void canSetItems() {
         // given
         Menu menu = Menu.builder().build();
         Product product1 = Product.builder().price(10.0).build();
         Product product2 = Product.builder().price(20.0).build();
         Product product3 = Product.builder().price(30.0).build();
-        List<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
+        List<Item> items = new ArrayList<>();
+        items.add(product1);
+        items.add(product2);
+        items.add(product3);
 
         // when
-        menu.setProducts(products);
+        menu.setItems(items);
 
         // then
-        assertEquals(products, menu.getProducts());
+        assertEquals(items, menu.getItems());
     }
 
     @Test
@@ -140,11 +141,11 @@ class MenuTest {
         product2.setName("Product 2");
         Product product3 = Product.builder().price(30.0).build();
         product3.setName("Product 3");
-        List<Product> products = new ArrayList<>();
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
-        menu.setProducts(products);
+        List<Item> items = new ArrayList<>();
+        items.add(product1);
+        items.add(product2);
+        items.add(product3);
+        menu.setItems(items);
 
         // when
         String toString = menu.toString();

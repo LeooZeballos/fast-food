@@ -72,7 +72,7 @@ public class ProductService {
         // remove product from all menus that contain it
         ArrayList<Menu> menus = new ArrayList<>(menuRepository.findAll());
         for (Menu menu : menus) {
-            menu.getProducts().remove(product);
+            menu.getItems().remove(product);
         }
 
         // disable product

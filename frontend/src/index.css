@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 20 14.3% 4.1%;
+    --background: 40 33% 98%;
+    --foreground: 160 84% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 4.1%;
+    --card-foreground: 160 84% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
-    --primary: 0 72.2% 50.6%; /* FastFood Red */
-    --primary-foreground: 60 9.1% 97.8%;
-    --secondary: 48 96% 53%; /* FastFood Yellow/Orange */
-    --secondary-foreground: 20 14.3% 4.1%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
-    --accent: 48 96% 53%;
-    --accent-foreground: 20 14.3% 4.1%;
+    --popover-foreground: 160 84% 10%;
+    --primary: 160 84% 15%; /* Deep Forest Green */
+    --primary-foreground: 40 30% 98%;
+    --secondary: 38 92% 50%; /* Warm Gold */
+    --secondary-foreground: 160 84% 15%;
+    --muted: 158 22% 95%;
+    --muted-foreground: 160 20% 40%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 160 84% 15%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
-    --ring: 0 72.2% 50.6%;
-    --radius: 0.5rem;
+    --destructive-foreground: 40 30% 98%;
+    --border: 160 20% 90%;
+    --input: 160 20% 90%;
+    --ring: 160 84% 15%;
+    --radius: 0.75rem;
   }
 }

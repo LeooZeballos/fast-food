@@ -26,6 +26,21 @@ public class MenuRestController {
         return menuMapper.toDTO(menu);
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public MenuDTO create(@RequestBody Menu menu) {
+        return menuMapper.toDTO(menuService.save(menu));
+    }
+
+    @PutMapping("/{id}")
+    public MenuDTO update(@PathVariable Long id, @RequestBody Menu menuData) {
+        Menu menu = menuService.findById(id);
+        menu.setName(menuData.getName());
+        menu.setDiscount(menuData.getDiscount());
+        menu.setItems(menuData.getItems());
+        return menuMapper.toDTO(menuService.save(menu));
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
