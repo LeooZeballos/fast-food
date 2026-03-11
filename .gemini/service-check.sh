@@ -29,7 +29,7 @@ check_frontend_health() {
 get_status_text() {
   local out=""
   out+="--- Service Status (Updated: $(date)) ---\n"
-  
+
   if check_port $BACKEND_PORT; then
     if check_backend_health; then
       out+="Backend: RUNNING (Healthy)\n"
@@ -105,8 +105,8 @@ start_all() {
   nohup java -Dspring.profiles.active=dev -Duser.timezone=UTC -jar target/FastFood-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
   sleep 2
 
-  echo "Starting Frontend (Port 4000, forcing IPv4)..."
-  nohup sh -c "cd frontend && NODE_OPTIONS=\"--dns-result-order=ipv4first\" pnpm dev --host 0.0.0.0" > frontend/frontend.log 2>&1 &
+  echo "Starting Frontend (Port 4000)..."
+  nohup sh -c "cd frontend && pnpm dev" > frontend/frontend.log 2>&1 &
   sleep 2
 
   # Start watcher

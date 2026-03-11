@@ -78,6 +78,11 @@ export const deleteBranch = async (id: number) => {
   await api.delete(`/branches/${id}`);
 };
 
+export const updateBranch = async ({ id, branch }: { id: number; branch: BranchDTO }) => {
+  const response = await api.put<BranchDTO>(`/branches/${id}`, branch);
+  return response.data;
+};
+
 export const getProducts = async () => {
   const response = await api.get<ProductDTO[]>("/products");
   return response.data;
@@ -98,6 +103,11 @@ export const toggleProductStatus = async ({ id, active }: { id: number; active: 
   return response.data;
 };
 
+export const updateProduct = async ({ id, product }: { id: number; product: Partial<ProductDTO> }) => {
+  const response = await api.put<ProductDTO>(`/products/${id}`, product);
+  return response.data;
+};
+
 export const getMenus = async () => {
   const response = await api.get<MenuDTO[]>("/menus");
   return response.data;
@@ -115,6 +125,11 @@ export const deleteMenu = async (id: number) => {
 export const toggleMenuStatus = async ({ id, active }: { id: number; active: boolean }) => {
   const action = active ? "disable" : "enable";
   const response = await api.patch<MenuDTO>(`/menus/${id}/${action}`);
+  return response.data;
+};
+
+export const updateMenu = async ({ id, menu }: { id: number; menu: Partial<MenuDTO> }) => {
+  const response = await api.put<MenuDTO>(`/menus/${id}`, menu);
   return response.data;
 };
 

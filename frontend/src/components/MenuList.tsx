@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMenus, deleteMenu, toggleMenuStatus, createMenu } from "@/api";
+import { getMenus, deleteMenu, toggleMenuStatus, createMenu, updateMenu } from "@/api";
 import type { MenuDTO } from "@/api";
 import { useState } from "react";
 import {
@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Loader2 } from "lucide-react";
+import { Trash2, Plus, Loader2, Utensils, Edit2 } from "lucide-react";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import {
   Dialog,
@@ -21,15 +21,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function MenuList() {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", discountPercentage: "10" });
 
   const { data: menus, isLoading, error } = useQuery({
@@ -50,6 +52,20 @@ export function MenuList() {
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: updateMenu,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["menus"] });
+      setIsOpen(false);
+      setEditingId(null);
+      setFormData({ name: "", discountPercentage: "10" });
+      toast.success("Menu updated successfully");
+    },
+    onError: () => {
+      toast.error("Error updating menu");
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: deleteMenu,
     onSuccess: () => {
@@ -65,14 +81,33 @@ export function MenuList() {
     },
   });
 
+  const handleEdit = (menu: MenuDTO) => {
+    setEditingId(menu.id || null);
+    setFormData({ name: menu.name, discountPercentage: menu.discountPercentage.toString() });
+    setIsOpen(true);
+  };
+
+  const handleCreate = () => {
+    setEditingId(null);
+    setFormData({ name: "", discountPercentage: "10" });
+    setIsOpen(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createMutation.mutate({
+    const payload = {
       name: formData.name,
       discountPercentage: parseFloat(formData.discountPercentage),
-      active: true,
-      // Note: In a real app we'd also send selected items
-    });
+    };
+
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, menu: payload });
+    } else {
+      createMutation.mutate({
+        ...payload,
+        active: true,
+      });
+    }
   };
 
   if (isLoading) {
@@ -82,32 +117,42 @@ export function MenuList() {
   if (error) return <div>Error loading menus</div>;
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-2xl font-bold">Menus Management</CardTitle>
+    <Card className="w-full border-2 shadow-2xl rounded-[2.5rem] overflow-hidden bg-white">
+      <CardHeader className="flex flex-row items-center justify-between p-8 border-b-2 border-slate-50 bg-slate-50/50">
+        <div className="space-y-1">
+          <CardTitle className="text-3xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-3">
+            <Utensils className="h-8 w-8 text-secondary" />
+            Menus
+          </CardTitle>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Bundled item management</p>
+        </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="mr-2 h-4 w-4" /> New Menu
+            <Button size="lg" className="rounded-2xl font-black uppercase text-xs tracking-widest px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-all" onClick={handleCreate}>
+              <Plus className="mr-2 h-5 w-5 text-secondary" /> New Menu
             </Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Menu</DialogTitle>
+          <DialogContent className="rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl sm:max-w-[425px]">
+            <DialogHeader className="bg-primary text-white p-8 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full -mr-16 -mt-16 blur-3xl text-white" />
+              <DialogTitle className="text-3xl font-black italic uppercase tracking-tighter relative z-10">
+                {editingId ? "Edit Menu" : "Add New Menu"}
+              </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Menu Name</Label>
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div className="space-y-3">
+                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Menu Name</Label>
                 <Input
                   id="name"
                   placeholder="e.g. Combo Deluxe"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
+                  className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="discount">Discount (%)</Label>
+              <div className="space-y-3">
+                <Label htmlFor="discount" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Discount (%)</Label>
                 <Input
                   id="discount"
                   type="number"
@@ -115,59 +160,83 @@ export function MenuList() {
                   value={formData.discountPercentage}
                   onChange={(e) => setFormData({ ...formData, discountPercentage: e.target.value })}
                   required
+                  className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
                 />
               </div>
-              <p className="text-sm text-muted-foreground italic">
-                Note: Items can be added later in the full editor.
+              <p className="text-[10px] text-slate-400 font-bold uppercase italic tracking-widest text-center mt-2">
+                Items can be added later in the editor.
               </p>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+              <div className="flex gap-4 pt-4">
+                <Button type="button" variant="ghost" className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Menu
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                  {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {editingId ? "Save Changes" : "Create Menu"}
                 </Button>
-              </DialogFooter>
+              </div>
             </form>
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Discount</TableHead>
-              <TableHead>Products</TableHead>
-              <TableHead>Active</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-slate-50/50">
+            <TableRow className="hover:bg-transparent border-b-2 border-slate-50">
+              <TableHead className="px-8 py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Menu Name</TableHead>
+              <TableHead className="py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Price</TableHead>
+              <TableHead className="py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Discount</TableHead>
+              <TableHead className="py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Status</TableHead>
+              <TableHead className="px-8 py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {menus?.map((menu: MenuDTO) => (
-              <TableRow key={menu.id}>
-                <TableCell className="font-medium">{menu.name}</TableCell>
-                <TableCell>{menu.formattedPrice || `$${menu.price.toFixed(2)}`}</TableCell>
-                <TableCell>{menu.formattedDiscount || `${menu.discountPercentage}%`}</TableCell>
-                <TableCell className="max-w-xs truncate">{menu.productsList}</TableCell>
-                <TableCell>
-                  <Switch
-                    checked={menu.active}
-                    onCheckedChange={() => 
-                      menu.id && toggleMutation.mutate({ id: menu.id, active: menu.active })
-                    }
-                  />
+              <TableRow key={menu.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
+                <TableCell className="px-8 py-6">
+                  <div className="space-y-1">
+                    <p className="font-black text-slate-900 uppercase tracking-tight italic text-lg leading-tight">{menu.name}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase truncate max-w-[200px]">{menu.productsList}</p>
+                  </div>
                 </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => menu.id && deleteMutation.mutate(menu.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <TableCell className="py-6 font-black text-secondary text-xl tracking-tighter">{menu.formattedPrice || `$${menu.price.toFixed(2)}`}</TableCell>
+                <TableCell className="py-6"><Badge variant="secondary" className="font-black text-[10px] rounded-lg bg-orange-100 text-orange-600 border-none px-2">-{menu.discountPercentage}%</Badge></TableCell>
+                <TableCell className="py-6">
+                   <div className="flex items-center gap-3">
+                    <Switch
+                      checked={menu.active}
+                      onCheckedChange={() => 
+                        menu.id && toggleMutation.mutate({ id: menu.id, active: menu.active })
+                      }
+                      className="data-[state=checked]:bg-green-500"
+                    />
+                    <span className={cn(
+                      "text-[9px] font-black uppercase tracking-widest",
+                      menu.active ? "text-green-500" : "text-slate-300"
+                    )}>
+                      {menu.active ? "Active" : "Disabled"}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-8 py-6 text-right whitespace-nowrap">
+                   <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-12 w-12 text-slate-200 hover:text-primary hover:bg-primary/5 transition-all rounded-2xl group-hover:text-slate-300"
+                      onClick={() => handleEdit(menu)}
+                    >
+                      <Edit2 className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-12 w-12 text-slate-200 hover:text-destructive hover:bg-destructive/5 transition-all rounded-2xl group-hover:text-slate-300"
+                      onClick={() => menu.id && deleteMutation.mutate(menu.id)}
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

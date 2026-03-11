@@ -61,7 +61,8 @@ public class Menu extends Item {
     public double calculatePrice() {
         double price = 0;
         for (Item item : items) { price += item.calculatePrice(); }
-        return price * (1 - discount.doubleValue());
+        double disc = (discount != null) ? discount.doubleValue() : 0.0;
+        return price * (1 - disc);
     }
 
 }
