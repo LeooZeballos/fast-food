@@ -42,3 +42,5 @@ build/
 
 ### pnpm ###
 .pnpm-store
+.frontend.pid
+.backend.pid
