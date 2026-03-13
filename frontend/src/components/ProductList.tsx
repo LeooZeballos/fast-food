@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProducts, deleteProduct, toggleProductStatus, createProduct, updateProduct } from "@/api";
 import type { ProductDTO } from "@/api";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Table,
   TableBody,
@@ -35,8 +36,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { ErrorState } from "@/components/ui/error-state";
+
 export function ProductList() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", price: "", icon: "burger" });
@@ -52,10 +56,10 @@ export function ProductList() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsOpen(false);
       setFormData({ name: "", price: "", icon: "burger" });
-      toast.success("Product created successfully");
+      toast.success(t('admin.products.successCreate'));
     },
     onError: () => {
-      toast.error("Error creating product");
+      toast.error(t('admin.products.errorCreate'));
     }
   });
 
@@ -66,10 +70,10 @@ export function ProductList() {
       setIsOpen(false);
       setEditingId(null);
       setFormData({ name: "", price: "", icon: "burger" });
-      toast.success("Product updated successfully");
+      toast.success(t('admin.products.successUpdate'));
     },
     onError: () => {
-      toast.error("Error updating product");
+      toast.error(t('admin.products.errorUpdate'));
     }
   });
 
@@ -77,7 +81,7 @@ export function ProductList() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product deleted successfully");
+      toast.success(t('admin.products.successDelete'));
     },
   });
 
@@ -122,12 +126,12 @@ export function ProductList() {
   };
 
   const PRODUCT_ICONS = [
-    { id: "burger", label: "Burger" },
-    { id: "fries", label: "Fries/Sides" },
-    { id: "drink", label: "Soft Drink" },
-    { id: "beer", label: "Beer" },
-    { id: "shake", label: "Milkshake" },
-    { id: "coffee", label: "Coffee" },
+    { id: "burger", label: t('admin.products.icons.burger') },
+    { id: "fries", label: t('admin.products.icons.sides') },
+    { id: "drink", label: t('admin.products.icons.drink') },
+    { id: "beer", label: t('admin.products.icons.beer') },
+    { id: "shake", label: t('admin.products.icons.shake') },
+    { id: "coffee", label: t('admin.products.icons.coffee') },
   ];
 
   const getImageUrl = (icon: string) => {
@@ -143,48 +147,57 @@ export function ProductList() {
   };
 
   if (isLoading) {
-    return <TableSkeleton title="Products Management" columnCount={4} />;
+    return <TableSkeleton title={t('admin.products.title')} columnCount={4} />;
   }
 
-  if (error) return <div>Error loading products</div>;
+  if (error) {
+    return (
+      <ErrorState 
+        variant="fetch"
+        title={t('admin.products.offlineTitle')}
+        message={t('admin.products.offlineMessage')}
+        onRetry={() => queryClient.invalidateQueries({ queryKey: ["products"] })}
+      />
+    );
+  }
 
   return (
-    <Card className="w-full border-2 shadow-2xl rounded-[2.5rem] overflow-hidden bg-white">
-      <CardHeader className="flex flex-row items-center justify-between p-8 border-b-2 border-slate-50 bg-slate-50/50">
+    <Card className="w-full border-2 shadow-2xl rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-white">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 md:p-8 border-b-2 border-slate-50 bg-slate-50/50 gap-4 sm:gap-0">
         <div className="space-y-1">
-          <CardTitle className="text-3xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-3">
-            <Package className="h-8 w-8 text-secondary" />
-            Products
+          <CardTitle className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-3">
+            <Package className="h-6 w-6 md:h-8 md:w-8 text-secondary" />
+            {t('admin.products.title')}
           </CardTitle>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Individual item management</p>
+          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{t('admin.products.subtitle')}</p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button size="lg" className="rounded-2xl font-black uppercase text-xs tracking-widest px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-all" onClick={handleCreate}>
-              <Plus className="mr-2 h-5 w-5 text-secondary" /> New Product
+            <Button size="lg" className="w-full sm:w-auto rounded-xl md:rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest px-6 md:px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-all" onClick={handleCreate}>
+              <Plus className="mr-2 h-4 w-4 md:h-5 md:w-5 text-secondary" /> {t('admin.products.new')}
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl sm:max-w-[425px]">
-            <DialogHeader className="bg-primary text-white p-8 relative overflow-hidden">
+          <DialogContent className="rounded-[2rem] md:rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl w-[95vw] sm:max-w-[425px]">
+            <DialogHeader className="bg-primary text-white p-6 md:p-8 relative overflow-hidden">
                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full -mr-16 -mt-16 blur-3xl text-white" />
-              <DialogTitle className="text-3xl font-black italic uppercase tracking-tighter relative z-10">
-                {editingId ? "Edit Product" : "Add New Product"}
+              <DialogTitle className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter relative z-10">
+                {editingId ? t('admin.products.edit') : t('admin.products.new')}
               </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Product Name</Label>
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4 md:space-y-6">
+              <div className="space-y-2 md:space-y-3">
+                <Label htmlFor="name" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('admin.products.name')}</Label>
                 <Input
                   id="name"
-                  placeholder="e.g. Double Cheese Burger"
+                  placeholder={t('admin.products.placeholder')}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
-              <div className="space-y-3">
-                <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Price ($)</Label>
+              <div className="space-y-2 md:space-y-3">
+                <Label htmlFor="price" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('common.price')} ($)</Label>
                 <Input
                   id="price"
                   type="number"
@@ -193,61 +206,61 @@ export function ProductList() {
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
-                  className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
-              <div className="space-y-3">
-                <Label htmlFor="icon" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Category / Icon</Label>
+              <div className="space-y-2 md:space-y-3">
+                <Label htmlFor="icon" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('admin.products.category')}</Label>
                 <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
-                  <SelectTrigger className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4">
-                    <SelectValue placeholder="Select icon..." />
+                  <SelectTrigger className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4">
+                    <SelectValue placeholder={t('admin.products.selectIcon')} />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl">
+                  <SelectContent className="rounded-xl md:rounded-2xl">
                     {PRODUCT_ICONS.map(icon => (
-                      <SelectItem key={icon.id} value={icon.id} className="py-3">
+                      <SelectItem key={icon.id} value={icon.id} className="py-2 md:py-3">
                         <div className="flex items-center gap-3">
-                          <img src={getImageUrl(icon.id)} alt={icon.label} className="w-8 h-8 rounded-lg object-cover" />
-                          <span className="font-black text-sm uppercase tracking-tight">{icon.label}</span>
+                          <img src={getImageUrl(icon.id)} alt={icon.label} className="w-6 h-6 md:w-8 md:h-8 rounded-lg object-cover" />
+                          <span className="font-black text-xs md:text-sm uppercase tracking-tight">{icon.label}</span>
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex gap-4 pt-4">
-                <Button type="button" variant="ghost" className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
-                  Cancel
+              <div className="flex gap-3 md:gap-4 pt-4">
+                <Button type="button" variant="ghost" className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
+                  {t('common.cancel')}
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
                   {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {editingId ? "Save Changes" : "Create Product"}
+                  {editingId ? t('common.saveChanges') : t('admin.products.new')}
                 </Button>
               </div>
             </form>
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 overflow-x-auto">
         <Table>
           <TableHeader className="bg-slate-50/50">
             <TableRow className="hover:bg-transparent border-b-2 border-slate-50">
-              <TableHead className="px-8 py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Item Name</TableHead>
-              <TableHead className="py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Price</TableHead>
-              <TableHead className="py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400">Status</TableHead>
-              <TableHead className="px-8 py-5 font-black uppercase text-[10px] tracking-[0.2em] text-slate-400 text-right">Actions</TableHead>
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.name')}</TableHead>
+              <TableHead className="py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.price')}</TableHead>
+              <TableHead className="hidden sm:table-cell py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.status')}</TableHead>
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400 text-right">{t('common.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products?.map((product: ProductDTO) => (
               <TableRow key={product.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
-                <TableCell className="px-8 py-6">
-                  <div className="flex items-center gap-4">
-                    <img src={getImageUrl(product.icon || "burger")} alt={product.name} className="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-110 transition-transform duration-500" />
-                    <span className="font-black text-slate-900 uppercase tracking-tight italic text-lg">{product.name}</span>
+                <TableCell className="px-6 md:px-8 py-4 md:py-6">
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <img src={getImageUrl(product.icon || "burger")} alt={product.name} className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-sm group-hover:scale-110 transition-transform duration-500" />
+                    <span className="font-black text-slate-900 uppercase tracking-tight italic text-sm md:text-lg">{product.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="py-6 font-black text-secondary text-xl tracking-tighter">{product.formattedPrice || `$${product.price.toFixed(2)}`}</TableCell>
-                <TableCell className="py-6">
+                <TableCell className="py-4 md:py-6 font-black text-secondary text-base md:text-xl tracking-tighter">{product.formattedPrice || `$${product.price.toFixed(2)}`}</TableCell>
+                <TableCell className="hidden sm:table-cell py-4 md:py-6">
                   <div className="flex items-center gap-3">
                     <Switch
                       checked={product.active}
@@ -257,30 +270,30 @@ export function ProductList() {
                       className="data-[state=checked]:bg-green-500"
                     />
                     <span className={cn(
-                      "text-[9px] font-black uppercase tracking-widest",
+                      "text-[8px] md:text-[9px] font-black uppercase tracking-widest",
                       product.active ? "text-green-500" : "text-slate-300"
                     )}>
-                      {product.active ? "Active" : "Disabled"}
+                      {product.active ? t('common.active') : t('common.disabled')}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="px-8 py-6 text-right whitespace-nowrap">
-                  <div className="flex justify-end gap-2">
+                <TableCell className="px-6 md:px-8 py-4 md:py-6 text-right whitespace-nowrap">
+                  <div className="flex justify-end gap-1 md:gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
-                      className="h-12 w-12 text-slate-200 hover:text-primary hover:bg-primary/5 transition-all rounded-2xl group-hover:text-slate-300"
+                      className="h-10 w-10 md:h-12 md:w-12 border-2 text-primary hover:bg-primary hover:text-white transition-all rounded-xl md:rounded-2xl"
                       onClick={() => handleEdit(product)}
                     >
-                      <Edit2 className="h-5 w-5" />
+                      <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
-                      className="h-12 w-12 text-slate-200 hover:text-destructive hover:bg-destructive/5 transition-all rounded-2xl group-hover:text-slate-300"
+                      className="h-10 w-10 md:h-12 md:w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-xl md:rounded-2xl"
                       onClick={() => product.id && deleteMutation.mutate(product.id)}
                     >
-                      <Trash2 className="h-5 w-5" />
+                      <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                   </div>
                 </TableCell>
@@ -289,7 +302,7 @@ export function ProductList() {
             {products?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                  No products found.
+                  {t('common.noResults')}
                 </TableCell>
               </TableRow>
             )}

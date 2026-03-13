@@ -25,4 +25,65 @@
     --ring: 160 84% 15%;
     --radius: 0.75rem;
   }
+
+  .dark {
+    --background: 160 84% 4%;
+    --foreground: 40 33% 98%;
+    --card: 160 84% 6%;
+    --card-foreground: 40 33% 98%;
+    --popover: 160 84% 6%;
+    --popover-foreground: 40 33% 98%;
+    --primary: 38 92% 50%; /* Warm Gold becomes primary in dark mode for better visibility */
+    --primary-foreground: 160 84% 4%;
+    --secondary: 160 84% 15%;
+    --secondary-foreground: 38 92% 50%;
+    --muted: 160 84% 12%;
+    --muted-foreground: 160 20% 60%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 160 84% 4%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 40 33% 98%;
+    --border: 160 84% 15%;
+    --input: 160 84% 15%;
+    --ring: 38 92% 50%;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(-5deg); }
+  }
+
+  @keyframes blob {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 8s ease-in-out infinite;
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
 }

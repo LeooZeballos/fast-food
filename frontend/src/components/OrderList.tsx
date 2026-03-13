@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { 
   getOrders, 
   startPreparation, 
@@ -10,9 +11,8 @@ import {
 } from "@/api";
 import type { FoodOrderDTO } from "@/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Play, 
   CheckCircle, 
@@ -24,13 +24,14 @@ import {
   ChefHat, 
   PackageCheck, 
   Ban, 
-  History,
-  ExternalLink
+  History
 } from "lucide-react";
-import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { cn } from "@/lib/utils";
 
+import { ErrorState } from "@/components/ui/error-state";
+
 function TimeAgo({ timestamp }: { timestamp: string }) {
+  const { t } = useTranslation();
   const [minutes, setMinutes] = useState(0);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ function TimeAgo({ timestamp }: { timestamp: string }) {
       minutes > 5 ? "text-secondary bg-secondary/10" : "text-primary/40 bg-slate-50"
     )}>
       <Clock className="h-3 w-3" />
-      {minutes === 0 ? "Just now" : `${minutes}m ago`}
+      {minutes === 0 ? t('common.justNow') : t('common.minutesAgo', { count: minutes })}
     </div>
   );
 }
@@ -69,13 +70,14 @@ function OrderCard({
     reject: (id: number) => void;
   }
 }) {
+  const { t } = useTranslation();
   const config = {
-    "Created": { color: "bg-slate-500", icon: <History className="h-4 w-4" />, label: "NEW" },
-    "Inpreparation": { color: "bg-blue-500", icon: <ChefHat className="h-4 w-4" />, label: "PREP" },
-    "Done": { color: "bg-orange-500", icon: <PackageCheck className="h-4 w-4" />, label: "READY" },
-    "Paid": { color: "bg-green-600", icon: <CreditCard className="h-4 w-4" />, label: "PAID" },
-    "Cancelled": { color: "bg-destructive", icon: <Ban className="h-4 w-4" />, label: "VOID" },
-    "Rejected": { color: "bg-destructive", icon: <RotateCcw className="h-4 w-4" />, label: "REJ" },
+    "Created": { color: "bg-slate-500", icon: <History className="h-4 w-4" />, label: t('kitchen.actions.start').toUpperCase() },
+    "Inpreparation": { color: "bg-blue-500", icon: <ChefHat className="h-4 w-4" />, label: t('kitchen.actions.ready').toUpperCase() },
+    "Done": { color: "bg-orange-500", icon: <PackageCheck className="h-4 w-4" />, label: t('kitchen.states.ready') },
+    "Paid": { color: "bg-green-600", icon: <CreditCard className="h-4 w-4" />, label: t('kitchen.states.paid') },
+    "Cancelled": { color: "bg-destructive", icon: <Ban className="h-4 w-4" />, label: t('kitchen.states.void') },
+    "Rejected": { color: "bg-destructive", icon: <RotateCcw className="h-4 w-4" />, label: t('kitchen.states.rej') },
   }[order.formattedState] || { color: "bg-slate-500", icon: null, label: order.formattedState };
 
   return (
@@ -112,7 +114,7 @@ function OrderCard({
           {order.formattedState === "Created" && (
             <div className="flex gap-2">
               <Button className="flex-grow h-11 bg-primary text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.start(order.id)}>
-                <Play className="mr-2 h-4 w-4 text-secondary" /> Start
+                <Play className="mr-2 h-4 w-4 text-secondary" /> {t('kitchen.actions.start')}
               </Button>
               <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
                 <XCircle className="h-5 w-5" />
@@ -122,7 +124,7 @@ function OrderCard({
           {order.formattedState === "Inpreparation" && (
             <div className="flex gap-2">
               <Button className="flex-grow h-11 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.finish(order.id)}>
-                <CheckCircle className="mr-2 h-4 w-4" /> Ready
+                <CheckCircle className="mr-2 h-4 w-4" /> {t('kitchen.actions.ready')}
               </Button>
               <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
                 <XCircle className="h-5 w-5" />
@@ -132,7 +134,7 @@ function OrderCard({
           {order.formattedState === "Done" && (
             <div className="flex gap-2">
               <Button className="flex-grow h-11 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.pay(order.id)}>
-                <CreditCard className="mr-2 h-4 w-4" /> Pay
+                <CreditCard className="mr-2 h-4 w-4" /> {t('kitchen.actions.pay')}
               </Button>
               <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.reject(order.id)}>
                 <RotateCcw className="h-5 w-5" />
@@ -147,6 +149,7 @@ function OrderCard({
 
 export function OrderList() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const { data: orders, isLoading } = useQuery({
     queryKey: ["orders", "all"],
     queryFn: () => getOrders("all"),
@@ -180,10 +183,21 @@ export function OrderList() {
     );
   }
 
+  if (orders === undefined) {
+    return (
+      <ErrorState 
+        variant="connection"
+        title={t('kitchen.offline')}
+        message={t('kitchen.offlineMessage')}
+        onRetry={() => queryClient.invalidateQueries({ queryKey: ["orders"] })}
+      />
+    );
+  }
+
   const columns = [
-    { id: "Created", label: "New Orders", color: "text-slate-400", icon: <History className="h-5 w-5" /> },
-    { id: "Inpreparation", label: "In Kitchen", color: "text-blue-500", icon: <ChefHat className="h-5 w-5" /> },
-    { id: "Done", label: "Ready to Serve", color: "text-orange-500", icon: <PackageCheck className="h-5 w-5" /> },
+    { id: "Created", label: t('kitchen.columns.new'), color: "text-slate-400", icon: <History className="h-5 w-5" /> },
+    { id: "Inpreparation", label: t('kitchen.columns.prep'), color: "text-blue-500", icon: <ChefHat className="h-5 w-5" /> },
+    { id: "Done", label: t('kitchen.columns.ready'), color: "text-orange-500", icon: <PackageCheck className="h-5 w-5" /> },
   ];
 
   return (
@@ -192,13 +206,13 @@ export function OrderList() {
         <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
         <div className="space-y-1">
           <h2 className="text-4xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-4">
-            <ChefHat className="h-10 w-10 text-secondary" /> Kitchen KDS
+            <ChefHat className="h-10 w-10 text-secondary" /> {t('kitchen.kds')}
           </h2>
-          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">Visual Order Workflow</p>
+          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">{t('kitchen.visualWorkflow')}</p>
         </div>
         <div className="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border-2">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Feed Active</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('kitchen.liveFeed')}</span>
         </div>
       </div>
 
@@ -215,14 +229,14 @@ export function OrderList() {
               </Badge>
             </div>
             
-            <div className="flex flex-col min-h-[500px] bg-slate-50/50 rounded-[2.5rem] p-4 border-2 border-dashed border-slate-200/60">
+            <div className="flex flex-col min-h-[500px] bg-white rounded-[2.5rem] p-4 border-2 border-slate-100 shadow-sm relative">
               {orders?.filter(o => o.formattedState === column.id).map(order => (
                 <OrderCard key={order.id} order={order} onAction={actions} />
               ))}
               {orders?.filter(o => o.formattedState === column.id).length === 0 && (
                 <div className="flex-grow flex flex-col items-center justify-center opacity-20 py-12">
                   <PackageCheck className="h-12 w-12 mb-2" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">Clear</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">{t('common.clear')}</p>
                 </div>
               )}
             </div>

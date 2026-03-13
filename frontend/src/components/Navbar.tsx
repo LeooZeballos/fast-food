@@ -1,11 +1,55 @@
 import { useState, useEffect } from "react";
-import { ClipboardList, ShoppingCart, ShieldCheck, Menu as MenuIcon, UtensilsCrossed, Clock } from "lucide-react";
+import { ClipboardList, ShoppingCart, ShieldCheck, Menu as MenuIcon, Clock, Languages, LogOut, User, Sun, Moon } from "lucide-react";
+import { BurgerIcon } from "./ui/burger-icon";
 import type { View } from "../App";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../AuthContext";
+import { useTheme } from "../ThemeContext";
 
 interface NavbarProps {
   activeView: View;
   onViewChange: (view: View) => void;
+}
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="flex items-center justify-center w-10 h-10 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group"
+      title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+    >
+      {theme === "dark" ? (
+        <Sun className="h-4 w-4 text-secondary group-hover:rotate-90 transition-transform duration-500" />
+      ) : (
+        <Moon className="h-4 w-4 text-secondary group-hover:-rotate-12 transition-transform duration-500" />
+      )}
+    </button>
+  );
+}
+
+function LanguageSwitcher() {
+  const { i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'es' : 'en';
+    i18n.changeLanguage(newLang);
+  };
+
+  return (
+    <button 
+      onClick={toggleLanguage}
+      className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors group"
+      title={i18n.language === 'en' ? 'Switch to Spanish' : 'Cambiar a Inglés'}
+    >
+      <Languages className="h-4 w-4 text-secondary group-hover:scale-110 transition-transform" />
+      <span className="font-black text-[10px] tracking-widest text-white/80 uppercase">
+        {i18n.language === 'en' ? 'EN' : 'ES'}
+      </span>
+    </button>
+  );
 }
 
 function LiveClock() {
@@ -28,6 +72,16 @@ function LiveClock() {
 
 export function Navbar({ activeView, onViewChange }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useTranslation();
+  const { username, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   const NavButton = ({ view, icon: Icon, label, sublabel }: { view: View, icon: any, label: string, sublabel: string }) => (
     <button
@@ -64,14 +118,14 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
             className="flex items-center cursor-pointer group"
             onClick={() => onViewChange("take-order")}
           >
-            <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center mr-4 group-hover:rotate-12 transition-transform shadow-xl shadow-secondary/20">
-              <UtensilsCrossed className="text-primary h-6 w-6" />
+            <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mr-4 group-hover:rotate-12 transition-transform shadow-xl border border-white/20 p-2">
+              <BurgerIcon className="w-full h-full drop-shadow-lg" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-3xl font-black tracking-tighter italic uppercase leading-none">
                 FastFood<span className="text-secondary">OS</span>
               </h1>
-              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40 mt-1">Operational System v1.0</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40 mt-1">{t('nav.operationalSystem')} v1.0</p>
             </div>
           </div>
 
@@ -80,25 +134,40 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
             <NavButton 
               view="take-order" 
               icon={ShoppingCart} 
-              label="Terminal" 
-              sublabel="Sales" 
+              label={t('nav.takeOrder')} 
+              sublabel={t('nav.sales')} 
             />
             <NavButton 
               view="orders" 
               icon={ClipboardList} 
-              label="Kitchen" 
-              sublabel="Production" 
+              label={t('nav.kitchen')} 
+              sublabel={t('nav.production')} 
             />
             <NavButton 
               view="admin" 
               icon={ShieldCheck} 
-              label="Console" 
-              sublabel="System" 
+              label={t('nav.admin')} 
+              sublabel={t('nav.system')} 
             />
           </div>
 
           {/* Right Side Info */}
           <div className="flex items-center gap-4">
+            <div className="hidden xl:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+              <User className="h-4 w-4 text-secondary" />
+              <span className="text-xs font-black uppercase tracking-widest text-white/80">{username}</span>
+              <div className="w-px h-4 bg-white/10 mx-2" />
+              <button 
+                onClick={handleLogout}
+                className="hover:text-secondary transition-colors group flex items-center gap-2"
+                title={t('nav.logout')}
+              >
+                <LogOut className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+
+            <ThemeToggle />
+            <LanguageSwitcher />
             <LiveClock />
             
             {/* Mobile Menu Button */}
@@ -121,19 +190,19 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
             onClick={() => { onViewChange("take-order"); setIsMenuOpen(false); }}
             className={cn("w-full px-6 py-4 rounded-2xl text-left font-black uppercase italic tracking-tighter flex items-center gap-4", activeView === "take-order" ? "bg-secondary text-primary" : "hover:bg-white/5")}
           >
-            <ShoppingCart className="h-5 w-5" /> Sales Terminal
+            <ShoppingCart className="h-5 w-5" /> {t('nav.takeOrder')}
           </button>
           <button
             onClick={() => { onViewChange("orders"); setIsMenuOpen(false); }}
             className={cn("w-full px-6 py-4 rounded-2xl text-left font-black uppercase italic tracking-tighter flex items-center gap-4", activeView === "orders" ? "bg-secondary text-primary" : "hover:bg-white/5")}
           >
-            <ClipboardList className="h-5 w-5" /> Kitchen Display
+            <ClipboardList className="h-5 w-5" /> {t('nav.kitchen')}
           </button>
           <button
             onClick={() => { onViewChange("admin"); setIsMenuOpen(false); }}
             className={cn("w-full px-6 py-4 rounded-2xl text-left font-black uppercase italic tracking-tighter flex items-center gap-4", activeView === "admin" ? "bg-secondary text-primary" : "hover:bg-white/5")}
           >
-            <ShieldCheck className="h-5 w-5" /> System Console
+            <ShieldCheck className="h-5 w-5" /> {t('nav.admin')}
           </button>
         </div>
       )}

@@ -35,6 +35,12 @@ This file documents project-specific findings, architectural decisions, and conf
 - **Service Verification:** Ensure that the application starts correctly after your changes by checking the logs (`tail -f backend.log`).
 - **Proof of Success:** Always include the test results in your final response: `Tests run: X, Failures: 0, Errors: 0`.
 
+## 🌎 Localization & Multi-language Support
+- **Bilingual Mandate:** The application MUST be fully bilingual (English and Spanish).
+- **New UI Text:** Every new string, label, placeholder, or notification MUST be added to BOTH `frontend/src/locales/en.json` and `frontend/src/locales/es.json`.
+- **No Hardcoded Strings:** Do not use hardcoded text in React components or Thymeleaf templates. Always use `t('key')` in React or `#{key}` in Thymeleaf.
+- **Dynamic Formatting:** Use the active language (`i18n.language`) to dynamically format currencies, dates, and numbers.
+
 ## Testing Strategy
 - **Integration Tests:** Files like `FastFoodApplicationTests` must use `@ActiveProfiles("test")` and `@TestPropertySource` to override system environment variables (like `SPRING_DATASOURCE_URL`) to ensure they run against H2 rather than attempting to connect to the external PostgreSQL service.
 - **Local Native Maven:** Use `mvn` directly in the CLI instead of `./mvnw` to avoid execution/permission issues in the container environment.

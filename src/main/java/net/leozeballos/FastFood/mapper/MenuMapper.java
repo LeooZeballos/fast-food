@@ -17,6 +17,7 @@ public class MenuMapper {
         return MenuDTO.builder()
                 .id(menu.getId())
                 .name(menu.getName())
+                .nameEs(menu.getNameEs())
                 .price(menu.calculatePrice())
                 .discountPercentage(discount * 100)
                 .productsList(menu.getItems().stream()

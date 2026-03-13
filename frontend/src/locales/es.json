@@ -1,0 +1,192 @@
+{
+  "common": {
+    "all": "Todo",
+    "search": "Buscar...",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "saveChanges": "Guardar Cambios",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "status": "Estado",
+    "active": "Activo",
+    "disabled": "Desactivado",
+    "actions": "Acciones",
+    "name": "Nombre",
+    "price": "Precio",
+    "discount": "Descuento",
+    "total": "Total",
+    "justNow": "Recién",
+    "minutesAgo": "hace {{count}}m",
+    "noResults": "No se encontraron resultados",
+    "success": "Éxito",
+    "error": "Error",
+    "create": "Crear",
+    "add": "Agregar",
+    "new": "Nuevo",
+    "items": "Items",
+    "clear": "Vaciar",
+    "clearConfirm": "¿Vaciar el pedido actual?",
+    "noResultsAdjust": "Intenta ajustar tu búsqueda o filtros"
+  },
+  "nav": {
+    "takeOrder": "Tomar Pedido",
+    "kitchen": "Cocina",
+    "admin": "Admin",
+    "sales": "Ventas",
+    "production": "Producción",
+    "system": "Sistema",
+    "operationalSystem": "Sistema Operativo",
+    "logout": "Cerrar Sesión"
+  },
+  "takeOrder": {
+    "posTerminal": "Terminal POS",
+    "kitchenManagement": "Sistema de Gestión de Pedidos",
+    "branch": "Sucursal de Servicio",
+    "selectLocation": "Seleccionar ubicación...",
+    "categories": {
+      "all": "Todo",
+      "burger": "Hamburguesas",
+      "drink": "Bebidas",
+      "sides": "Acompañamientos",
+      "combo": "Combos"
+    },
+    "tabs": {
+      "all": "Todo",
+      "products": "A La Carta",
+      "menus": "Combos"
+    },
+    "cart": {
+      "ticket": "Ticket",
+      "orderType": "TIPO DE PEDIDO",
+      "dineIn": "EN LOCAL",
+      "totalDue": "Total a Pagar",
+      "placeOrder": "Realizar Pedido",
+      "voidTicket": "Anular Ticket",
+      "sending": "ENVIANDO...",
+      "success": "¡Pedido realizado con éxito!",
+      "successDesc": "La cocina ha recibido tu pedido.",
+      "error": "Error al realizar el pedido",
+      "emptyCart": "Carrito Vacío",
+      "emptyCartDesc": "Agrega algunos productos antes de finalizar.",
+      "missingBranch": "Falta Sucursal",
+      "missingBranchDesc": "Por favor selecciona una sucursal antes de enviar.",
+      "saveDiscount": "Ahorra"
+    }
+  },
+  "kitchen": {
+    "kds": "KDS de Cocina",
+    "visualWorkflow": "Flujo de Trabajo Visual",
+    "liveFeed": "Señal en Vivo Activa",
+    "offline": "Sistema de Cocina Desconectado",
+    "offlineMessage": "No podemos conectar con el sistema de pedidos. La pantalla de cocina podría estar desconectada.",
+    "columns": {
+      "new": "Nuevos Pedidos",
+      "prep": "En Cocina",
+      "ready": "Listo para Servir"
+    },
+    "actions": {
+      "start": "Empezar",
+      "ready": "Listo",
+      "pay": "Pagar",
+      "cancel": "Anular",
+      "reject": "Rechazar"
+    },
+    "states": {
+      "ready": "LISTO",
+      "paid": "PAGADO",
+      "void": "ANULADO",
+      "rej": "RECH"
+    }
+  },
+  "admin": {
+    "panel": "Panel de Administración",
+    "management": "Sistema de Gestión y Configuración",
+    "tabs": {
+      "products": "Productos",
+      "menus": "Menús",
+      "branches": "Sucursales"
+    },
+    "branches": {
+      "title": "Sucursales",
+      "subtitle": "Gestión de ubicaciones",
+      "new": "Nueva Sucursal",
+      "edit": "Editar Sucursal",
+      "name": "Nombre de Sucursal",
+      "street": "Calle",
+      "city": "Ciudad",
+      "placeholderName": "ej. Sucursal Centro",
+      "placeholderStreet": "ej. Av. Principal 123",
+      "placeholderCity": "ej. Buenos Aires",
+      "create": "Crear Sucursal",
+      "successCreate": "Sucursal creada con éxito",
+      "successUpdate": "Sucursal actualizada con éxito",
+      "successDelete": "Sucursal eliminada con éxito",
+      "errorCreate": "Error al crear sucursal",
+      "errorUpdate": "Error al actualizar sucursal",
+      "offlineTitle": "Sucursales no disponibles",
+      "offlineMessage": "Tuvimos problemas al cargar las sucursales. Por favor revisa tu conexión."
+    },
+    "products": {
+      "title": "Productos",
+      "subtitle": "Gestión de ítems individuales",
+      "new": "Nuevo Producto",
+      "edit": "Editar Producto",
+      "name": "Nombre del Producto",
+      "placeholder": "ej. Hamburguesa con Queso",
+      "category": "Categoría / Icono",
+      "selectIcon": "Seleccionar icono...",
+      "successCreate": "Producto creado con éxito",
+      "successUpdate": "Producto actualizado con éxito",
+      "successDelete": "Producto eliminado con éxito",
+      "errorCreate": "Error al crear producto",
+      "errorUpdate": "Error al actualizar producto",
+      "offlineTitle": "Productos no disponibles",
+      "offlineMessage": "Tuvimos problemas al cargar la lista de productos. Por favor revisa tu conexión.",
+      "icons": {
+        "burger": "Hamburguesa",
+        "sides": "Papas/Acompañamientos",
+        "drink": "Refresco",
+        "beer": "Cerveza",
+        "shake": "Malteada",
+        "coffee": "Café"
+      }
+    },
+    "menus": {
+      "title": "Menús",
+      "subtitle": "Gestión de combos",
+      "new": "Nuevo Menú",
+      "edit": "Editar Menú",
+      "name": "Nombre del Menú",
+      "discount": "Descuento (%)",
+      "placeholder": "ej. Combo Deluxe",
+      "style": "Estilo / Icono",
+      "itemsNote": "Los ítems se pueden agregar luego en el editor.",
+      "successCreate": "Menú creado con éxito",
+      "successUpdate": "Menú actualizado con éxito",
+      "successDelete": "Menú eliminado con éxito",
+      "errorCreate": "Error al crear menú",
+      "errorUpdate": "Error al actualizar menú",
+      "offlineTitle": "Menús no disponibles",
+      "offlineMessage": "Tuvimos problemas al cargar los combos. Por favor revisa tu conexión.",
+      "icons": {
+        "combo": "Combo Estándar",
+        "burger": "Especial de Hamburguesa",
+        "drink": "Especial de Bebida"
+      }
+    }
+  },
+  "login": {
+    "signInToContinue": "Por favor inicia sesión para continuar",
+    "welcomeBack": "Bienvenido de nuevo",
+    "enterCredentials": "Ingresa tus credenciales para acceder al sistema",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "signIn": "Iniciar Sesión",
+    "signingIn": "Iniciando sesión...",
+    "success": "¡Sesión iniciada con éxito!",
+    "error": "Credenciales inválidas. Inténtalo de nuevo.",
+    "selectLanguage": "Seleccionar Idioma",
+    "terminal": "Acceso Seguro a Terminal"
+  }
+}

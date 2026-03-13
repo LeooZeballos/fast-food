@@ -14,6 +14,7 @@ public class ProductMapper {
         return ProductDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .nameEs(product.getNameEs())
                 .price(product.getPrice())
                 .icon(product.getIcon())
                 .active(product.isActive())

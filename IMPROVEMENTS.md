@@ -20,3 +20,15 @@ This document tracks the planned and implemented improvements for the FastFood a
     - [ ] **Loading Skeletons**: Replace "Loading..." text with animated grey blocks.
     - [ ] **Micro-animations**: Pulse effects for active states and success animations.
 - [ ] **Visual Hierarchy on Cards**: Switch Product and Menu lists from tables to visually appealing grid cards.
+
+## 🛡️ Security Specialist (Audit & Compliance)
+
+### Critical & High Priority
+- [x] **Implement Spring Security**: Added Spring Security with database-backed authentication, modern password hashing (BCrypt), and frontend login/logout flow.
+- [x] **Restrict Actuator Endpoints**: Restricted exposure to `health,info` in `application.properties`.
+- [ ] **Secure Database Credentials**: Encrypt plain-text passwords in `application-dev.properties` and `docker-compose.yml` using Jasypt.
+
+### Medium & Low Priority
+- [x] **Update Frontend Dependencies**: Patched the `hono` vulnerability (Prototype Pollution) by updating dependencies. `pnpm audit` now reports no vulnerabilities.
+- [x] **Enable CSRF Protection**: Implemented Cookie-based CSRF protection with full React/Axios integration.
+- [ ] **Audit Data Access**: Ensure branch-specific data is only accessible to authorized users of that branch.

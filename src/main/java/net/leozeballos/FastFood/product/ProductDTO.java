@@ -12,6 +12,8 @@ public record ProductDTO(
     @NotBlank(message = "Product name is required")
     @Size(min = 1, max = 50, message = "Product name must be between 1 and 50 characters")
     String name,
+    @Size(max = 50)
+    String nameEs,
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
     double price,
     String icon,

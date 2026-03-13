@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/branches")
@@ -16,6 +18,11 @@ public class BranchRestController {
 
     private final BranchService branchService;
     private final BranchMapper branchMapper;
+
+    @GetMapping("/me")
+    public Map<String, String> getMe(Principal principal) {
+        return Map.of("name", principal != null ? principal.getName() : "anonymous");
+    }
 
     @GetMapping
     public List<BranchDTO> getAll() {

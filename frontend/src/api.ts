@@ -2,6 +2,9 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:4080/api/v1",
+  withCredentials: true,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 export type BranchDTO = {
@@ -14,6 +17,7 @@ export type BranchDTO = {
 export type ProductDTO = {
   id?: number;
   name: string;
+  nameEs?: string;
   price: number;
   icon?: string;
   active: boolean;
@@ -23,6 +27,7 @@ export type ProductDTO = {
 export type MenuDTO = {
   id?: number;
   name: string;
+  nameEs?: string;
   price: number;
   discountPercentage: number;
   productsList: string;
@@ -165,6 +170,36 @@ export const rejectOrder = async (id: number) => {
 
 export const createOrder = async (order: CreateOrderDTO) => {
   const response = await api.post<FoodOrderDTO>("/orders", order);
+  return response.data;
+};
+
+const authApi = axios.create({
+  baseURL: "http://localhost:4080",
+  withCredentials: true,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
+});
+
+export const login = async (username: string, password: string) => {
+  const params = new URLSearchParams();
+  params.append("username", username);
+  params.append("password", password);
+  
+  // Spring Security's default /login expects form-data
+  await authApi.post("/login", params, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  });
+};
+
+export const logout = async () => {
+  await authApi.post("/logout", null);
+};
+
+export const getMe = async () => {
+  const response = await api.get<{ name: string }>("/branches/me"); // Simple protected endpoint to check auth
   return response.data;
 };
 

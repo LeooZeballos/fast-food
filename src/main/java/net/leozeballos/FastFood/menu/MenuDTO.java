@@ -7,6 +7,7 @@ import net.leozeballos.FastFood.util.FormattingUtils;
 public record MenuDTO(
     Long id,
     String name,
+    String nameEs,
     double price,
     double discountPercentage,
     String productsList,

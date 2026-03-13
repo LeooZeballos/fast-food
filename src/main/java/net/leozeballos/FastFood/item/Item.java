@@ -41,6 +41,13 @@ public abstract class Item {
     private String name;
 
     /**
+     * Spanish translation of the item name.
+     */
+    @Size(max = 50, message = "Spanish name must be under 50 characters")
+    @Column(length = 50)
+    private String nameEs;
+
+    /**
      * The icon identifier for the item (e.g., 'burger', 'drink').
      */
     @Column(length = 30)
