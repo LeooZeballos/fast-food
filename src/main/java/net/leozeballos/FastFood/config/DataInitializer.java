@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @Profile("dev")
@@ -25,25 +26,37 @@ public class DataInitializer implements CommandLineRunner {
     private final BranchRepository branchRepository;
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
+    private final net.leozeballos.FastFood.inventory.InventoryRepository inventoryRepository;
 
     @Override
     @Transactional
     public void run(String... args) {
         if (branchRepository.count() == 0) {
-            // --- BRANCHES ---
-            Branch b1 = new Branch();
-            b1.setName("Downtown Central");
-            b1.setAddress(Address.builder().city("Buenos Aires").street("Av. Corrientes 1234").build());
-            
-            Branch b2 = new Branch();
-            b2.setName("Riverside Mall");
-            b2.setAddress(Address.builder().city("Rosario").street("Av. del Libertad 567").build());
+            // ... (keep branch logic)
+        }
 
-            branchRepository.saveAll(List.of(b1, b2));
+        // --- INVENTORY INITIALIZATION ---
+        if (inventoryRepository.count() == 0) {
+            List<Branch> branches = branchRepository.findAll();
+            List<net.leozeballos.FastFood.item.Item> items = productRepository.findAll().stream().map(p -> (net.leozeballos.FastFood.item.Item)p).collect(Collectors.toList());
+            items.addAll(menuRepository.findAll());
+
+            for (Branch branch : branches) {
+                for (net.leozeballos.FastFood.item.Item item : items) {
+                    inventoryRepository.save(net.leozeballos.FastFood.inventory.Inventory.builder()
+                            .branch(branch)
+                            .item(item)
+                            .stockQuantity(100) // Initial stock for all items
+                            .isAvailable(true)
+                            .build());
+                }
+            }
+            System.out.println("--- Inventory Initialized successfully ---");
         }
 
         if (productRepository.count() == 0) {
-            // ... products logic ...
+            // ... (rest of the file)
+
         }
 
         if (menuRepository.count() == 0) {

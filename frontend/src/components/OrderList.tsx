@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   getOrders, 
@@ -9,39 +9,148 @@ import {
   rejectOrder
 } from "@/api";
 import type { FoodOrderDTO } from "@/api";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Play, CheckCircle, CreditCard, XCircle, RotateCcw } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Play, 
+  CheckCircle, 
+  CreditCard, 
+  XCircle, 
+  RotateCcw, 
+  Clock, 
+  Store, 
+  ChefHat, 
+  PackageCheck, 
+  Ban, 
+  History,
+  ExternalLink
+} from "lucide-react";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { cn } from "@/lib/utils";
+
+function TimeAgo({ timestamp }: { timestamp: string }) {
+  const [minutes, setMinutes] = useState(0);
+
+  useEffect(() => {
+    const calculate = () => {
+      const start = new Date(timestamp).getTime();
+      const now = new Date().getTime();
+      setMinutes(Math.floor((now - start) / 60000));
+    };
+    calculate();
+    const interval = setInterval(calculate, 30000);
+    return () => clearInterval(interval);
+  }, [timestamp]);
+
+  return (
+    <div className={cn(
+      "flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md",
+      minutes > 15 ? "text-destructive bg-destructive/10 animate-pulse" : 
+      minutes > 5 ? "text-secondary bg-secondary/10" : "text-primary/40 bg-slate-50"
+    )}>
+      <Clock className="h-3 w-3" />
+      {minutes === 0 ? "Just now" : `${minutes}m ago`}
+    </div>
+  );
+}
+
+function OrderCard({ 
+  order, 
+  onAction 
+}: { 
+  order: FoodOrderDTO; 
+  onAction: {
+    start: (id: number) => void;
+    finish: (id: number) => void;
+    pay: (id: number) => void;
+    cancel: (id: number) => void;
+    reject: (id: number) => void;
+  }
+}) {
+  const config = {
+    "Created": { color: "bg-slate-500", icon: <History className="h-4 w-4" />, label: "NEW" },
+    "Inpreparation": { color: "bg-blue-500", icon: <ChefHat className="h-4 w-4" />, label: "PREP" },
+    "Done": { color: "bg-orange-500", icon: <PackageCheck className="h-4 w-4" />, label: "READY" },
+    "Paid": { color: "bg-green-600", icon: <CreditCard className="h-4 w-4" />, label: "PAID" },
+    "Cancelled": { color: "bg-destructive", icon: <Ban className="h-4 w-4" />, label: "VOID" },
+    "Rejected": { color: "bg-destructive", icon: <RotateCcw className="h-4 w-4" />, label: "REJ" },
+  }[order.formattedState] || { color: "bg-slate-500", icon: null, label: order.formattedState };
+
+  return (
+    <Card className="group border-2 bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all select-none flex flex-col relative mb-4">
+      <CardHeader className="p-5 pb-0 space-y-3">
+        <div className="flex justify-between items-start">
+          <div className="space-y-0.5">
+            <p className="font-mono text-[9px] font-black text-slate-300">#{order.id}</p>
+            <div className="flex items-center gap-1.5 text-primary">
+              <Store className="h-2.5 w-2.5 text-secondary" />
+              <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">{order.branchName}</span>
+            </div>
+          </div>
+          <TimeAgo timestamp={order.creationTimestamp} />
+        </div>
+      </CardHeader>
+      
+      <CardContent className="p-5 pt-3 flex-grow">
+        <div className="space-y-3">
+          <p className="text-[11px] font-black text-slate-900 leading-tight uppercase italic line-clamp-3">
+            {order.formattedFoodOrderDetails}
+          </p>
+          <div className="flex justify-between items-center pt-3 border-t-2 border-slate-50">
+            <p className="text-lg font-black text-secondary tracking-tighter">{order.formattedTotal}</p>
+            <Badge className={cn("rounded-lg px-2 py-0.5 font-black text-[8px] tracking-[0.15em] border-none text-white", config.color)}>
+              {config.label}
+            </Badge>
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="p-5 pt-0 mt-auto">
+        <div className="grid grid-cols-1 gap-2 w-full">
+          {order.formattedState === "Created" && (
+            <div className="flex gap-2">
+              <Button className="flex-grow h-11 bg-primary text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.start(order.id)}>
+                <Play className="mr-2 h-4 w-4 text-secondary" /> Start
+              </Button>
+              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
+                <XCircle className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+          {order.formattedState === "Inpreparation" && (
+            <div className="flex gap-2">
+              <Button className="flex-grow h-11 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.finish(order.id)}>
+                <CheckCircle className="mr-2 h-4 w-4" /> Ready
+              </Button>
+              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
+                <XCircle className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+          {order.formattedState === "Done" && (
+            <div className="flex gap-2">
+              <Button className="flex-grow h-11 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.pay(order.id)}>
+                <CreditCard className="mr-2 h-4 w-4" /> Pay
+              </Button>
+              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.reject(order.id)}>
+                <RotateCcw className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
 
 export function OrderList() {
-  const [filter, setFilter] = useState(() => localStorage.getItem("orderListFilter") || "all");
   const queryClient = useQueryClient();
-
-  const handleFilterChange = (value: string) => {
-    setFilter(value);
-    localStorage.setItem("orderListFilter", value);
-  };
-
   const { data: orders, isLoading } = useQuery({
-    queryKey: ["orders", filter],
-    queryFn: () => getOrders(filter),
+    queryKey: ["orders", "all"],
+    queryFn: () => getOrders("all"),
+    refetchInterval: 5000,
   });
 
   const mutationOptions = {
@@ -50,115 +159,76 @@ export function OrderList() {
     },
   };
 
-  const startMutation = useMutation({ mutationFn: startPreparation, ...mutationOptions });
-  const finishMutation = useMutation({ mutationFn: finishPreparation, ...mutationOptions });
-  const payMutation = useMutation({ mutationFn: confirmPayment, ...mutationOptions });
-  const cancelMutation = useMutation({ mutationFn: cancelOrder, ...mutationOptions });
-  const rejectMutation = useMutation({ mutationFn: rejectOrder, ...mutationOptions });
-
-  const getStatusBadge = (state: string) => {
-    switch (state) {
-      case "Created": return <Badge variant="secondary">{state}</Badge>;
-      case "Inpreparation": return <Badge className="bg-blue-500">{state}</Badge>;
-      case "Done": return <Badge className="bg-green-500">{state}</Badge>;
-      case "Paid": return <Badge variant="outline" className="border-green-500 text-green-500">{state}</Badge>;
-      case "Cancelled": return <Badge variant="destructive">{state}</Badge>;
-      case "Rejected": return <Badge variant="destructive">{state}</Badge>;
-      default: return <Badge>{state}</Badge>;
-    }
+  const actions = {
+    start: useMutation({ mutationFn: startPreparation, ...mutationOptions }).mutate,
+    finish: useMutation({ mutationFn: finishPreparation, ...mutationOptions }).mutate,
+    pay: useMutation({ mutationFn: confirmPayment, ...mutationOptions }).mutate,
+    cancel: useMutation({ mutationFn: cancelOrder, ...mutationOptions }).mutate,
+    reject: useMutation({ mutationFn: rejectOrder, ...mutationOptions }).mutate,
   };
 
   if (isLoading) {
-    return <TableSkeleton title="Orders Management" columnCount={6} showButton={false} />;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 animate-pulse">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="space-y-4">
+            <div className="h-12 bg-slate-100 rounded-2xl w-1/2" />
+            {[1, 2].map(j => <div key={j} className="h-48 bg-white border-2 rounded-[2rem]" />)}
+          </div>
+        ))}
+      </div>
+    );
   }
 
+  const columns = [
+    { id: "Created", label: "New Orders", color: "text-slate-400", icon: <History className="h-5 w-5" /> },
+    { id: "Inpreparation", label: "In Kitchen", color: "text-blue-500", icon: <ChefHat className="h-5 w-5" /> },
+    { id: "Done", label: "Ready to Serve", color: "text-orange-500", icon: <PackageCheck className="h-5 w-5" /> },
+  ];
+
   return (
-    <Card className="w-full max-w-5xl mx-auto mt-8">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-2xl font-bold">Orders Management</CardTitle>
-        <div className="w-[180px]">
-          <Select value={filter} onValueChange={handleFilterChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Orders</SelectItem>
-              <SelectItem value="created">Created</SelectItem>
-              <SelectItem value="in_preparation">In Preparation</SelectItem>
-              <SelectItem value="finished">Finished (Done)</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col gap-10 mt-4 animate-in fade-in duration-700 mb-20">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-8 rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
+        <div className="space-y-1">
+          <h2 className="text-4xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-4">
+            <ChefHat className="h-10 w-10 text-secondary" /> Kitchen KDS
+          </h2>
+          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">Visual Order Workflow</p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Branch</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Details</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders?.map((order: FoodOrderDTO) => (
-              <TableRow key={order.id}>
-                <TableCell className="font-mono text-xs">#{order.id}</TableCell>
-                <TableCell>{order.branchName}</TableCell>
-                <TableCell>{getStatusBadge(order.formattedState)}</TableCell>
-                <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                  {order.formattedFoodOrderDetails}
-                </TableCell>
-                <TableCell className="font-bold">{order.formattedTotal}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {order.formattedState === "Created" && (
-                      <>
-                        <Button size="sm" onClick={() => order.id && startMutation.mutate(order.id)}>
-                          <Play className="mr-1 h-3 w-3" /> Start
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => order.id && cancelMutation.mutate(order.id)}>
-                          <XCircle className="mr-1 h-3 w-3" /> Cancel
-                        </Button>
-                      </>
-                    )}
-                    {order.formattedState === "Inpreparation" && (
-                      <>
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => order.id && finishMutation.mutate(order.id)}>
-                          <CheckCircle className="mr-1 h-3 w-3" /> Finish
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => order.id && cancelMutation.mutate(order.id)}>
-                          <XCircle className="mr-1 h-3 w-3" /> Cancel
-                        </Button>
-                      </>
-                    )}
-                    {order.formattedState === "Done" && (
-                      <>
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={() => order.id && payMutation.mutate(order.id)}>
-                          <CreditCard className="mr-1 h-3 w-3" /> Pay
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => order.id && rejectMutation.mutate(order.id)}>
-                          <RotateCcw className="mr-1 h-3 w-3" /> Reject
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {orders?.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  No orders found for this filter.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+        <div className="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border-2">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Feed Active</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        {columns.map(column => (
+          <div key={column.id} className="flex flex-col gap-6">
+            <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-3">
+                <span className={cn("p-2 rounded-xl bg-white border-2", column.color)}>{column.icon}</span>
+                <h3 className="font-black italic uppercase tracking-tighter text-xl text-slate-900">{column.label}</h3>
+              </div>
+              <Badge variant="secondary" className="rounded-lg font-black text-xs px-2.5 py-0.5 bg-slate-100 text-slate-400">
+                {orders?.filter(o => o.formattedState === column.id).length || 0}
+              </Badge>
+            </div>
+            
+            <div className="flex flex-col min-h-[500px] bg-slate-50/50 rounded-[2.5rem] p-4 border-2 border-dashed border-slate-200/60">
+              {orders?.filter(o => o.formattedState === column.id).map(order => (
+                <OrderCard key={order.id} order={order} onAction={actions} />
+              ))}
+              {orders?.filter(o => o.formattedState === column.id).length === 0 && (
+                <div className="flex-grow flex flex-col items-center justify-center opacity-20 py-12">
+                  <PackageCheck className="h-12 w-12 mb-2" />
+                  <p className="text-[10px] font-black uppercase tracking-widest">Clear</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

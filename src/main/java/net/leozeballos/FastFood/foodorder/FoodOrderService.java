@@ -31,6 +31,7 @@ public class FoodOrderService {
     private final FoodOrderStateChangeInterceptor stateChangeInterceptor;
     private final net.leozeballos.FastFood.branch.BranchService branchService;
     private final net.leozeballos.FastFood.item.ItemService itemService;
+    private final net.leozeballos.FastFood.inventory.InventoryService inventoryService;
     private final FoodOrderMapper foodOrderMapper;
 
     public List<FoodOrderDTO> findAllDTO() {
@@ -56,6 +57,13 @@ public class FoodOrderService {
 
     @Transactional
     public FoodOrder createOrder(CreateOrderDTO createOrderDTO) {
+        // Validate stock before creating the order
+        for (var itemDTO : createOrderDTO.items()) {
+            if (!inventoryService.isItemAvailable(createOrderDTO.branchId(), itemDTO.itemId(), itemDTO.quantity())) {
+                throw new IllegalStateException("Item not available in branch inventory: " + itemDTO.itemId());
+            }
+        }
+
         FoodOrder order = new FoodOrder();
         order.setState(FoodOrderState.CREATED);
         order.setBranch(branchService.findById(createOrderDTO.branchId()));
@@ -67,6 +75,10 @@ public class FoodOrderService {
                     detail.setItem(item);
                     detail.setQuantity(itemDTO.quantity());
                     detail.setHistoricPrice(item.calculatePrice());
+                    
+                    // Decrement stock
+                    inventoryService.decrementStock(createOrderDTO.branchId(), itemDTO.itemId(), itemDTO.quantity());
+                    
                     return detail;
                 })
                 .collect(Collectors.toList());

@@ -27,11 +27,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 export function ProductList() {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ name: "", price: "" });
+  const [formData, setFormData] = useState({ name: "", price: "", icon: "burger" });
 
   const { data: products, isLoading, error } = useQuery({
     queryKey: ["products"],
@@ -43,7 +51,7 @@ export function ProductList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsOpen(false);
-      setFormData({ name: "", price: "" });
+      setFormData({ name: "", price: "", icon: "burger" });
       toast.success("Product created successfully");
     },
     onError: () => {
@@ -57,7 +65,7 @@ export function ProductList() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsOpen(false);
       setEditingId(null);
-      setFormData({ name: "", price: "" });
+      setFormData({ name: "", price: "", icon: "burger" });
       toast.success("Product updated successfully");
     },
     onError: () => {
@@ -82,13 +90,13 @@ export function ProductList() {
 
   const handleEdit = (product: ProductDTO) => {
     setEditingId(product.id || null);
-    setFormData({ name: product.name, price: product.price.toString() });
+    setFormData({ name: product.name, price: product.price.toString(), icon: product.icon || "burger" });
     setIsOpen(true);
   };
 
   const handleCreate = () => {
     setEditingId(null);
-    setFormData({ name: "", price: "" });
+    setFormData({ name: "", price: "", icon: "burger" });
     setIsOpen(true);
   };
 
@@ -100,15 +108,38 @@ export function ProductList() {
         product: {
           name: formData.name,
           price: parseFloat(formData.price),
+          icon: formData.icon,
         }
       });
     } else {
       createMutation.mutate({
         name: formData.name,
         price: parseFloat(formData.price),
+        icon: formData.icon,
         active: true,
       });
     }
+  };
+
+  const PRODUCT_ICONS = [
+    { id: "burger", label: "Burger" },
+    { id: "fries", label: "Fries/Sides" },
+    { id: "drink", label: "Soft Drink" },
+    { id: "beer", label: "Beer" },
+    { id: "shake", label: "Milkshake" },
+    { id: "coffee", label: "Coffee" },
+  ];
+
+  const getImageUrl = (icon: string) => {
+    const images: Record<string, string> = {
+      burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
+      fries: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=800&auto=format&fit=crop",
+      drink: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop",
+      beer: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=800&auto=format&fit=crop",
+      shake: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop",
+      coffee: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop",
+    };
+    return images[icon] || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
   };
 
   if (isLoading) {
@@ -165,6 +196,24 @@ export function ProductList() {
                   className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
                 />
               </div>
+              <div className="space-y-3">
+                <Label htmlFor="icon" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Category / Icon</Label>
+                <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
+                  <SelectTrigger className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4">
+                    <SelectValue placeholder="Select icon..." />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {PRODUCT_ICONS.map(icon => (
+                      <SelectItem key={icon.id} value={icon.id} className="py-3">
+                        <div className="flex items-center gap-3">
+                          <img src={getImageUrl(icon.id)} alt={icon.label} className="w-8 h-8 rounded-lg object-cover" />
+                          <span className="font-black text-sm uppercase tracking-tight">{icon.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex gap-4 pt-4">
                 <Button type="button" variant="ghost" className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
                   Cancel
@@ -191,7 +240,12 @@ export function ProductList() {
           <TableBody>
             {products?.map((product: ProductDTO) => (
               <TableRow key={product.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
-                <TableCell className="px-8 py-6 font-black text-slate-900 uppercase tracking-tight italic text-lg">{product.name}</TableCell>
+                <TableCell className="px-8 py-6">
+                  <div className="flex items-center gap-4">
+                    <img src={getImageUrl(product.icon || "burger")} alt={product.name} className="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-110 transition-transform duration-500" />
+                    <span className="font-black text-slate-900 uppercase tracking-tight italic text-lg">{product.name}</span>
+                  </div>
+                </TableCell>
                 <TableCell className="py-6 font-black text-secondary text-xl tracking-tighter">{product.formattedPrice || `$${product.price.toFixed(2)}`}</TableCell>
                 <TableCell className="py-6">
                   <div className="flex items-center gap-3">

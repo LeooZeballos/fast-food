@@ -27,12 +27,13 @@ class FoodOrderServiceTest {
     @Mock private FoodOrderStateChangeInterceptor foodOrderStateChangeInterceptor;
     @Mock private net.leozeballos.FastFood.branch.BranchService branchService;
     @Mock private net.leozeballos.FastFood.item.ItemService itemService;
+    @Mock private net.leozeballos.FastFood.inventory.InventoryService inventoryService;
     @Spy private FoodOrderMapper foodOrderMapper;
     private FoodOrderService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, foodOrderMapper);
+        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, inventoryService, foodOrderMapper);
     }
 
     @Test

@@ -28,11 +28,19 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 export function MenuList() {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ name: "", discountPercentage: "10" });
+  const [formData, setFormData] = useState({ name: "", discountPercentage: "10", icon: "combo" });
 
   const { data: menus, isLoading, error } = useQuery({
     queryKey: ["menus"],
@@ -44,7 +52,7 @@ export function MenuList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
       setIsOpen(false);
-      setFormData({ name: "", discountPercentage: "10" });
+      setFormData({ name: "", discountPercentage: "10", icon: "combo" });
       toast.success("Menu created successfully");
     },
     onError: () => {
@@ -58,7 +66,7 @@ export function MenuList() {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
       setIsOpen(false);
       setEditingId(null);
-      setFormData({ name: "", discountPercentage: "10" });
+      setFormData({ name: "", discountPercentage: "10", icon: "combo" });
       toast.success("Menu updated successfully");
     },
     onError: () => {
@@ -83,13 +91,13 @@ export function MenuList() {
 
   const handleEdit = (menu: MenuDTO) => {
     setEditingId(menu.id || null);
-    setFormData({ name: menu.name, discountPercentage: menu.discountPercentage.toString() });
+    setFormData({ name: menu.name, discountPercentage: menu.discountPercentage.toString(), icon: menu.icon || "combo" });
     setIsOpen(true);
   };
 
   const handleCreate = () => {
     setEditingId(null);
-    setFormData({ name: "", discountPercentage: "10" });
+    setFormData({ name: "", discountPercentage: "10", icon: "combo" });
     setIsOpen(true);
   };
 
@@ -98,6 +106,7 @@ export function MenuList() {
     const payload = {
       name: formData.name,
       discountPercentage: parseFloat(formData.discountPercentage),
+      icon: formData.icon,
     };
 
     if (editingId) {
@@ -108,6 +117,21 @@ export function MenuList() {
         active: true,
       });
     }
+  };
+
+  const MENU_ICONS = [
+    { id: "combo", label: "Standard Combo" },
+    { id: "burger", label: "Burger Special" },
+    { id: "drink", label: "Drink Special" },
+  ];
+
+  const getImageUrl = (icon: string) => {
+    const images: Record<string, string> = {
+      burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
+      combo: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=800&auto=format&fit=crop",
+      drink: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop",
+    };
+    return images[icon] || images.combo;
   };
 
   if (isLoading) {
@@ -163,6 +187,24 @@ export function MenuList() {
                   className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4"
                 />
               </div>
+              <div className="space-y-3">
+                <Label htmlFor="icon" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Menu Style / Icon</Label>
+                <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
+                  <SelectTrigger className="h-14 border-2 bg-slate-50 rounded-2xl focus-visible:ring-primary/10 text-lg font-medium px-4">
+                    <SelectValue placeholder="Select icon..." />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {MENU_ICONS.map(icon => (
+                      <SelectItem key={icon.id} value={icon.id} className="py-3">
+                        <div className="flex items-center gap-3">
+                          <img src={getImageUrl(icon.id)} alt={icon.label} className="w-8 h-8 rounded-lg object-cover" />
+                          <span className="font-black text-sm uppercase tracking-tight">{icon.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <p className="text-[10px] text-slate-400 font-bold uppercase italic tracking-widest text-center mt-2">
                 Items can be added later in the editor.
               </p>
@@ -194,9 +236,12 @@ export function MenuList() {
             {menus?.map((menu: MenuDTO) => (
               <TableRow key={menu.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
                 <TableCell className="px-8 py-6">
-                  <div className="space-y-1">
-                    <p className="font-black text-slate-900 uppercase tracking-tight italic text-lg leading-tight">{menu.name}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase truncate max-w-[200px]">{menu.productsList}</p>
+                  <div className="flex items-center gap-4">
+                    <img src={getImageUrl(menu.icon || "combo")} alt={menu.name} className="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-110 transition-transform duration-500" />
+                    <div className="space-y-1">
+                      <p className="font-black text-slate-900 uppercase tracking-tight italic text-lg leading-tight">{menu.name}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase truncate max-w-[200px]">{menu.productsList}</p>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell className="py-6 font-black text-secondary text-xl tracking-tighter">{menu.formattedPrice || `$${menu.price.toFixed(2)}`}</TableCell>
