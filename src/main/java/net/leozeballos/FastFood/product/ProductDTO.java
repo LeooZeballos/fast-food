@@ -17,6 +17,7 @@ public record ProductDTO(
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
     double price,
     String icon,
+    String imageUrl,
     boolean active
 ) {
     public String getFormattedPrice() {

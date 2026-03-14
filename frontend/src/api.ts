@@ -7,6 +7,20 @@ const api = axios.create({
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
+// CSRF Fallback for non-GET requests
+api.interceptors.request.use((config) => {
+  if (config.method !== 'get' && !config.headers['X-XSRF-TOKEN']) {
+    const xsrfCookie = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('XSRF-TOKEN='));
+    
+    if (xsrfCookie) {
+      config.headers['X-XSRF-TOKEN'] = xsrfCookie.split('=')[1];
+    }
+  }
+  return config;
+});
+
 export type BranchDTO = {
   id?: number;
   name: string;
@@ -20,6 +34,7 @@ export type ProductDTO = {
   nameEs?: string;
   price: number;
   icon?: string;
+  imageUrl?: string;
   active: boolean;
   formattedPrice?: string;
 }
@@ -32,6 +47,7 @@ export type MenuDTO = {
   discountPercentage: number;
   productsList: string;
   icon?: string;
+  imageUrl?: string;
   active: boolean;
   formattedPrice?: string;
   formattedDiscount?: string;

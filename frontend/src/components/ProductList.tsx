@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -32,16 +33,21 @@ import { ErrorState } from "@/components/ui/error-state";
 
 function ProductSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-        <Card key={i} className="rounded-[2rem] border-2 overflow-hidden">
-          <Skeleton className="h-48 w-full" />
-          <CardContent className="p-6 space-y-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-1/4" />
-            <div className="flex justify-between items-center pt-4">
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-10 w-10 rounded-xl" />
+        <Card key={i} className="rounded-[2.5rem] border-2 overflow-hidden h-full flex flex-col">
+          <Skeleton className="h-56 w-full" />
+          <CardContent className="p-8 space-y-6 flex-grow">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-8 w-3/4" />
+            </div>
+            <div className="flex justify-between items-center pt-6 border-t">
+              <Skeleton className="h-10 w-24" />
+              <div className="flex gap-2">
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -155,7 +161,7 @@ export function ProductList() {
       shake: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop",
       coffee: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop",
     };
-    return images[icon] || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
+    return images[icon] || fallbackImage;
   };
 
   if (isLoading) {
@@ -268,7 +274,7 @@ export function ProductList() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {products?.map((product: ProductDTO) => (
           <Card key={product.id} className={cn(
-            "group border-2 rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 bg-card flex flex-col",
+            "group border-2 rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 bg-card flex flex-col p-0",
             !product.active && "opacity-60 grayscale"
           )}>
             <div className="relative h-56 overflow-hidden">

@@ -5,8 +5,7 @@ import { useAuth } from "@/AuthContext";
 import { 
   getOrders, 
   startPreparation, 
-// ...
-
+  finishPreparation,
   confirmPayment, 
   cancelOrder, 
   rejectOrder

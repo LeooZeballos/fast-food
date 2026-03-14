@@ -64,7 +64,19 @@ public class FoodOrderRestController {
     @Operation(summary = "Create a new order", description = "Places a new food order in the system")
     @ApiResponse(responseCode = "201", description = "Order created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
-    public FoodOrderDTO create(@Valid @RequestBody CreateOrderDTO createOrderDTO) {
+    @ApiResponse(responseCode = "403", description = "Access denied to branch")
+    public FoodOrderDTO create(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateOrderDTO createOrderDTO) {
+        
+        // Security check: if user is not ADMIN, they can only create orders for their branch
+        if (!isAdmin(userDetails)) {
+            Long userBranchId = (userDetails != null) ? userDetails.getBranchId() : null;
+            if (userBranchId == null || !userBranchId.equals(createOrderDTO.branchId())) {
+                throw new org.springframework.security.access.AccessDeniedException("User can only place orders for their assigned branch");
+            }
+        }
+
         FoodOrder order = foodOrderService.createOrder(createOrderDTO);
         return foodOrderMapper.toDTO(order);
     }
@@ -124,10 +136,14 @@ public class FoodOrderRestController {
     }
 
     private Long getEffectiveBranchId(CustomUserDetails userDetails) {
-        if (userDetails == null) return null;
-        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+        if (isAdmin(userDetails)) {
             return null; // Admins see everything
         }
-        return userDetails.getBranchId();
+        return userDetails != null ? userDetails.getBranchId() : null;
+    }
+
+    private boolean isAdmin(CustomUserDetails userDetails) {
+        return userDetails != null && userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }

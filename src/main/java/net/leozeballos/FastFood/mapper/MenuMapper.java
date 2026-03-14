@@ -24,6 +24,7 @@ public class MenuMapper {
                         .map(net.leozeballos.FastFood.item.Item::getName)
                         .collect(Collectors.joining(", ")))
                 .icon(menu.getIcon())
+                .imageUrl(menu.getImageUrl())
                 .active(menu.isActive())
                 .build();
     }

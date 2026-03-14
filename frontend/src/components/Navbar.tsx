@@ -71,6 +71,39 @@ function LiveClock() {
   );
 }
 
+interface NavButtonProps {
+  view: View;
+  icon: any;
+  label: string;
+  sublabel: string;
+  activeView: View;
+  onViewChange: (view: View) => void;
+}
+
+const NavButton = ({ view, icon: Icon, label, sublabel, activeView, onViewChange }: NavButtonProps) => (
+  <button
+    onClick={() => onViewChange(view)}
+    data-testid={`nav-${view}`}
+    className={cn(
+      "relative flex flex-col items-start px-6 py-3 rounded-[1.25rem] transition-all group overflow-hidden border-2",
+      activeView === view 
+      ? "bg-secondary border-secondary text-primary shadow-lg scale-[1.02]" 
+      : "bg-transparent border-transparent text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 hover:border-primary-foreground/10"
+    )}
+  >
+    <div className="flex items-center gap-3 relative z-10">
+      <Icon className={cn("w-5 h-5", activeView === view ? "text-primary" : "group-hover:text-secondary transition-colors")} />
+      <div className="text-left">
+        <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 opacity-60 group-hover:opacity-100 transition-opacity">{sublabel}</p>
+        <p className="text-sm font-black uppercase tracking-tighter italic leading-none">{label}</p>
+      </div>
+    </div>
+    {activeView === view && (
+      <div className="absolute inset-0 bg-gradient-to-tr from-primary-foreground/20 to-transparent pointer-events-none" />
+    )}
+  </button>
+);
+
 export function Navbar({ activeView, onViewChange }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
@@ -83,30 +116,6 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
       console.error("Logout failed", error);
     }
   };
-
-  const NavButton = ({ view, icon: Icon, label, sublabel }: { view: View, icon: any, label: string, sublabel: string }) => (
-    <button
-      onClick={() => onViewChange(view)}
-      data-testid={`nav-${view}`}
-      className={cn(
-        "relative flex flex-col items-start px-6 py-3 rounded-[1.25rem] transition-all group overflow-hidden border-2",
-        activeView === view 
-        ? "bg-secondary border-secondary text-primary shadow-lg scale-[1.02]" 
-        : "bg-transparent border-transparent text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 hover:border-primary-foreground/10"
-      )}
-    >
-      <div className="flex items-center gap-3 relative z-10">
-        <Icon className={cn("w-5 h-5", activeView === view ? "text-primary" : "group-hover:text-secondary transition-colors")} />
-        <div className="text-left">
-          <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 opacity-60 group-hover:opacity-100 transition-opacity">{sublabel}</p>
-          <p className="text-sm font-black uppercase tracking-tighter italic leading-none">{label}</p>
-        </div>
-      </div>
-      {activeView === view && (
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary-foreground/20 to-transparent pointer-events-none" />
-      )}
-    </button>
-  );
 
   return (
     <nav className="bg-primary text-primary-foreground relative z-50">
@@ -138,12 +147,16 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
               icon={ShoppingCart} 
               label={t('nav.takeOrder')} 
               sublabel={t('nav.sales')} 
+              activeView={activeView}
+              onViewChange={onViewChange}
             />
             <NavButton 
               view="orders" 
               icon={ClipboardList} 
               label={t('nav.kitchen')} 
               sublabel={t('nav.production')} 
+              activeView={activeView}
+              onViewChange={onViewChange}
             />
             {isAdmin && (
               <NavButton 
@@ -151,6 +164,8 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
                 icon={ShieldCheck} 
                 label={t('nav.admin')} 
                 sublabel={t('nav.system')} 
+                activeView={activeView}
+                onViewChange={onViewChange}
               />
             )}
           </div>

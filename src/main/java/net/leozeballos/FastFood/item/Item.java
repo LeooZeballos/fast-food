@@ -59,6 +59,12 @@ public abstract class Item {
     @Column(nullable = false)
     private boolean isActive = true;
 
+    /**
+     * URL for the item's image.
+     */
+    @Column(length = 255)
+    private String imageUrl;
+
     @jakarta.persistence.Version
     private Long version;
 

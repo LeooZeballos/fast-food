@@ -1,150 +1,63 @@
 package net.leozeballos.FastFood.config;
 
 import lombok.RequiredArgsConstructor;
-import net.leozeballos.FastFood.address.Address;
+import net.leozeballos.FastFood.auth.User;
+import net.leozeballos.FastFood.auth.UserRepository;
 import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.branch.BranchRepository;
-import net.leozeballos.FastFood.menu.Menu;
-import net.leozeballos.FastFood.menu.MenuRepository;
-import net.leozeballos.FastFood.product.Product;
-import net.leozeballos.FastFood.product.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.math.BigDecimal;
-
-import net.leozeballos.FastFood.auth.User;
-import net.leozeballos.FastFood.auth.UserRepository;
 import java.util.Set;
 
+/**
+ * DataInitializer now only handles User setup.
+ * All Products, Menus, and Branches are managed via Flyway SQL Migrations.
+ */
 @Configuration
 @Profile("dev")
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final BranchRepository branchRepository;
-    private final ProductRepository productRepository;
-    private final MenuRepository menuRepository;
-    private final net.leozeballos.FastFood.inventory.InventoryRepository inventoryRepository;
     private final UserRepository userRepository;
 
     @Override
     @Transactional
     public void run(String... args) {
-        if (branchRepository.count() == 0) {
-            // --- BRANCHES ---
-            Branch b1 = new Branch();
-            b1.setName("Downtown Central");
-            b1.setAddress(Address.builder().city("Buenos Aires").street("Av. Corrientes 1234").build());
-
-            Branch b2 = new Branch();
-            b2.setName("Riverside Mall");
-            b2.setAddress(Address.builder().city("Rosario").street("Av. del Libertad 567").build());
-
-            branchRepository.saveAll(List.of(b1, b2));
-            System.out.println("--- Branches Initialized successfully ---");
-        }
-
-        List<Branch> allBranches = branchRepository.findAll();
-        Branch mainBranch = allBranches.isEmpty() ? null : allBranches.get(0);
-
-        // Force reset admin user with known bcrypt hash for "admin"
-        User admin = userRepository.findByUsername("admin").orElse(new User());
-        admin.setUsername("admin");
-        admin.setPassword("$2a$10$yafJV01hrbBMWhcHU4pqCeOjT9czyBtLQsdaTN14noy7VyTuPBBQS"); // "admin"
-        admin.setRoles(new HashSet<>(Set.of("ADMIN")));
-        admin.setEnabled(true);
-        admin.setBranch(mainBranch);
-        userRepository.save(admin);
-        System.out.println("Admin user updated/reset: admin/admin linked to " + (mainBranch != null ? mainBranch.getName() : "no branch"));
-
-        // --- INVENTORY INITIALIZATION ---
-        if (inventoryRepository.count() == 0) {
-            List<Branch> branches = branchRepository.findAll();
-            List<net.leozeballos.FastFood.item.Item> items = productRepository.findAll().stream().map(p -> (net.leozeballos.FastFood.item.Item)p).collect(Collectors.toList());
-            items.addAll(menuRepository.findAll());
-
-            for (Branch branch : branches) {
-                for (net.leozeballos.FastFood.item.Item item : items) {
-                    inventoryRepository.save(net.leozeballos.FastFood.inventory.Inventory.builder()
-                            .branch(branch)
-                            .item(item)
-                            .stockQuantity(100) // Initial stock for all items
-                            .isAvailable(true)
-                            .build());
-                }
+        // Only initialize users if they don't exist
+        if (userRepository.count() == 0) {
+            List<Branch> allBranches = branchRepository.findAll();
+            if (allBranches.isEmpty()) {
+                System.out.println("⚠️ Cannot initialize users: No branches found. Check Flyway migrations.");
+                return;
             }
-            System.out.println("--- Inventory Initialized successfully ---");
-        }
 
-        if (productRepository.count() == 0) {
-            // PRODUCTS
-            Product p1 = new Product("Classic Burger", 8.50);
-            p1.setNameEs("Hamburguesa Clásica");
-            p1.setIcon("burger");
-            Product p2 = new Product("Cheese Deluxe", 10.00);
-            p2.setNameEs("Queso Deluxe");
-            p2.setIcon("burger");
-            Product p3 = new Product("Bacon King", 12.50);
-            p3.setNameEs("Rey Tocino");
-            p3.setIcon("burger");
-            Product p4 = new Product("French Fries (L)", 4.00);
-            p4.setNameEs("Papas Fritas (G)");
-            p4.setIcon("fries");
-            Product p5 = new Product("Onion Rings", 4.50);
-            p5.setNameEs("Aros de Cebolla");
-            p5.setIcon("fries");
-            Product p6 = new Product("Coca-Cola 500ml", 3.00);
-            p6.setNameEs("Coca-Cola 500ml");
-            p6.setIcon("drink");
-            Product p7 = new Product("Craft Beer", 6.00);
-            p7.setNameEs("Cerveza Artesanal");
-            p7.setIcon("beer");
-            Product p8 = new Product("Vanilla Shake", 5.50);
-            p8.setNameEs("Malteada de Vainilla");
-            p8.setIcon("shake");
+            Branch b1 = allBranches.get(0);
 
-            productRepository.saveAll(List.of(p1, p2, p3, p4, p5, p6, p7, p8));
-        }
+            // Admin: Global Access
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword("$2a$10$yafJV01hrbBMWhcHU4pqCeOjT9czyBtLQsdaTN14noy7VyTuPBBQS"); // "admin"
+            admin.setRoles(new HashSet<>(Set.of("ADMIN")));
+            admin.setEnabled(true);
+            admin.setBranch(b1);
+            userRepository.save(admin);
 
-        if (menuRepository.count() == 0) {
-            List<Product> products = productRepository.findAll();
-            Product p1 = products.stream().filter(p -> p.getName().contains("Classic Burger")).findFirst().orElse(null);
-            Product p2 = products.stream().filter(p -> p.getName().contains("Cheese Deluxe")).findFirst().orElse(null);
-            Product p3 = products.stream().filter(p -> p.getName().contains("Bacon King")).findFirst().orElse(null);
-            Product p4 = products.stream().filter(p -> p.getName().contains("French Fries")).findFirst().orElse(null);
-            Product p5 = products.stream().filter(p -> p.getName().contains("Onion Rings")).findFirst().orElse(null);
-            Product p6 = products.stream().filter(p -> p.getName().contains("Coca-Cola")).findFirst().orElse(null);
-            Product p7 = products.stream().filter(p -> p.getName().contains("Craft Beer")).findFirst().orElse(null);
+            // Staff 1
+            User staff1 = new User();
+            staff1.setUsername("staff1");
+            staff1.setPassword("$2a$10$yafJV01hrbBMWhcHU4pqCeOjT9czyBtLQsdaTN14noy7VyTuPBBQS");
+            staff1.setRoles(new HashSet<>(Set.of("USER")));
+            staff1.setEnabled(true);
+            staff1.setBranch(b1);
+            userRepository.save(staff1);
 
-            Menu m1 = new Menu();
-            m1.setName("Classic Combo");
-            m1.setNameEs("Combo Clásico");
-            m1.setIcon("combo");
-            m1.setDiscount(new BigDecimal("0.1"));
-            if (p1 != null && p4 != null && p6 != null) m1.setItems(List.of(p1, p4, p6));
-
-            Menu m2 = new Menu();
-            m2.setName("Bacon Lovers Feast");
-            m2.setNameEs("Banquete para Amantes del Tocino");
-            m2.setIcon("combo");
-            m2.setDiscount(new BigDecimal("0.15"));
-            if (p3 != null && p5 != null && p7 != null) m2.setItems(List.of(p3, p5, p7));
-
-            Menu m3 = new Menu();
-            m3.setName("Double Cheese Special");
-            m3.setNameEs("Especial Doble Queso");
-            m3.setIcon("combo");
-            m3.setDiscount(new BigDecimal("0.2"));
-            if (p2 != null && p4 != null && p6 != null) m3.setItems(List.of(p2, p2, p4, p6));
-
-            menuRepository.saveAll(List.of(m1, m2, m3));
-            System.out.println("--- Test Menus Initialized successfully ---");
+            System.out.println("--- Users Initialized successfully ---");
         }
     }
 }

@@ -17,6 +17,7 @@ public class ProductMapper {
                 .nameEs(product.getNameEs())
                 .price(product.getPrice())
                 .icon(product.getIcon())
+                .imageUrl(product.getImageUrl())
                 .active(product.isActive())
                 .build();
     }

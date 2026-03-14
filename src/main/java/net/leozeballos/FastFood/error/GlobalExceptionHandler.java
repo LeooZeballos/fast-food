@@ -50,6 +50,12 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ProblemDetail handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, WebRequest request) {
+        log.error("Access denied: {}", ex.getMessage());
+        return buildProblemDetail(HttpStatus.FORBIDDEN, "Access Denied", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGlobalException(Exception ex, WebRequest request) {
         log.error("Internal Server Error: ", ex);

@@ -33,16 +33,21 @@ import { ErrorState } from "@/components/ui/error-state";
 
 function MenuSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
       {[1, 2, 3, 4].map((i) => (
-        <Card key={i} className="rounded-[2rem] border-2 overflow-hidden">
-          <Skeleton className="h-56 w-full" />
-          <CardContent className="p-6 space-y-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <div className="flex justify-between items-center pt-4">
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-10 w-10 rounded-xl" />
+        <Card key={i} className="rounded-[2.5rem] border-2 overflow-hidden h-full flex flex-col">
+          <Skeleton className="h-64 w-full" />
+          <CardContent className="p-8 space-y-6 flex-grow">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-8 w-3/4" />
+            </div>
+            <div className="flex justify-between items-center pt-6 border-t">
+              <Skeleton className="h-10 w-24" />
+              <div className="flex gap-2">
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -260,7 +265,7 @@ export function MenuList() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {menus?.map((menu: MenuDTO) => (
           <Card key={menu.id} className={cn(
-            "group border-2 rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 bg-card flex flex-col",
+            "group border-2 rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 bg-card flex flex-col p-0",
             !menu.active && "opacity-60 grayscale"
           )}>
             <div className="relative h-64 overflow-hidden">

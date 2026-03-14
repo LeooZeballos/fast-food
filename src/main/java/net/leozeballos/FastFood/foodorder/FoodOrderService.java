@@ -146,6 +146,7 @@ public class FoodOrderService {
         return stateMachine;
     }
 
+    @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> finishPreparation(Long id, Long branchId) {
         findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
@@ -163,6 +164,7 @@ public class FoodOrderService {
         return stateMachine;
     }
 
+    @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id, Long branchId) {
         findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
@@ -170,6 +172,7 @@ public class FoodOrderService {
         return stateMachine;
     }
 
+    @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id, Long branchId) {
         findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);

@@ -2,15 +2,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProducts, getMenus, getBranches, createOrder, getInventoryByBranch } from "@/api";
 import type { ProductDTO, MenuDTO, InventoryDTO } from "@/api";
 import { useState, useMemo, useEffect } from "react";
-import { useAuth } from "@/AuthContext";
-import { useTranslation } from "react-i18next";
 import { 
-// ... (rest of imports)
-
   Plus, 
   Minus, 
   Trash2, 
   Receipt, 
+  ShoppingCart,
   Store, 
   UtensilsCrossed, 
   Beef, 
@@ -33,8 +30,10 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface CartItem {
   itemId: number;
@@ -45,32 +44,13 @@ interface CartItem {
   quantity: number;
 }
 
-const ItemImage = ({ icon, type, className }: { icon?: string, type: "PRODUCT" | "MENU", className?: string }) => {
-  const getImageUrl = () => {
-    if (type === "MENU") {
-      const images: Record<string, string> = {
-        burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
-        combo: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=800&auto=format&fit=crop",
-        drink: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop",
-      };
-      return images[icon || ""] || images.combo;
-    } else {
-      const images: Record<string, string> = {
-        burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
-        fries: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=800&auto=format&fit=crop",
-        drink: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop",
-        beer: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=800&auto=format&fit=crop",
-        shake: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop",
-        coffee: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop",
-      };
-      return images[icon || ""] || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
-    }
-  };
+const ItemImage = ({ imageUrl, className }: { id?: number, icon?: string, imageUrl?: string, type: "PRODUCT" | "MENU", className?: string }) => {
+  const fallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <img 
-        src={getImageUrl()} 
+        src={imageUrl || fallbackImage} 
         alt="Item" 
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       />
@@ -80,15 +60,16 @@ const ItemImage = ({ icon, type, className }: { icon?: string, type: "PRODUCT" |
 };
 
 export function TakeOrder() {
-  const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
-  const { branchId, isAdmin } = useAuth();
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const queryClient = useQueryClient();
   const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"all" | "products" | "menus">("all");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [cart, setCart] = useState<CartItem[]>([]);
 
+  // Get initial branch from localStorage if available
+  const branchId = localStorage.getItem("branchId");
   useEffect(() => {
     if (branchId && !selectedBranch) {
       setSelectedBranch(branchId.toString());
@@ -103,27 +84,35 @@ export function TakeOrder() {
     { id: "combo", label: t('takeOrder.categories.combo'), icon: <Sparkles className="h-4 w-4" /> },
   ];
 
-  const { data: products, isLoading: loadingProducts, error: errorProducts } = useQuery({ queryKey: ["products"], queryFn: getProducts });
-  const { data: menus, isLoading: loadingMenus, error: errorMenus } = useQuery({ queryKey: ["menus"], queryFn: getMenus });
+  const { data: products, isLoading: loadingProducts } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const { data: menus, isLoading: loadingMenus } = useQuery({ queryKey: ["menus"], queryFn: getMenus });
   const { data: branches } = useQuery({ queryKey: ["branches"], queryFn: getBranches });
 
-  const { data: inventory } = useQuery({
+  const { data: inventory, isLoading: loadingInventory } = useQuery({
     queryKey: ["inventory", selectedBranch],
     queryFn: () => getInventoryByBranch(parseInt(selectedBranch)),
     enabled: !!selectedBranch,
   });
 
   const availabilityMap = useMemo(() => {
-    const map = new Map<number, boolean>();
+    const map = new Map<string, boolean>();
+    console.log("Building Availability Map. Inventory Size:", inventory?.length);
     inventory?.forEach((item: InventoryDTO) => {
-      map.set(item.item.id, item.stockQuantity > 0 && item.isAvailable);
+      map.set(`${item.item.id}`, item.stockQuantity > 0 && item.isAvailable);
     });
     return map;
   }, [inventory]);
 
-  const isItemAvailable = (itemId: number) => {
-    if (!selectedBranch) return true;
-    return availabilityMap.get(itemId) ?? false;
+  const isItemAvailable = (itemId: number, _type: "PRODUCT" | "MENU") => {
+    if (!selectedBranch || loadingInventory) return true;
+    
+    if (inventory && inventory.length > 0) {
+      const available = availabilityMap.get(`${itemId}`) ?? true;
+      if (!available) console.log(`Item ${itemId} (${_type}) is OUT OF STOCK`);
+      return available;
+    }
+    
+    return true;
   };
 
   const activeProducts = useMemo(() => products?.filter(p => p.active) || [], [products]);
@@ -136,23 +125,25 @@ export function TakeOrder() {
       ...activeMenus.map(m => ({ ...m, type: "MENU" as const }))
     ];
 
-    if (activeTab === "products") items = items.filter(i => i.type === "PRODUCT");
-    if (activeTab === "menus") items = items.filter(i => i.type === "MENU");
+    if (query) {
+      items = items.filter(i => 
+        i.name.toLowerCase().includes(query) || 
+        (i.nameEs && i.nameEs.toLowerCase().includes(query))
+      );
+    }
 
     if (activeCategory !== "all") {
       if (activeCategory === "sides") {
-        items = items.filter(i => i.icon === "fries");
+        items = items.filter(i => i.icon === "fries" || i.icon === "sides");
+      } else if (activeCategory === "drink") {
+        items = items.filter(i => ["drink", "beer", "shake", "coffee"].includes(i.icon || ""));
       } else {
         items = items.filter(i => i.icon === activeCategory || (activeCategory === "combo" && i.type === "MENU"));
       }
     }
 
-    if (query) {
-      items = items.filter(i => i.name.toLowerCase().includes(query) || (i.nameEs && i.nameEs.toLowerCase().includes(query)));
-    }
-
     return items;
-  }, [activeProducts, activeMenus, searchQuery, activeTab, activeCategory]);
+  }, [activeProducts, activeMenus, searchQuery, activeCategory]);
 
   const addToCart = (item: ProductDTO | MenuDTO, type: "PRODUCT" | "MENU") => {
     setCart(prev => {
@@ -163,16 +154,12 @@ export function TakeOrder() {
       return [...prev, { 
         itemId: item.id!, 
         type, 
-        name: item.name,
+        name: item.name, 
         nameEs: item.nameEs,
         price: item.price, 
         quantity: 1 
       }];
     });
-  };
-
-  const removeFromCart = (itemId: number, type: "PRODUCT" | "MENU") => {
-    setCart(prev => prev.filter(i => !(i.itemId === itemId && i.type === type)));
   };
 
   const updateQuantity = (itemId: number, type: "PRODUCT" | "MENU", delta: number) => {
@@ -185,14 +172,18 @@ export function TakeOrder() {
     }));
   };
 
-  const clearCart = () => window.confirm(t('common.clearConfirm')) && setCart([]);
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  const formatPrice = (amount: number) => {
-    const locale = i18n.language === 'es' ? 'es-ES' : 'en-US';
-    const currency = i18n.language === 'es' ? 'EUR' : 'USD';
-    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+  const removeFromCart = (itemId: number, type: "PRODUCT" | "MENU") => {
+    setCart(prev => prev.filter(i => !(i.itemId === itemId && i.type === type)));
   };
+
+  const clearCart = () => setCart([]);
+
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  const formatPrice = (p: number) => new Intl.NumberFormat(i18n.language === 'es' ? 'es-ES' : 'en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(p);
 
   const createOrderMutation = useMutation({
     mutationFn: createOrder,
@@ -247,50 +238,49 @@ export function TakeOrder() {
           <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.2em]">{t('takeOrder.kitchenManagement')}</p>
         </div>
         <div className="w-full lg:w-80">
-          <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2 block ml-1">
-            {t('takeOrder.branch')} {!isAdmin && branchId && <span className="text-secondary">(Assigned)</span>}
-          </label>
-          <Select value={selectedBranch} onValueChange={setSelectedBranch} disabled={!isAdmin && !!branchId}>
+          <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2 block ml-1">{t('takeOrder.branch')}</label>
+          <Select value={selectedBranch} onValueChange={setSelectedBranch}>
             <SelectTrigger data-testid="branch-select" className="h-14 border-2 bg-muted/50 focus:ring-primary/10 rounded-2xl transition-all px-6 w-full">
               <div className="flex items-center gap-3 w-full">
                 <Store className="h-5 w-5 text-secondary shrink-0" />
                 <SelectValue placeholder={t('takeOrder.selectLocation')} />
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-2xl">
+            <SelectContent className="rounded-2xl border-2">
               {branches?.map(b => (
-                <SelectItem key={b.id} value={b.id?.toString() || ""} className="py-3 pl-4 pr-10">
-                  <div className="flex items-center gap-2">
-                    <span className="font-black text-sm uppercase tracking-tight">{b.name}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase font-bold ml-1">— {b.city}</span>
-                  </div>
-                </SelectItem>
+                <SelectItem key={b.id} value={b.id?.toString() || ""}>{b.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-        <div className="xl:col-span-8 space-y-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-card/50 p-4 rounded-3xl border-2 border-dashed border-border">
-              <div className="relative w-full md:w-96 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 group-focus-within:text-primary transition-colors" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8 space-y-8">
+          <div className="bg-card p-6 rounded-[2.5rem] border-2 shadow-sm space-y-6">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="relative flex-grow w-full group">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
-                  placeholder={t('common.search')}
-                  className="pl-12 h-12 border-2 bg-card rounded-2xl focus-visible:ring-primary/10 text-lg font-medium"
+                  placeholder={t('common.search')} 
+                  className="h-14 pl-14 pr-6 rounded-2xl border-2 bg-muted/50 focus-visible:ring-primary/10 text-lg font-medium transition-all"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-primary"><X className="h-5 w-5" /></button>}
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center bg-muted rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-                <TabsList className="h-12 p-1.5 bg-muted rounded-2xl">
-                  <TabsTrigger value="all" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.all')}</TabsTrigger>
-                  <TabsTrigger value="products" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.products')}</TabsTrigger>
-                  <TabsTrigger value="menus" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.menus')}</TabsTrigger>
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full md:w-auto">
+                <TabsList className="h-14 bg-muted p-1.5 rounded-2xl border-2 w-full">
+                  <TabsTrigger value="all" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('common.all')}</TabsTrigger>
+                  <TabsTrigger value="products" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.products')}</TabsTrigger>
+                  <TabsTrigger value="menus" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.menus')}</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -313,61 +303,153 @@ export function TakeOrder() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.length > 0 ? (
-              filteredItems.map(item => {
-                const isAvailable = item.id ? isItemAvailable(item.id) : true;
-                return (
-                  <Card 
-                    key={`${item.type}-${item.id}`} 
-                    data-testid="product-card"
-                    className={cn(
-                      "group border-2 bg-card rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col relative",
-                      !isAvailable ? "opacity-60 grayscale cursor-not-allowed" : "hover:scale-[1.02] cursor-pointer"
-                    )}
-                    onClick={() => isAvailable && addToCart(item, item.type)}
-                  >
-                    <ItemImage icon={item.icon} type={item.type} className="h-48 w-full" />
-                    
-                    {!isAvailable && (
-                      <div className="absolute top-4 left-4 z-20">
-                        <Badge variant="destructive" className="font-black text-[8px] tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-lg border-2 border-white/20 backdrop-blur-md">
-                          {t('common.outOfStock')}
-                        </Badge>
-                      </div>
-                    )}
-
-                    <CardContent className="p-6 space-y-4 flex-grow flex flex-col">
-                      <div className="space-y-1 flex-grow">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{item.type}</span>
-                          {item.type === "MENU" && isAvailable && <span className="text-[10px] font-black text-secondary italic tracking-tighter uppercase">{t('takeOrder.cart.saveDiscount')} {(item as MenuDTO).formattedDiscount}</span>}
-                        </div>
-                        <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic">
-                          {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
-                        </h3>
-                        {item.type === "MENU" && (
-                          <p className="text-[10px] text-muted-foreground font-bold uppercase leading-relaxed line-clamp-2 mt-2">
-                            {(item as MenuDTO).productsList}
-                          </p>
+          <div className="space-y-12">
+            {/* Menus Section */}
+            {(activeTab === "all" || activeTab === "menus") && filteredItems.filter(i => i.type === "MENU").length > 0 && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-grow bg-border" />
+                  <h3 className="text-xl font-black uppercase italic tracking-tighter text-secondary flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" /> {t('takeOrder.tabs.menus')}
+                  </h3>
+                  <div className="h-px flex-grow bg-border" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {filteredItems.filter(i => i.type === "MENU").map(item => {
+                    const isAvailable = item.id ? isItemAvailable(item.id, item.type) : true;
+                    return (
+                      <Card 
+                        key={`${item.type}-${item.id}`} 
+                        data-testid="product-card"
+                        className={cn(
+                          "group border-4 bg-card rounded-[3rem] overflow-hidden shadow-md hover:shadow-2xl transition-all flex flex-col relative h-full p-0 border-secondary/20 hover:border-secondary",
+                          !isAvailable ? "opacity-60 grayscale cursor-not-allowed" : "hover:scale-[1.02] cursor-pointer"
                         )}
-                      </div>
-                      <div className="flex justify-between items-center pt-2 mt-auto">
-                        <p className="font-black text-primary text-2xl tracking-tighter">{item.formattedPrice}</p>
-                        <div className={cn(
-                          "h-10 w-10 rounded-xl flex items-center justify-center text-white shadow-lg transition-all",
-                          isAvailable 
-                            ? "bg-primary shadow-primary/20 group-hover:bg-secondary group-hover:text-primary" 
-                            : "bg-muted text-muted-foreground shadow-none"
-                        )}>
-                          <Plus className="h-6 w-6" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
-            ) : (
+                        onClick={() => isAvailable && addToCart(item, item.type)}
+                      >
+                        <ItemImage imageUrl={item.imageUrl} type={item.type} className="h-56 w-full shrink-0" />
+                        
+                        {!isAvailable && (
+                          <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-6">
+                            <div className="bg-destructive text-destructive-foreground font-black text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-2xl shadow-2xl border-4 border-destructive-foreground/20 rotate-[-10deg] scale-110 animate-in zoom-in-50 duration-300">
+                              {t('common.outOfStock')}
+                            </div>
+                          </div>
+                        )}
+
+                        <CardContent className="p-8 space-y-6 flex-grow flex flex-col justify-between">
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-start">
+                              <div className="space-y-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg bg-secondary text-primary shadow-sm inline-block mb-2">
+                                  {t('takeOrder.categories.combo')}
+                                </span>
+                                <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-2xl leading-tight uppercase tracking-tighter italic">
+                                  {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
+                                </h3>
+                              </div>
+                              {isAvailable && (
+                                <Badge className="bg-primary text-white border-none font-black text-[10px] uppercase tracking-tighter px-3 py-1 rounded-full animate-bounce">
+                                  -{ (item as MenuDTO).formattedDiscount }
+                                </Badge>
+                              )}
+                            </div>
+
+                            <div className="bg-muted/50 p-4 rounded-3xl border-2 border-dashed border-secondary/20">
+                              <p className="text-[11px] text-muted-foreground font-bold uppercase leading-relaxed line-clamp-2">
+                                {(item as MenuDTO).productsList}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-6 border-t-2 border-border/50 mt-auto">
+                            <div className="space-y-0.5">
+                              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Total Combo</p>
+                              <p className="font-black text-primary text-3xl tracking-tighter italic">{item.formattedPrice}</p>
+                            </div>
+                            <div className={cn(
+                              "h-14 w-14 rounded-2xl flex items-center justify-center text-white shadow-xl transition-all",
+                              isAvailable 
+                                ? "bg-secondary text-primary shadow-secondary/20 group-hover:bg-primary group-hover:text-white group-hover:rotate-90" 
+                                : "bg-muted text-muted-foreground shadow-none"
+                            )}>
+                              <Plus className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Single Items Section */}
+            {(activeTab === "all" || activeTab === "products") && filteredItems.filter(i => i.type === "PRODUCT").length > 0 && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-grow bg-border" />
+                  <h3 className="text-xl font-black uppercase italic tracking-tighter text-primary flex items-center gap-2">
+                    <UtensilsCrossed className="h-5 w-5 text-secondary" /> {t('takeOrder.tabs.products')}
+                  </h3>
+                  <div className="h-px flex-grow bg-border" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                  {filteredItems.filter(i => i.type === "PRODUCT").map(item => {
+                    const isAvailable = item.id ? isItemAvailable(item.id, item.type) : true;
+                    return (
+                      <Card 
+                        key={`${item.type}-${item.id}`} 
+                        data-testid="product-card"
+                        className={cn(
+                          "group border-2 bg-card rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col relative h-full p-0",
+                          !isAvailable ? "opacity-60 grayscale cursor-not-allowed" : "hover:scale-[1.02] cursor-pointer"
+                        )}
+                        onClick={() => isAvailable && addToCart(item, item.type)}
+                      >
+                        <ItemImage imageUrl={item.imageUrl} type={item.type} className="h-44 w-full shrink-0" />
+                        
+                        {!isAvailable && (
+                          <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-6">
+                            <div className="bg-destructive text-destructive-foreground font-black text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-2xl shadow-2xl border-4 border-destructive-foreground/20 rotate-[-10deg] scale-110 animate-in zoom-in-50 duration-300">
+                              {t('common.outOfStock')}
+                            </div>
+                          </div>
+                        )}
+
+                        <CardContent className="p-6 space-y-4 flex-grow flex flex-col justify-between">
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-md bg-primary/10 text-primary">
+                                {item.type}
+                              </span>
+                            </div>
+                            
+                            <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic min-h-[2.5rem] line-clamp-2">
+                              {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
+                            </h3>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-4 border-t border-border/50 mt-4">
+                            <p className="font-black text-primary text-2xl tracking-tighter italic">{item.formattedPrice}</p>
+                            <div className={cn(
+                              "h-11 w-11 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all",
+                              isAvailable 
+                                ? "bg-primary shadow-primary/20 group-hover:bg-secondary group-hover:text-primary group-hover:rotate-90" 
+                                : "bg-muted text-muted-foreground shadow-none"
+                            )}>
+                              <Plus className="h-6 w-6" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {filteredItems.length === 0 && (
               <div className="col-span-full py-24 bg-card rounded-[3rem] border-2 border-dashed border-border text-center">
                 <Utensils className="h-16 w-12 text-muted-foreground/20 mx-auto mb-6" />
                 <h3 className="text-2xl font-black uppercase tracking-tighter italic text-foreground">{t('common.noResults')}</h3>
@@ -426,49 +508,56 @@ export function TakeOrder() {
                         </div>
                         <button 
                           onClick={(e) => { e.stopPropagation(); removeFromCart(item.itemId, item.type); }}
-                          className="h-8 w-8 flex items-center justify-center text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 rounded-lg transition-all"
+                          className="h-10 w-10 flex items-center justify-center text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5" />
                         </button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="py-20 text-center space-y-4 opacity-20">
-                    <ShoppingCart className="h-12 w-12 mx-auto" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em]">{t('takeOrder.cart.emptyCart')}</p>
+                  <div className="flex flex-col items-center justify-center py-20 text-center px-6">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6 border-4 border-dashed border-border">
+                      <ShoppingCart className="h-8 w-8 text-muted-foreground/20" />
+                    </div>
+                    <h4 className="font-black uppercase tracking-tighter text-xl text-foreground mb-2">{t('takeOrder.cart.emptyCart')}</h4>
+                    <p className="text-muted-foreground text-xs font-medium uppercase tracking-widest leading-relaxed">
+                      {t('takeOrder.cart.emptyCartDesc')}
+                    </p>
                   </div>
                 )}
               </div>
             </CardContent>
 
-            <CardFooter className="flex flex-col p-8 pt-6 gap-6 bg-muted/50 border-t-2 border-border shrink-0">
-              <div className="w-full space-y-3">
+            <CardFooter className="p-8 bg-muted/30 border-t-2 border-border/50 shrink-0">
+              <div className="w-full space-y-6">
                 <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('takeOrder.cart.totalDue')}</span>
-                  <span className="text-4xl font-black text-primary tracking-tighter leading-none">{formatPrice(total)}</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest">{t('takeOrder.cart.totalDue')}</span>
+                    <p className="text-4xl font-black text-primary tracking-tighter leading-none">{formatPrice(total)}</p>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/5 transition-all text-xs font-black uppercase tracking-widest"
+                    onClick={clearCart}
+                    disabled={cart.length === 0}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" /> {t('takeOrder.cart.voidTicket')}
+                  </Button>
                 </div>
-              </div>
-              
-              <div className="flex gap-3 w-full">
-                <Button 
-                  variant="outline" 
-                  className="flex-1 h-16 rounded-2xl border-2 font-black uppercase italic tracking-tighter text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all text-xs"
-                  onClick={clearCart}
-                  disabled={cart.length === 0}
-                >
-                  {t('takeOrder.cart.voidTicket')}
-                </Button>
+                
                 <Button 
                   data-testid="place-order-button"
-                  className="flex-[2] h-16 rounded-2xl font-black uppercase italic tracking-tighter text-lg shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary group relative overflow-hidden"
+                  className="w-full h-20 rounded-[1.5rem] font-black uppercase italic tracking-tighter text-2xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary text-white group relative overflow-hidden"
                   onClick={handleCheckout}
                   disabled={createOrderMutation.isPending || cart.length === 0}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    {createOrderMutation.isPending ? t('takeOrder.cart.sending') : t('takeOrder.cart.placeOrder')}
+                    <ClipboardList className="h-6 w-6 text-secondary" />
+                    {createOrderMutation.isPending ? t('common.loading') : t('takeOrder.cart.placeOrder')}
                   </span>
-                  <div className="absolute inset-0 bg-card/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </Button>
               </div>
             </CardFooter>
