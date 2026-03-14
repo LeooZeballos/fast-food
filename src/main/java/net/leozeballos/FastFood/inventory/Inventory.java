@@ -41,6 +41,9 @@ public class Inventory {
     @Builder.Default
     private boolean isAvailable = true;
 
+    @Version
+    private Long version;
+
     /**
      * Check if there's enough stock for a given quantity.
      * @param requestedQuantity The quantity requested.

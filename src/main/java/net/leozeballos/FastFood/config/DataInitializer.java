@@ -38,15 +38,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        // Force reset admin user with known bcrypt hash for "admin"
-        User admin = userRepository.findByUsername("admin").orElse(new User());
-        admin.setUsername("admin");
-        admin.setPassword("$2a$10$yafJV01hrbBMWhcHU4pqCeOjT9czyBtLQsdaTN14noy7VyTuPBBQS"); // "admin"
-        admin.setRoles(new HashSet<>(Set.of("ADMIN")));
-        admin.setEnabled(true);
-        userRepository.save(admin);
-        System.out.println("Admin user updated/reset: admin/admin");
-
         if (branchRepository.count() == 0) {
             // --- BRANCHES ---
             Branch b1 = new Branch();
@@ -58,7 +49,21 @@ public class DataInitializer implements CommandLineRunner {
             b2.setAddress(Address.builder().city("Rosario").street("Av. del Libertad 567").build());
 
             branchRepository.saveAll(List.of(b1, b2));
+            System.out.println("--- Branches Initialized successfully ---");
         }
+
+        List<Branch> allBranches = branchRepository.findAll();
+        Branch mainBranch = allBranches.isEmpty() ? null : allBranches.get(0);
+
+        // Force reset admin user with known bcrypt hash for "admin"
+        User admin = userRepository.findByUsername("admin").orElse(new User());
+        admin.setUsername("admin");
+        admin.setPassword("$2a$10$yafJV01hrbBMWhcHU4pqCeOjT9czyBtLQsdaTN14noy7VyTuPBBQS"); // "admin"
+        admin.setRoles(new HashSet<>(Set.of("ADMIN")));
+        admin.setEnabled(true);
+        admin.setBranch(mainBranch);
+        userRepository.save(admin);
+        System.out.println("Admin user updated/reset: admin/admin linked to " + (mainBranch != null ? mainBranch.getName() : "no branch"));
 
         // --- INVENTORY INITIALIZATION ---
         if (inventoryRepository.count() == 0) {

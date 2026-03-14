@@ -24,7 +24,7 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Item {
 
@@ -58,6 +58,9 @@ public abstract class Item {
      */
     @Column(nullable = false)
     private boolean isActive = true;
+
+    @jakarta.persistence.Version
+    private Long version;
 
     public Item(String name) {
         this.name = name;

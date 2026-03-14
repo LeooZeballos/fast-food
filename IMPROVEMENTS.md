@@ -32,3 +32,16 @@ This document tracks the planned and implemented improvements for the FastFood a
 - [x] **Update Frontend Dependencies**: Patched the `hono` vulnerability (Prototype Pollution) by updating dependencies. `pnpm audit` now reports no vulnerabilities.
 - [x] **Enable CSRF Protection**: Implemented Cookie-based CSRF protection with full React/Axios integration.
 - [ ] **Audit Data Access**: Ensure branch-specific data is only accessible to authorized users of that branch.
+
+## ⚙️ Backend Specialist (Performance & Architecture)
+
+- [ ] **Disable Open-Session-In-View (OSIV)**: Set `spring.jpa.open-in-view=false` to prevent N+1 query issues and improve connection management.
+- [x] **Modernize Java & Concurrency**: Upgrade to **Java 21** and enable **Virtual Threads** (`spring.threads.virtual.enabled=true`) for better throughput.
+- [x] **Implement Caching Layer**: Use `@Cacheable` with Caffeine or Redis for frequently accessed data like branches, product lists, and menus.
+- [x] **Standardized Error Handling (RFC 7807)**: Refactor `GlobalExceptionHandler` to use Spring's `ProblemDetail` for standardized API error responses.
+- [x] **Optimistic Locking**: Implement `@Version` in the `Inventory` entity to prevent race conditions during concurrent stock decrements.
+- [x] **Database Migration Tooling**: Replace `hibernate.ddl-auto=update` with **Flyway** or **Liquibase** for version-controlled schema management.
+- [x] **Externalize Configuration**: Move hardcoded CORS origins and other environment-specific settings to `application.properties` or environment variables.
+
+- [ ] **Enhanced Observability**: Integrate **Micrometer** for metrics and ensure Actuator endpoints are properly secured with role-based access.
+- [ ] **API Documentation Refinement**: Ensure all REST controllers are fully documented with OpenAPI/Swagger annotations for better frontend integration.

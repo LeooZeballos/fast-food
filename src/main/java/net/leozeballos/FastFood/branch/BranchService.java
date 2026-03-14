@@ -2,6 +2,8 @@ package net.leozeballos.FastFood.branch;
 
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.mapper.BranchMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class BranchService {
         this.branchMapper = branchMapper;
     }
 
+    @Cacheable(value = "branches")
     public List<BranchDTO> findAllDTO() {
         return branchRepository.findAll().stream()
                 .map(branchMapper::toDTO)
@@ -39,14 +42,17 @@ public class BranchService {
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id));
     }
 
+    @CacheEvict(value = "branches", allEntries = true)
     public Branch save(Branch branch) {
         return branchRepository.save(branch);
     }
 
+    @CacheEvict(value = "branches", allEntries = true)
     public void delete(Branch branch) {
         branchRepository.delete(branch);
     }
 
+    @CacheEvict(value = "branches", allEntries = true)
     public void deleteById(Long id) {
         if (!branchRepository.existsById(id)) {
             throw new ResourceNotFoundException("Branch not found with id: " + id);
@@ -54,6 +60,7 @@ public class BranchService {
         branchRepository.deleteById(id);
     }
 
+    @CacheEvict(value = "branches", allEntries = true)
     public void deleteAll() {
         branchRepository.deleteAll();
     }

@@ -3,6 +3,7 @@ package net.leozeballos.FastFood.auth;
 import jakarta.persistence.*;
 import lombok.*;
 
+import net.leozeballos.FastFood.branch.Branch;
 import java.util.Set;
 
 @Entity
@@ -26,6 +27,10 @@ public class User {
 
     @Column(nullable = false)
     private boolean enabled = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

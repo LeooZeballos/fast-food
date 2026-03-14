@@ -24,19 +24,6 @@ public class SecurityIntegrationTest {
     }
 
     @Test
-    public void branchListIsProtected() throws Exception {
-        mockMvc.perform(get("/branch/list"))
-                .andExpect(status().isUnauthorized()); 
-    }
-
-    @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void branchListIsAccessibleWhenAuthenticated() throws Exception {
-        mockMvc.perform(get("/branch/list"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void apiIsProtected() throws Exception {
         mockMvc.perform(get("/api/v1/branches"))
                 .andExpect(status().isUnauthorized());

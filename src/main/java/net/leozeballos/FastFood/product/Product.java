@@ -24,7 +24,7 @@ public class Product extends Item {
     /**
      * The price of the product.
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     @DecimalMin(value = "0.0")
     private double price;
 
