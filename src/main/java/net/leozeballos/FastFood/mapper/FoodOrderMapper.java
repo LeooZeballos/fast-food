@@ -19,7 +19,9 @@ public class FoodOrderMapper {
         return FoodOrderDTO.builder()
                 .id(order.getId())
                 .creationTimestamp(order.getCreationTimestamp())
+                .preparationStartTimestamp(order.getPreparationStartTimestamp())
                 .paymentTimestamp(order.getPaymentTimestamp())
+
                 .formattedState(FormattingUtils.formatState(order.getState()))
                 .branchName(order.getBranch() != null ? order.getBranch().getName() : "Unknown Branch")
                 .total(order.calculateTotal())

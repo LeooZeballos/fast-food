@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 
 import net.leozeballos.FastFood.auth.User;
 import net.leozeballos.FastFood.auth.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Set;
 
 @Configuration
@@ -33,7 +32,6 @@ public class DataInitializer implements CommandLineRunner {
     private final MenuRepository menuRepository;
     private final net.leozeballos.FastFood.inventory.InventoryRepository inventoryRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -43,7 +41,7 @@ public class DataInitializer implements CommandLineRunner {
             Branch b1 = new Branch();
             b1.setName("Downtown Central");
             b1.setAddress(Address.builder().city("Buenos Aires").street("Av. Corrientes 1234").build());
-            
+
             Branch b2 = new Branch();
             b2.setName("Riverside Mall");
             b2.setAddress(Address.builder().city("Rosario").street("Av. del Libertad 567").build());
@@ -130,7 +128,7 @@ public class DataInitializer implements CommandLineRunner {
             m1.setIcon("combo");
             m1.setDiscount(new BigDecimal("0.1"));
             if (p1 != null && p4 != null && p6 != null) m1.setItems(List.of(p1, p4, p6));
-            
+
             Menu m2 = new Menu();
             m2.setName("Bacon Lovers Feast");
             m2.setNameEs("Banquete para Amantes del Tocino");

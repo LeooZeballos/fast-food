@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public record FoodOrderDTO(
     Long id,
     LocalDateTime creationTimestamp,
+    LocalDateTime preparationStartTimestamp,
     LocalDateTime paymentTimestamp,
     String formattedState,
     String branchName,
@@ -20,6 +21,10 @@ public record FoodOrderDTO(
 ) {
     public String getFormattedCreationTimestamp() {
         return FormattingUtils.formatDateTime(creationTimestamp);
+    }
+
+    public String getFormattedPreparationStartTimestamp() {
+        return FormattingUtils.formatDateTime(preparationStartTimestamp);
     }
 
     public String getFormattedPaymentTimestamp() {

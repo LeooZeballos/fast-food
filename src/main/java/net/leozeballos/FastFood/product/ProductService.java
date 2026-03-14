@@ -6,12 +6,14 @@ import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -40,9 +42,11 @@ public class ProductService {
      * @return Filtered list of ProductDTOs.
      */
     public List<ProductDTO> findAllDTO(String name, Double maxPrice, Boolean active) {
-        Specification<Product> spec = Specification.where(ProductSpecifications.hasName(name))
-                .and(ProductSpecifications.isPriceLessThan(maxPrice))
-                .and(ProductSpecifications.isActive(active));
+        Specification<Product> spec = Specification.allOf(
+                ProductSpecifications.hasName(name),
+                ProductSpecifications.isPriceLessThan(maxPrice),
+                ProductSpecifications.isActive(active)
+        );
 
         return productRepository.findAll(spec).stream()
                 .map(productMapper::toDTO)
@@ -58,14 +62,17 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }
 
+    @Transactional
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
+    @Transactional
     public void delete(Product product) {
         productRepository.delete(product);
     }
 
+    @Transactional
     public void disableItem(Long id) {
         Product product = findById(id);
 
@@ -80,12 +87,14 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional
     public void enableItem(Long id) {
         Product product = findById(id);
         product.enable();
         productRepository.save(product);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Product not found with id: " + id);
@@ -93,6 +102,7 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         productRepository.deleteAll();
     }

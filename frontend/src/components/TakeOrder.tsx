@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProducts, getMenus, getBranches, createOrder } from "@/api";
-import type { ProductDTO, MenuDTO } from "@/api";
-import { useState, useMemo } from "react";
+import { getProducts, getMenus, getBranches, createOrder, getInventoryByBranch } from "@/api";
+import type { ProductDTO, MenuDTO, InventoryDTO } from "@/api";
+import { useState, useMemo, useEffect } from "react";
+import { useAuth } from "@/AuthContext";
 import { useTranslation } from "react-i18next";
 import { 
-  ShoppingCart, 
+// ... (rest of imports)
+
   Plus, 
   Minus, 
   Trash2, 
@@ -80,11 +82,18 @@ const ItemImage = ({ icon, type, className }: { icon?: string, type: "PRODUCT" |
 export function TakeOrder() {
   const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
+  const { branchId, isAdmin } = useAuth();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [activeCategory, setActiveCategory] = useState("all");
+
+  useEffect(() => {
+    if (branchId && !selectedBranch) {
+      setSelectedBranch(branchId.toString());
+    }
+  }, [branchId, selectedBranch]);
 
   const categories = [
     { id: "all", label: t('takeOrder.categories.all'), icon: <UtensilsCrossed className="h-4 w-4" /> },
@@ -97,6 +106,25 @@ export function TakeOrder() {
   const { data: products, isLoading: loadingProducts, error: errorProducts } = useQuery({ queryKey: ["products"], queryFn: getProducts });
   const { data: menus, isLoading: loadingMenus, error: errorMenus } = useQuery({ queryKey: ["menus"], queryFn: getMenus });
   const { data: branches } = useQuery({ queryKey: ["branches"], queryFn: getBranches });
+
+  const { data: inventory } = useQuery({
+    queryKey: ["inventory", selectedBranch],
+    queryFn: () => getInventoryByBranch(parseInt(selectedBranch)),
+    enabled: !!selectedBranch,
+  });
+
+  const availabilityMap = useMemo(() => {
+    const map = new Map<number, boolean>();
+    inventory?.forEach((item: InventoryDTO) => {
+      map.set(item.item.id, item.stockQuantity > 0 && item.isAvailable);
+    });
+    return map;
+  }, [inventory]);
+
+  const isItemAvailable = (itemId: number) => {
+    if (!selectedBranch) return true;
+    return availabilityMap.get(itemId) ?? false;
+  };
 
   const activeProducts = useMemo(() => products?.filter(p => p.active) || [], [products]);
   const activeMenus = useMemo(() => menus?.filter(m => m.active) || [], [menus]);
@@ -219,8 +247,10 @@ export function TakeOrder() {
           <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.2em]">{t('takeOrder.kitchenManagement')}</p>
         </div>
         <div className="w-full lg:w-80">
-          <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2 block ml-1">{t('takeOrder.branch')}</label>
-          <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+          <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2 block ml-1">
+            {t('takeOrder.branch')} {!isAdmin && branchId && <span className="text-secondary">(Assigned)</span>}
+          </label>
+          <Select value={selectedBranch} onValueChange={setSelectedBranch} disabled={!isAdmin && !!branchId}>
             <SelectTrigger data-testid="branch-select" className="h-14 border-2 bg-muted/50 focus:ring-primary/10 rounded-2xl transition-all px-6 w-full">
               <div className="flex items-center gap-3 w-full">
                 <Store className="h-5 w-5 text-secondary shrink-0" />
@@ -285,38 +315,58 @@ export function TakeOrder() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.length > 0 ? (
-              filteredItems.map(item => (
-                <Card 
-                  key={`${item.type}-${item.id}`} 
-                  data-testid="product-card"
-                  className="group border-2 bg-card rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col"
-                  onClick={() => addToCart(item, item.type)}
-                >
-                  <ItemImage icon={item.icon} type={item.type} className="h-48 w-full" />
-                  <CardContent className="p-6 space-y-4 flex-grow flex flex-col">
-                    <div className="space-y-1 flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{item.type}</span>
-                        {item.type === "MENU" && <span className="text-[10px] font-black text-secondary italic tracking-tighter uppercase">{t('takeOrder.cart.saveDiscount')} {(item as MenuDTO).formattedDiscount}</span>}
+              filteredItems.map(item => {
+                const isAvailable = item.id ? isItemAvailable(item.id) : true;
+                return (
+                  <Card 
+                    key={`${item.type}-${item.id}`} 
+                    data-testid="product-card"
+                    className={cn(
+                      "group border-2 bg-card rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col relative",
+                      !isAvailable ? "opacity-60 grayscale cursor-not-allowed" : "hover:scale-[1.02] cursor-pointer"
+                    )}
+                    onClick={() => isAvailable && addToCart(item, item.type)}
+                  >
+                    <ItemImage icon={item.icon} type={item.type} className="h-48 w-full" />
+                    
+                    {!isAvailable && (
+                      <div className="absolute top-4 left-4 z-20">
+                        <Badge variant="destructive" className="font-black text-[8px] tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-lg border-2 border-white/20 backdrop-blur-md">
+                          {t('common.outOfStock')}
+                        </Badge>
                       </div>
-                      <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic">
-                        {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
-                      </h3>
-                      {item.type === "MENU" && (
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase leading-relaxed line-clamp-2 mt-2">
-                          {(item as MenuDTO).productsList}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex justify-between items-center pt-2 mt-auto">
-                      <p className="font-black text-primary text-2xl tracking-tighter">{item.formattedPrice}</p>
-                      <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:bg-secondary group-hover:text-primary transition-all">
-                        <Plus className="h-6 w-6" />
+                    )}
+
+                    <CardContent className="p-6 space-y-4 flex-grow flex flex-col">
+                      <div className="space-y-1 flex-grow">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{item.type}</span>
+                          {item.type === "MENU" && isAvailable && <span className="text-[10px] font-black text-secondary italic tracking-tighter uppercase">{t('takeOrder.cart.saveDiscount')} {(item as MenuDTO).formattedDiscount}</span>}
+                        </div>
+                        <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic">
+                          {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
+                        </h3>
+                        {item.type === "MENU" && (
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase leading-relaxed line-clamp-2 mt-2">
+                            {(item as MenuDTO).productsList}
+                          </p>
+                        )}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                      <div className="flex justify-between items-center pt-2 mt-auto">
+                        <p className="font-black text-primary text-2xl tracking-tighter">{item.formattedPrice}</p>
+                        <div className={cn(
+                          "h-10 w-10 rounded-xl flex items-center justify-center text-white shadow-lg transition-all",
+                          isAvailable 
+                            ? "bg-primary shadow-primary/20 group-hover:bg-secondary group-hover:text-primary" 
+                            : "bg-muted text-muted-foreground shadow-none"
+                        )}>
+                          <Plus className="h-6 w-6" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
             ) : (
               <div className="col-span-full py-24 bg-card rounded-[3rem] border-2 border-dashed border-border text-center">
                 <Utensils className="h-16 w-12 text-muted-foreground/20 mx-auto mb-6" />

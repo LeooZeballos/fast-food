@@ -17,25 +17,26 @@ This document tracks the planned and implemented improvements for the FastFood a
 - [x] **FastFood Color Palette**: High-impact brand colors (warm reds, yellows) and redesigned Navbar.
 - [ ] **Kanban Board for Orders**: Visual workflow for kitchen staff using columns for different order states.
 - [ ] **Enhanced Interactive Feedback**:
-    - [ ] **Loading Skeletons**: Replace "Loading..." text with animated grey blocks.
+    - [x] **Loading Skeletons**: Integrated animated skeletons into Product and Menu lists.
     - [ ] **Micro-animations**: Pulse effects for active states and success animations.
-- [ ] **Visual Hierarchy on Cards**: Switch Product and Menu lists from tables to visually appealing grid cards.
+- [x] **Visual Hierarchy on Cards**: Switch Product and Menu lists from tables to visually appealing grid cards.
 
 ## 🛡️ Security Specialist (Audit & Compliance)
 
 ### Critical & High Priority
 - [x] **Implement Spring Security**: Added Spring Security with database-backed authentication, modern password hashing (BCrypt), and frontend login/logout flow.
 - [x] **Restrict Actuator Endpoints**: Restricted exposure to `health,info` in `application.properties`.
-- [ ] **Secure Database Credentials**: Encrypt plain-text passwords in `application-dev.properties` and `docker-compose.yml` using Jasypt.
+- [x] **Secure Database Credentials**: Encrypted plain-text passwords in `application-dev.properties` and `docker-compose.yml` using Jasypt.
 
 ### Medium & Low Priority
 - [x] **Update Frontend Dependencies**: Patched the `hono` vulnerability (Prototype Pollution) by updating dependencies. `pnpm audit` now reports no vulnerabilities.
 - [x] **Enable CSRF Protection**: Implemented Cookie-based CSRF protection with full React/Axios integration.
-- [ ] **Audit Data Access**: Ensure branch-specific data is only accessible to authorized users of that branch.
+- [x] **Audit Data Access**: Ensure branch-specific data is only accessible to authorized users of that branch.
 
 ## ⚙️ Backend Specialist (Performance & Architecture)
 
-- [ ] **Disable Open-Session-In-View (OSIV)**: Set `spring.jpa.open-in-view=false` to prevent N+1 query issues and improve connection management.
+- [x] **Disable Open-Session-In-View (OSIV)**: Set `spring.jpa.open-in-view=false` to prevent N+1 query issues and improve connection management.
+
 - [x] **Modernize Java & Concurrency**: Upgrade to **Java 21** and enable **Virtual Threads** (`spring.threads.virtual.enabled=true`) for better throughput.
 - [x] **Implement Caching Layer**: Use `@Cacheable` with Caffeine or Redis for frequently accessed data like branches, product lists, and menus.
 - [x] **Standardized Error Handling (RFC 7807)**: Refactor `GlobalExceptionHandler` to use Spring's `ProblemDetail` for standardized API error responses.
@@ -44,4 +45,4 @@ This document tracks the planned and implemented improvements for the FastFood a
 - [x] **Externalize Configuration**: Move hardcoded CORS origins and other environment-specific settings to `application.properties` or environment variables.
 
 - [ ] **Enhanced Observability**: Integrate **Micrometer** for metrics and ensure Actuator endpoints are properly secured with role-based access.
-- [ ] **API Documentation Refinement**: Ensure all REST controllers are fully documented with OpenAPI/Swagger annotations for better frontend integration.
+- [x] **API Documentation Refinement**: Ensure all REST controllers are fully documented with OpenAPI/Swagger annotations for better frontend integration.

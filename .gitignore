@@ -44,3 +44,4 @@ build/
 .pnpm-store
 .frontend.pid
 .backend.pid
+.env

@@ -26,6 +26,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean enabled = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

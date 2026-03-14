@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class FoodOrderService {
 
     public static final String FOOD_ORDER_ID_HEADER = "food_order_id";
@@ -34,8 +35,12 @@ public class FoodOrderService {
     private final net.leozeballos.FastFood.inventory.InventoryService inventoryService;
     private final FoodOrderMapper foodOrderMapper;
 
-    public List<FoodOrderDTO> findAllDTO() {
-        return foodOrderRepository.findAllWithDetails().stream()
+    public List<FoodOrderDTO> findAllDTO(Long branchId) {
+        List<FoodOrder> orders = (branchId == null) 
+                ? foodOrderRepository.findAllWithDetails()
+                : foodOrderRepository.findAllByBranchIdWithDetails(branchId);
+        
+        return orders.stream()
                 .map(foodOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -44,15 +49,23 @@ public class FoodOrderService {
         return foodOrderRepository.findAll();
     }
 
-    public FoodOrderDTO findDTOById(Long id) {
-        return foodOrderRepository.findById(id)
-                .map(foodOrderMapper::toDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
+    public FoodOrderDTO findDTOById(Long id, Long branchId) {
+        FoodOrder order = findById(id, branchId);
+        return foodOrderMapper.toDTO(order);
     }
 
-    public FoodOrder findById(Long id) {
-        return foodOrderRepository.findById(id)
+    public FoodOrder findById(Long id, Long branchId) {
+        FoodOrder order = foodOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
+        
+        checkBranchAccess(order, branchId);
+        return order;
+    }
+
+    private void checkBranchAccess(FoodOrder order, Long branchId) {
+        if (branchId != null && !order.getBranch().getId().equals(branchId)) {
+            throw new org.springframework.security.access.AccessDeniedException("User does not have access to this branch's data");
+        }
     }
 
     @Transactional
@@ -104,10 +117,10 @@ public class FoodOrderService {
         foodOrderRepository.delete(order);
     }
 
-    public void deleteById(Long id) {
-        if (!foodOrderRepository.existsById(id)) {
-            throw new ResourceNotFoundException("FoodOrder not found with id: " + id);
-        }
+    public void deleteById(Long id, Long branchId) {
+        FoodOrder order = foodOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
+        checkBranchAccess(order, branchId);
         foodOrderRepository.deleteById(id);
     }
 
@@ -115,41 +128,50 @@ public class FoodOrderService {
         foodOrderRepository.deleteAll();
     }
 
-    public StateMachine<FoodOrderState, FoodOrderEvent> update(Long id) {
+    public StateMachine<FoodOrderState, FoodOrderEvent> update(Long id, Long branchId) {
+        findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.UPDATE);
         return stateMachine;
     }
 
-    public StateMachine<FoodOrderState, FoodOrderEvent> startPreparation(Long id) {
+    @Transactional
+    public StateMachine<FoodOrderState, FoodOrderEvent> startPreparation(Long id, Long branchId) {
+        FoodOrder order = findById(id, branchId); // Access check
+        order.setPreparationStartTimestamp(LocalDateTime.now());
+        foodOrderRepository.save(order);
+        
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.STARTPREPARATION);
         return stateMachine;
     }
 
-    public StateMachine<FoodOrderState, FoodOrderEvent> finishPreparation(Long id) {
+    public StateMachine<FoodOrderState, FoodOrderEvent> finishPreparation(Long id, Long branchId) {
+        findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.FINISHPREPARATION);
         return stateMachine;
     }
 
     @Transactional
-    public StateMachine<FoodOrderState, FoodOrderEvent> confirmPayment(Long id) {
+    public StateMachine<FoodOrderState, FoodOrderEvent> confirmPayment(Long id, Long branchId) {
+        FoodOrder foodOrder = findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
-        FoodOrder foodOrder = findById(id);
         sendEvent(id, stateMachine, FoodOrderEvent.CONFIRMPAYMENT);
         foodOrder.setPaymentTimestamp(LocalDateTime.now());
         foodOrderRepository.save(foodOrder);
         return stateMachine;
     }
 
-    public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id) {
+    public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id, Long branchId) {
+        findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.CANCEL);
         return stateMachine;
     }
 
-    public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id) {
+    public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id, Long branchId) {
+        findById(id, branchId); // Access check
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.REJECT);
         return stateMachine;
@@ -163,7 +185,9 @@ public class FoodOrderService {
     }
 
     private StateMachine<FoodOrderState, FoodOrderEvent> build(Long id) {
-        FoodOrder order = findById(id);
+        // Warning: this doesn't re-check branchId internally, 
+        // callers MUST check before calling build() or via findById(id, branchId)
+        FoodOrder order = foodOrderRepository.findById(id).orElseThrow();
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(order.getId()));
         stateMachine.stopReactively().subscribe();
         stateMachine.getStateMachineAccessor()
@@ -175,13 +199,24 @@ public class FoodOrderService {
         return stateMachine;
     }
 
-    public List<FoodOrderDTO> findAllFoodOrdersByStateDTO(FoodOrderState state) {
-        return foodOrderRepository.findAllFoodOrdersByState(state).stream()
+    public List<FoodOrderDTO> findAllFoodOrdersByStateDTO(FoodOrderState state, Long branchId) {
+        List<FoodOrder> orders;
+        if (branchId == null) {
+             orders = foodOrderRepository.findAllWithDetails().stream()
+                .filter(o -> o.getState() == state)
+                .collect(Collectors.toList());
+        } else {
+            orders = foodOrderRepository.findAllByBranchIdAndStateWithDetails(branchId, state);
+        }
+
+        return orders.stream()
                 .map(foodOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FoodOrder> findAllFoodOrdersByState(FoodOrderState state) {
-        return foodOrderRepository.findAllFoodOrdersByState(state);
+        return foodOrderRepository.findAllWithDetails().stream()
+                .filter(o -> o.getState() == state)
+                .collect(Collectors.toList());
     }
 }

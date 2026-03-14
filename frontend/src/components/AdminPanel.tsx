@@ -1,12 +1,33 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, Utensils, Store, ShieldCheck } from "lucide-react";
+import { Package, Utensils, Store, ShieldCheck, ShieldAlert } from "lucide-react";
 import { ProductList } from "./ProductList";
 import { MenuList } from "./MenuList";
 import { BranchList } from "./BranchList";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../AuthContext";
 
 export function AdminPanel() {
   const { t } = useTranslation();
+  const { isAdmin } = useAuth();
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center space-y-6 animate-in fade-in zoom-in-95 duration-500">
+        <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center border-4 border-destructive/20">
+          <ShieldAlert className="h-12 w-12 text-destructive" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-black uppercase italic tracking-tighter text-foreground">
+            {t('common.accessDenied') || "Access Denied"}
+          </h2>
+          <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto leading-relaxed">
+            {t('common.adminOnly') || "This section is reserved for system administrators only."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col gap-3 text-center bg-card p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">

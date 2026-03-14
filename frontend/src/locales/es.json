@@ -27,7 +27,10 @@
     "items": "Items",
     "clear": "Vaciar",
     "clearConfirm": "¿Vaciar el pedido actual?",
-    "noResultsAdjust": "Intenta ajustar tu búsqueda o filtros"
+    "noResultsAdjust": "Intenta ajustar tu búsqueda o filtros",
+    "accessDenied": "Acceso Denegado",
+    "adminOnly": "Esta sección está reservada únicamente para administradores del sistema.",
+    "outOfStock": "Agotado"
   },
   "nav": {
     "takeOrder": "Tomar Pedido",

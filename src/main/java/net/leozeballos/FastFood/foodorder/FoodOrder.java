@@ -45,6 +45,9 @@ public class FoodOrder {
     @CreationTimestamp
     private LocalDateTime creationTimestamp;
 
+    @Column
+    private LocalDateTime preparationStartTimestamp;
+
     /**
      * The payment date and time of the food order.
      */

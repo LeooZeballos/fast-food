@@ -74,7 +74,7 @@ function LiveClock() {
 export function Navbar({ activeView, onViewChange }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
-  const { username, logout } = useAuth();
+  const { username, isAdmin, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -145,12 +145,14 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
               label={t('nav.kitchen')} 
               sublabel={t('nav.production')} 
             />
-            <NavButton 
-              view="admin" 
-              icon={ShieldCheck} 
-              label={t('nav.admin')} 
-              sublabel={t('nav.system')} 
-            />
+            {isAdmin && (
+              <NavButton 
+                view="admin" 
+                icon={ShieldCheck} 
+                label={t('nav.admin')} 
+                sublabel={t('nav.system')} 
+              />
+            )}
           </div>
 
           {/* Right Side Info */}
@@ -200,12 +202,14 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
           >
             <ClipboardList className="h-5 w-5" /> {t('nav.kitchen')}
           </button>
-          <button
-            onClick={() => { onViewChange("admin"); setIsMenuOpen(false); }}
-            className={cn("w-full px-6 py-4 rounded-2xl text-left font-black uppercase italic tracking-tighter flex items-center gap-4", activeView === "admin" ? "bg-secondary text-primary" : "hover:bg-primary-foreground/5")}
-          >
-            <ShieldCheck className="h-5 w-5" /> {t('nav.admin')}
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => { onViewChange("admin"); setIsMenuOpen(false); }}
+              className={cn("w-full px-6 py-4 rounded-2xl text-left font-black uppercase italic tracking-tighter flex items-center gap-4", activeView === "admin" ? "bg-secondary text-primary" : "hover:bg-primary-foreground/5")}
+            >
+              <ShieldCheck className="h-5 w-5" /> {t('nav.admin')}
+            </button>
+          )}
         </div>
       )}
     </nav>

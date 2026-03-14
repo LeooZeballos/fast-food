@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/AuthContext";
 import { 
   getOrders, 
   startPreparation, 
-  finishPreparation, 
+// ...
+
   confirmPayment, 
   cancelOrder, 
   rejectOrder
@@ -57,6 +59,41 @@ function TimeAgo({ timestamp }: { timestamp: string }) {
   );
 }
 
+function PrepTimer({ start, end, state }: { start?: string, end?: string, state: string }) {
+  const { t } = useTranslation();
+  const [minutes, setMinutes] = useState(0);
+
+  useEffect(() => {
+    if (!start) return;
+    
+    const calculate = () => {
+      const startTime = new Date(start).getTime();
+      const endTime = end ? new Date(end).getTime() : new Date().getTime();
+      setMinutes(Math.floor((endTime - startTime) / 60000));
+    };
+    
+    calculate();
+    if (!end && state === "Inpreparation") {
+      const interval = setInterval(calculate, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [start, end, state]);
+
+  if (!start) return null;
+
+  return (
+    <div className={cn(
+      "flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md border",
+      state === "Inpreparation" && minutes > 10 ? "text-orange-500 border-orange-500/20 bg-orange-500/5 animate-pulse" :
+      state === "Done" || state === "Paid" ? "text-green-600 border-green-600/20 bg-green-600/5" :
+      "text-blue-500 border-blue-500/20 bg-blue-500/5"
+    )}>
+      <ChefHat className="h-3 w-3" />
+      {state === "Inpreparation" ? `Prep: ${minutes}m` : `Total Prep: ${minutes}m`}
+    </div>
+  );
+}
+
 function OrderCard({ 
   order, 
   onAction 
@@ -91,7 +128,14 @@ function OrderCard({
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">{order.branchName}</span>
             </div>
           </div>
-          <TimeAgo timestamp={order.creationTimestamp} />
+          <div className="flex flex-col items-end gap-2">
+            <TimeAgo timestamp={order.creationTimestamp} />
+            <PrepTimer 
+              start={order.preparationStartTimestamp} 
+              end={order.paymentTimestamp} 
+              state={order.formattedState} 
+            />
+          </div>
         </div>
       </CardHeader>
       
@@ -150,11 +194,23 @@ function OrderCard({
 export function OrderList() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  const { branchId, isAdmin } = useAuth();
   const { data: orders, isLoading } = useQuery({
     queryKey: ["orders", "all"],
     queryFn: () => getOrders("all"),
     refetchInterval: 5000,
   });
+
+  const { data: branches } = useQuery({ 
+    queryKey: ["branches"], 
+    queryFn: () => import("@/api").then(api => api.getBranches()),
+    enabled: !isAdmin && !!branchId 
+  });
+
+  const assignedBranchName = useMemo(() => {
+    if (isAdmin) return null;
+    return branches?.find(b => b.id === branchId)?.name;
+  }, [branches, branchId, isAdmin]);
 
   const mutationOptions = {
     onSuccess: () => {
@@ -210,9 +266,17 @@ export function OrderList() {
           </h2>
           <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.2em]">{t('kitchen.visualWorkflow')}</p>
         </div>
-        <div className="flex items-center gap-3 bg-muted/50 px-4 py-2 rounded-2xl border-2">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{t('kitchen.liveFeed')}</span>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          {assignedBranchName && (
+            <div className="flex items-center gap-3 bg-secondary/10 px-4 py-2 rounded-2xl border-2 border-secondary/20">
+              <Store className="h-4 w-4 text-secondary" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">{assignedBranchName}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-3 bg-muted/50 px-4 py-2 rounded-2xl border-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{t('kitchen.liveFeed')}</span>
+          </div>
         </div>
       </div>
 

@@ -256,7 +256,7 @@ class FoodOrderTest {
         String actual = foodOrder.toString();
 
         // then
-        assertThat(actual).isEqualTo("FoodOrder(id=null, creationTimestamp=null, paymentTimestamp=null, state=null, branch=null, version=null)");
+        assertThat(actual).isEqualTo("FoodOrder(id=null, creationTimestamp=null, preparationStartTimestamp=null, paymentTimestamp=null, state=null, branch=null, version=null)");
     }
 
 }

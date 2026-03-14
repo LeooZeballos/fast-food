@@ -5,7 +5,8 @@ services:
     environment:
       - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/fastfood
       - JDBC_DATABASE_USERNAME=postgres
-      - JDBC_DATABASE_PASSWORD=postgres
+      - JDBC_DATABASE_PASSWORD=ENC(Z4pKhqpM3s+ZEWz5swKQNxqWEF72Ya4npvJnZUregFSnZ4y/lIP402qathoU1H0w)
+      - JASYPT_ENCRYPTOR_PASSWORD=fastfood-secret
     ports:
       - 8081:8080
     depends_on:

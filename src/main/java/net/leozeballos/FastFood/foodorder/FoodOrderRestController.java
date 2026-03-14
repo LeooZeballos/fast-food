@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
+import net.leozeballos.FastFood.auth.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -22,12 +24,16 @@ public class FoodOrderRestController {
     private final FoodOrderMapper foodOrderMapper;
 
     @GetMapping
-    @Operation(summary = "Get all orders", description = "Returns a list of all orders, optionally filtered by status")
+    @Operation(summary = "Get all orders", description = "Returns a list of all orders, optionally filtered by status and scoped to the user's branch")
     public List<FoodOrderDTO> getAll(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "Filter by order status (created, in_preparation, finished, paid, cancelled, rejected)")
             @RequestParam(required = false) String type) {
+        
+        Long branchId = getEffectiveBranchId(userDetails);
+
         if (type == null || type.equals("all")) {
-            return foodOrderService.findAllDTO();
+            return foodOrderService.findAllDTO(branchId);
         }
         
         FoodOrderState state = switch (type) {
@@ -40,15 +46,18 @@ public class FoodOrderRestController {
             default -> null;
         };
 
-        return state != null ? foodOrderService.findAllFoodOrdersByStateDTO(state) : List.of();
+        return state != null ? foodOrderService.findAllFoodOrdersByStateDTO(state, branchId) : List.of();
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get order by ID", description = "Returns detailed information about a specific order")
+    @Operation(summary = "Get order by ID", description = "Returns detailed information about a specific order, strictly scoped to user branch")
     @ApiResponse(responseCode = "200", description = "Order found")
     @ApiResponse(responseCode = "404", description = "Order not found")
-    public FoodOrderDTO getOne(@Parameter(description = "ID of the order to be retrieved") @PathVariable Long id) {
-        return foodOrderService.findDTOById(id);
+    @ApiResponse(responseCode = "403", description = "Access denied to branch")
+    public FoodOrderDTO getOne(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to be retrieved") @PathVariable Long id) {
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @PostMapping
@@ -62,43 +71,63 @@ public class FoodOrderRestController {
 
     @PostMapping("/{id}/start-preparation")
     @Operation(summary = "Start order preparation", description = "Transitions the order state to IN_PREPARATION")
-    public FoodOrderDTO startPreparation(@Parameter(description = "ID of the order to start") @PathVariable Long id) {
-        foodOrderService.startPreparation(id);
-        return foodOrderService.findDTOById(id);
+    public FoodOrderDTO startPreparation(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to start") @PathVariable Long id) {
+        foodOrderService.startPreparation(id, getEffectiveBranchId(userDetails));
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @PostMapping("/{id}/finish-preparation")
     @Operation(summary = "Finish order preparation", description = "Transitions the order state to DONE (Finished)")
-    public FoodOrderDTO finishPreparation(@Parameter(description = "ID of the order to finish") @PathVariable Long id) {
-        foodOrderService.finishPreparation(id);
-        return foodOrderService.findDTOById(id);
+    public FoodOrderDTO finishPreparation(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to finish") @PathVariable Long id) {
+        foodOrderService.finishPreparation(id, getEffectiveBranchId(userDetails));
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @PostMapping("/{id}/confirm-payment")
     @Operation(summary = "Confirm order payment", description = "Transitions the order state to PAID")
-    public FoodOrderDTO confirmPayment(@Parameter(description = "ID of the order to pay") @PathVariable Long id) {
-        foodOrderService.confirmPayment(id);
-        return foodOrderService.findDTOById(id);
+    public FoodOrderDTO confirmPayment(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to pay") @PathVariable Long id) {
+        foodOrderService.confirmPayment(id, getEffectiveBranchId(userDetails));
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @PostMapping("/{id}/cancel")
     @Operation(summary = "Cancel order", description = "Transitions the order state to CANCELLED")
-    public FoodOrderDTO cancel(@Parameter(description = "ID of the order to cancel") @PathVariable Long id) {
-        foodOrderService.cancel(id);
-        return foodOrderService.findDTOById(id);
+    public FoodOrderDTO cancel(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to cancel") @PathVariable Long id) {
+        foodOrderService.cancel(id, getEffectiveBranchId(userDetails));
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @PostMapping("/{id}/reject")
     @Operation(summary = "Reject order", description = "Transitions the order state to REJECTED")
-    public FoodOrderDTO reject(@Parameter(description = "ID of the order to reject") @PathVariable Long id) {
-        foodOrderService.reject(id);
-        return foodOrderService.findDTOById(id);
+    public FoodOrderDTO reject(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to reject") @PathVariable Long id) {
+        foodOrderService.reject(id, getEffectiveBranchId(userDetails));
+        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete order", description = "Permanently removes an order from the system")
     @ApiResponse(responseCode = "204", description = "Order deleted successfully")
-    public void delete(@Parameter(description = "ID of the order to delete") @PathVariable Long id) {
-        foodOrderService.deleteById(id);
+    public void delete(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the order to delete") @PathVariable Long id) {
+        foodOrderService.deleteById(id, getEffectiveBranchId(userDetails));
+    }
+
+    private Long getEffectiveBranchId(CustomUserDetails userDetails) {
+        if (userDetails == null) return null;
+        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return null; // Admins see everything
+        }
+        return userDetails.getBranchId();
     }
 }

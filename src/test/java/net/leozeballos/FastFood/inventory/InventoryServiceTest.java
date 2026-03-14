@@ -1,7 +1,5 @@
 package net.leozeballos.FastFood.inventory;
 
-import net.leozeballos.FastFood.branch.Branch;
-import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.product.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

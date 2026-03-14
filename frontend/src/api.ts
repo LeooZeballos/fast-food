@@ -194,13 +194,55 @@ export const login = async (username: string, password: string) => {
   });
 };
 
+export type UserDTO = {
+  name: string;
+  branchId?: number | "none";
+  roles?: string[];
+}
+
+export type InventoryDTO = {
+  id: number;
+  stockQuantity: number;
+  isAvailable: boolean;
+  item: {
+    id: number;
+    name: string;
+  };
+}
+
+export const getInventoryByBranch = async (branchId: number) => {
+  const response = await api.get<InventoryDTO[]>(`/inventory/branch/${branchId}`);
+  return response.data;
+};
+
 export const logout = async () => {
   await authApi.post("/logout", null);
 };
 
 export const getMe = async () => {
-  const response = await api.get<{ name: string }>("/branches/me"); // Simple protected endpoint to check auth
+  const response = await api.get<UserDTO>("/branches/me");
   return response.data;
 };
+
+// RFC 7807 Error Interceptor
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.data) {
+      const detail = error.response.data.detail || error.response.data.message;
+      if (detail) {
+        error.message = detail;
+      }
+      // If there are validation errors (RFC 7807 custom properties)
+      if (error.response.data.errors) {
+        const valErrors = error.response.data.errors;
+        // @ts-ignore
+        error.validationErrors = valErrors;
+        error.message = Object.values(valErrors).join(", ");
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

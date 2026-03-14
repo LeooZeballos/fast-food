@@ -53,7 +53,7 @@ class FoodOrderServiceTest {
         when(foodOrderRepository.findById(id)).thenReturn(Optional.of(order));
 
         // when
-        underTest.findById(id);
+        underTest.findById(id, null);
 
         // then
         verify(foodOrderRepository).findById(id);
@@ -89,10 +89,11 @@ class FoodOrderServiceTest {
     void canDeleteFoodOrderById() {
         // given
         Long id = 1L;
-        when(foodOrderRepository.existsById(id)).thenReturn(true);
+        FoodOrder order = new FoodOrder();
+        when(foodOrderRepository.findById(id)).thenReturn(Optional.of(order));
 
         // when
-        underTest.deleteById(id);
+        underTest.deleteById(id, null);
 
         // then
         verify(foodOrderRepository).deleteById(id);
@@ -113,7 +114,7 @@ class FoodOrderServiceTest {
         underTest.findAllFoodOrdersByState(FoodOrderState.CREATED);
 
         // then
-        verify(foodOrderRepository).findAllFoodOrdersByState(FoodOrderState.CREATED);
+        verify(foodOrderRepository).findAllWithDetails();
     }
 
     @Test

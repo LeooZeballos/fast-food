@@ -27,7 +27,10 @@
     "items": "Items",
     "clear": "Clear",
     "clearConfirm": "Clear current order?",
-    "noResultsAdjust": "Try adjusting your search or filters"
+    "noResultsAdjust": "Try adjusting your search or filters",
+    "accessDenied": "Access Denied",
+    "adminOnly": "This section is reserved for system administrators only.",
+    "outOfStock": "Out of Stock"
   },
   "nav": {
     "takeOrder": "Take Order",
