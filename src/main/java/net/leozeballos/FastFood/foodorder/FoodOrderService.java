@@ -1,6 +1,7 @@
 package net.leozeballos.FastFood.foodorder;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -160,7 +162,8 @@ public class FoodOrderService {
 
     @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id, Long branchId) {
-        findById(id, branchId); // Access check
+        FoodOrder order = findById(id, branchId); // Access check
+        restoreStockForOrder(order);
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.CANCEL);
         return stateMachine;
@@ -168,17 +171,32 @@ public class FoodOrderService {
 
     @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id, Long branchId) {
-        findById(id, branchId); // Access check
+        FoodOrder order = findById(id, branchId); // Access check
+        restoreStockForOrder(order);
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.REJECT);
         return stateMachine;
+    }
+
+    private void restoreStockForOrder(FoodOrder order) {
+        Long branchId = order.getBranch().getId();
+        for (FoodOrderDetail detail : order.getFoodOrderDetails()) {
+            inventoryService.incrementStock(
+                branchId,
+                detail.getItem().getId(),
+                detail.getQuantity()
+            );
+        }
     }
 
     private void sendEvent(Long id, StateMachine<FoodOrderState, FoodOrderEvent> stateMachine, FoodOrderEvent event) {
         Message<FoodOrderEvent> msg = MessageBuilder.withPayload(event)
                 .setHeader(FOOD_ORDER_ID_HEADER, id)
                 .build();
-        stateMachine.sendEvent(Mono.just(msg)).subscribe();
+        stateMachine.sendEvent(Mono.just(msg)).subscribe(
+            result -> log.debug("Event {} sent for order {}", event, id),
+            error -> log.error("Error sending event {} for order {}: {}", event, id, error.getMessage())
+        );
     }
 
     private StateMachine<FoodOrderState, FoodOrderEvent> build(Long id) {
@@ -186,13 +204,22 @@ public class FoodOrderService {
         // callers MUST check before calling build() or via findById(id, branchId)
         FoodOrder order = foodOrderRepository.findById(id).orElseThrow();
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(order.getId()));
-        stateMachine.stopReactively().subscribe();
+        stateMachine.stopReactively().subscribe(
+            null,
+            error -> log.error("Error stopping state machine for order {}: {}", id, error.getMessage())
+        );
         stateMachine.getStateMachineAccessor()
                 .doWithAllRegions(sma -> {
                     sma.addStateMachineInterceptor(stateChangeInterceptor);
-                    sma.resetStateMachineReactively(new DefaultStateMachineContext<>(order.getState(), null, null, null)).subscribe();
+                    sma.resetStateMachineReactively(new DefaultStateMachineContext<>(order.getState(), null, null, null)).subscribe(
+                        null,
+                        error -> log.error("Error resetting state machine for order {}: {}", id, error.getMessage())
+                    );
                 });
-        stateMachine.startReactively().subscribe();
+        stateMachine.startReactively().subscribe(
+            null,
+            error -> log.error("Error starting state machine for order {}: {}", id, error.getMessage())
+        );
         return stateMachine;
     }
 

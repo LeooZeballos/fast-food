@@ -78,4 +78,35 @@ class FoodOrderServiceIntegrationTest {
         Inventory updatedInventory = inventoryRepository.findByBranchIdAndItemId(branch.getId(), product.getId()).orElseThrow();
         assertThat(updatedInventory.getStockQuantity()).isEqualTo(2);
     }
+
+    @Test
+    void cancelOrder_restoresInventoryStock() {
+        // given
+        Branch branch = branchRepository.save(Branch.builder().name("Test Branch").build());
+        Product product = productRepository.save(new Product("Test Burger", 10.0));
+        
+        inventoryRepository.save(Inventory.builder()
+                .branch(branch)
+                .item(product)
+                .stockQuantity(10)
+                .isAvailable(true)
+                .build());
+
+        CreateOrderDTO.OrderDetailItemDTO itemDTO = new CreateOrderDTO.OrderDetailItemDTO(product.getId(), 2);
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(branch.getId(), List.of(itemDTO));
+
+        FoodOrder order = underTest.createOrder(createOrderDTO);
+        
+        // Stock should be 8 now
+        assertThat(inventoryRepository.findByBranchIdAndItemId(branch.getId(), product.getId()).get().getStockQuantity())
+                .isEqualTo(8);
+
+        // when
+        underTest.cancel(order.getId(), null);
+
+        // then
+        // Stock should be 10 again
+        assertThat(inventoryRepository.findByBranchIdAndItemId(branch.getId(), product.getId()).get().getStockQuantity())
+                .isEqualTo(10);
+    }
 }

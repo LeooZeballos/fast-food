@@ -114,7 +114,7 @@ class FoodOrderServiceTest {
         underTest.findAllFoodOrdersByState(FoodOrderState.CREATED);
 
         // then
-        verify(foodOrderRepository).findAllWithDetails();
+        verify(foodOrderRepository).findAllByStateWithDetails(FoodOrderState.CREATED);
     }
 
     @Test
