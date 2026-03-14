@@ -28,4 +28,11 @@ public interface FoodOrderRepository extends JpaRepository<FoodOrder, Long> {
            "WHERE b.id = ?1 AND fo.state = ?2")
     List<FoodOrder> findAllByBranchIdAndStateWithDetails(Long branchId, FoodOrderState state);
 
+    @Query("SELECT DISTINCT fo FROM FoodOrder fo " +
+           "LEFT JOIN FETCH fo.branch b " +
+           "LEFT JOIN FETCH fo.foodOrderDetails fod " +
+           "LEFT JOIN FETCH fod.item i " +
+           "WHERE fo.state = ?1")
+    List<FoodOrder> findAllByStateWithDetails(FoodOrderState state);
+
 }

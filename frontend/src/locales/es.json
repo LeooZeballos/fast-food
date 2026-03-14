@@ -81,6 +81,8 @@
     "kds": "KDS de Cocina",
     "visualWorkflow": "Flujo de Trabajo Visual",
     "liveFeed": "Señal en Vivo Activa",
+    "prepTime": "Prep: {{minutes}}m",
+    "totalPrepTime": "Prep Total: {{minutes}}m",
     "offline": "Sistema de Cocina Desconectado",
     "offlineMessage": "No podemos conectar con el sistema de pedidos. La pantalla de cocina podría estar desconectada.",
     "columns": {

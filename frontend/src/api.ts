@@ -66,6 +66,7 @@ export type FoodOrderDetailDTO = {
 export type FoodOrderDTO = {
   id?: number;
   creationTimestamp: string;
+  preparationStartTimestamp?: string;
   paymentTimestamp?: string;
   formattedState: string;
   branchName: string;
@@ -252,8 +253,7 @@ api.interceptors.response.use(
       // If there are validation errors (RFC 7807 custom properties)
       if (error.response.data.errors) {
         const valErrors = error.response.data.errors;
-        // @ts-ignore
-        error.validationErrors = valErrors;
+        (error as any).validationErrors = valErrors;
         error.message = Object.values(valErrors).join(", ");
       }
     }

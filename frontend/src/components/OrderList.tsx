@@ -2,12 +2,13 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/AuthContext";
-import { 
-  getOrders, 
-  startPreparation, 
+import {
+  getOrders,
+  getBranches,
+  startPreparation,
   finishPreparation,
-  confirmPayment, 
-  cancelOrder, 
+  confirmPayment,
+  cancelOrder,
   rejectOrder
 } from "@/api";
 import type { FoodOrderDTO } from "@/api";
@@ -88,7 +89,7 @@ function PrepTimer({ start, end, state }: { start?: string, end?: string, state:
       "text-blue-500 border-blue-500/20 bg-blue-500/5"
     )}>
       <ChefHat className="h-3 w-3" />
-      {state === "Inpreparation" ? `Prep: ${minutes}m` : `Total Prep: ${minutes}m`}
+      {state === "Inpreparation" ? t('kitchen.prepTime', { minutes }) : t('kitchen.totalPrepTime', { minutes })}
     </div>
   );
 }
@@ -200,10 +201,10 @@ export function OrderList() {
     refetchInterval: 5000,
   });
 
-  const { data: branches } = useQuery({ 
-    queryKey: ["branches"], 
-    queryFn: () => import("@/api").then(api => api.getBranches()),
-    enabled: !isAdmin && !!branchId 
+  const { data: branches } = useQuery({
+    queryKey: ["branches"],
+    queryFn: getBranches,
+    enabled: !isAdmin && !!branchId
   });
 
   const assignedBranchName = useMemo(() => {

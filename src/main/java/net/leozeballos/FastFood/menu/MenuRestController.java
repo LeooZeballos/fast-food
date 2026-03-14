@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.mapper.MenuMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class MenuRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new menu", description = "Registers a new food menu in the system")
     @ApiResponse(responseCode = "201", description = "Menu created successfully")
@@ -57,6 +59,7 @@ public class MenuRestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a menu", description = "Updates an existing food menu's details")
     @ApiResponse(responseCode = "200", description = "Menu updated successfully")
     @ApiResponse(responseCode = "404", description = "Menu not found")
@@ -75,6 +78,7 @@ public class MenuRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a menu", description = "Permanently removes a menu from the system")
     @ApiResponse(responseCode = "204", description = "Menu deleted successfully")
@@ -83,6 +87,7 @@ public class MenuRestController {
     }
 
     @PatchMapping("/{id}/disable")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Disable a menu", description = "Sets the menu status to inactive")
     public MenuDTO disable(@Parameter(description = "ID of the menu to be disabled") @PathVariable Long id) {
         menuService.disableItem(id);
@@ -90,6 +95,7 @@ public class MenuRestController {
     }
 
     @PatchMapping("/{id}/enable")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Enable a menu", description = "Sets the menu status to active")
     public MenuDTO enable(@Parameter(description = "ID of the menu to be enabled") @PathVariable Long id) {
         menuService.enableItem(id);

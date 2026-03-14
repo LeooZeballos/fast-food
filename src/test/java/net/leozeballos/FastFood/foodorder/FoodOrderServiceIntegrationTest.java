@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application.properties")
 @Transactional
 class FoodOrderServiceIntegrationTest {
 
@@ -70,7 +72,7 @@ class FoodOrderServiceIntegrationTest {
         // when & then
         assertThatThrownBy(() -> underTest.createOrder(createOrderDTO))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Item not available");
+                .hasMessageContaining("Insufficient stock");
         
         // Verify stock was NOT decremented due to rollback or early check
         Inventory updatedInventory = inventoryRepository.findByBranchIdAndItemId(branch.getId(), product.getId()).orElseThrow();

@@ -45,3 +45,4 @@ build/
 .frontend.pid
 .backend.pid
 .env
+frontend/node_modules

@@ -1,12 +1,14 @@
 package net.leozeballos.FastFood.inventory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,15 +37,36 @@ public class InventoryService {
      */
     @Transactional
     public void decrementStock(Long branchId, Long itemId, int quantity) {
-        Inventory inventory = inventoryRepository.findByBranchIdAndItemId(branchId, itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found in branch inventory"));
-        
-        if (!inventory.hasStock(quantity)) {
-            throw new IllegalStateException("Insufficient stock for item: " + inventory.getItem().getName());
+        atomicDecrementOrThrow(branchId, itemId, quantity);
+    }
+
+    /**
+     * Decrement stock for a specific item at a branch atomically.
+     * @param branchId ID of the branch.
+     * @param itemId ID of the item.
+     * @param quantity Quantity to decrement.
+     * @throws IllegalStateException If stock is insufficient.
+     */
+    @Transactional
+    public void atomicDecrementOrThrow(Long branchId, Long itemId, int quantity) {
+        int affected = inventoryRepository.atomicDecrement(branchId, itemId, quantity);
+        if (affected == 0) {
+            throw new IllegalStateException("Insufficient stock for item id: " + itemId + " at branch: " + branchId);
         }
-        
-        inventory.reduceStock(quantity);
-        inventoryRepository.save(inventory);
+    }
+
+    /**
+     * Increment stock for a specific item at a branch.
+     * @param branchId ID of the branch.
+     * @param itemId ID of the item.
+     * @param quantity Quantity to increment.
+     */
+    @Transactional
+    public void incrementStock(Long branchId, Long itemId, int quantity) {
+        int affected = inventoryRepository.incrementStock(branchId, itemId, quantity);
+        if (affected == 0) {
+            log.warn("Could not restore stock for item {} at branch {} — inventory record not found.", itemId, branchId);
+        }
     }
 
     /**

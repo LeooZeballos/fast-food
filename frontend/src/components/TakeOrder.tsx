@@ -44,7 +44,7 @@ interface CartItem {
   quantity: number;
 }
 
-const ItemImage = ({ imageUrl, className }: { id?: number, icon?: string, imageUrl?: string, type: "PRODUCT" | "MENU", className?: string }) => {
+const ItemImage = ({ imageUrl, className }: { imageUrl?: string, className?: string }) => {
   const fallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
   return (
@@ -96,7 +96,6 @@ export function TakeOrder() {
 
   const availabilityMap = useMemo(() => {
     const map = new Map<string, boolean>();
-    console.log("Building Availability Map. Inventory Size:", inventory?.length);
     inventory?.forEach((item: InventoryDTO) => {
       map.set(`${item.item.id}`, item.stockQuantity > 0 && item.isAvailable);
     });
@@ -105,13 +104,11 @@ export function TakeOrder() {
 
   const isItemAvailable = (itemId: number, _type: "PRODUCT" | "MENU") => {
     if (!selectedBranch || loadingInventory) return true;
-    
+
     if (inventory && inventory.length > 0) {
-      const available = availabilityMap.get(`${itemId}`) ?? true;
-      if (!available) console.log(`Item ${itemId} (${_type}) is OUT OF STOCK`);
-      return available;
+      return availabilityMap.get(`${itemId}`) ?? true;
     }
-    
+
     return true;
   };
 
@@ -327,7 +324,7 @@ export function TakeOrder() {
                         )}
                         onClick={() => isAvailable && addToCart(item, item.type)}
                       >
-                        <ItemImage imageUrl={item.imageUrl} type={item.type} className="h-56 w-full shrink-0" />
+                        <ItemImage imageUrl={item.imageUrl} className="h-56 w-full shrink-0" />
                         
                         {!isAvailable && (
                           <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-6">
@@ -407,7 +404,7 @@ export function TakeOrder() {
                         )}
                         onClick={() => isAvailable && addToCart(item, item.type)}
                       >
-                        <ItemImage imageUrl={item.imageUrl} type={item.type} className="h-44 w-full shrink-0" />
+                        <ItemImage imageUrl={item.imageUrl} className="h-44 w-full shrink-0" />
                         
                         {!isAvailable && (
                           <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-6">

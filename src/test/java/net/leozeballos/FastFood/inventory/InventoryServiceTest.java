@@ -65,45 +65,49 @@ class InventoryServiceTest {
     }
 
     @Test
-    void decrementStockReducesQuantity() {
+    void atomicDecrementOrThrowReducesQuantity() {
         // given
         Long branchId = 1L;
         Long itemId = 2L;
         int quantity = 5;
-        Inventory inventory = Inventory.builder()
-                .stockQuantity(10)
-                .isAvailable(true)
-                .build();
-        when(inventoryRepository.findByBranchIdAndItemId(branchId, itemId))
-                .thenReturn(Optional.of(inventory));
+        when(inventoryRepository.atomicDecrement(branchId, itemId, quantity))
+                .thenReturn(1);
+
+        // when
+        underTest.atomicDecrementOrThrow(branchId, itemId, quantity);
+
+        // then
+        verify(inventoryRepository).atomicDecrement(branchId, itemId, quantity);
+    }
+
+    @Test
+    void atomicDecrementOrThrowThrowsExceptionWhenAffectedIsZero() {
+        // given
+        Long branchId = 1L;
+        Long itemId = 2L;
+        int quantity = 15;
+        when(inventoryRepository.atomicDecrement(branchId, itemId, quantity))
+                .thenReturn(0);
+
+        // when & then
+        assertThatThrownBy(() -> underTest.atomicDecrementOrThrow(branchId, itemId, quantity))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Insufficient stock");
+    }
+
+    @Test
+    void decrementStockCallsAtomicDecrement() {
+        // given
+        Long branchId = 1L;
+        Long itemId = 2L;
+        int quantity = 5;
+        when(inventoryRepository.atomicDecrement(branchId, itemId, quantity))
+                .thenReturn(1);
 
         // when
         underTest.decrementStock(branchId, itemId, quantity);
 
         // then
-        assertThat(inventory.getStockQuantity()).isEqualTo(5);
-        verify(inventoryRepository).save(inventory);
-    }
-
-    @Test
-    void decrementStockThrowsExceptionWhenInsufficient() {
-        // given
-        Long branchId = 1L;
-        Long itemId = 2L;
-        int quantity = 15;
-        Product product = new Product();
-        product.setName("Burger");
-        Inventory inventory = Inventory.builder()
-                .item(product)
-                .stockQuantity(10)
-                .isAvailable(true)
-                .build();
-        when(inventoryRepository.findByBranchIdAndItemId(branchId, itemId))
-                .thenReturn(Optional.of(inventory));
-
-        // when & then
-        assertThatThrownBy(() -> underTest.decrementStock(branchId, itemId, quantity))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Insufficient stock");
+        verify(inventoryRepository).atomicDecrement(branchId, itemId, quantity);
     }
 }

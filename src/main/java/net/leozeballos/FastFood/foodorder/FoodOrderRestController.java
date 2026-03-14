@@ -86,8 +86,9 @@ public class FoodOrderRestController {
     public FoodOrderDTO startPreparation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the order to start") @PathVariable Long id) {
-        foodOrderService.startPreparation(id, getEffectiveBranchId(userDetails));
-        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
+        Long branchId = getEffectiveBranchId(userDetails);
+        foodOrderService.startPreparation(id, branchId);
+        return foodOrderService.findDTOById(id, branchId);
     }
 
     @PostMapping("/{id}/finish-preparation")
@@ -95,8 +96,9 @@ public class FoodOrderRestController {
     public FoodOrderDTO finishPreparation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the order to finish") @PathVariable Long id) {
-        foodOrderService.finishPreparation(id, getEffectiveBranchId(userDetails));
-        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
+        Long branchId = getEffectiveBranchId(userDetails);
+        foodOrderService.finishPreparation(id, branchId);
+        return foodOrderService.findDTOById(id, branchId);
     }
 
     @PostMapping("/{id}/confirm-payment")
@@ -104,8 +106,9 @@ public class FoodOrderRestController {
     public FoodOrderDTO confirmPayment(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the order to pay") @PathVariable Long id) {
-        foodOrderService.confirmPayment(id, getEffectiveBranchId(userDetails));
-        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
+        Long branchId = getEffectiveBranchId(userDetails);
+        foodOrderService.confirmPayment(id, branchId);
+        return foodOrderService.findDTOById(id, branchId);
     }
 
     @PostMapping("/{id}/cancel")
@@ -113,8 +116,9 @@ public class FoodOrderRestController {
     public FoodOrderDTO cancel(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the order to cancel") @PathVariable Long id) {
-        foodOrderService.cancel(id, getEffectiveBranchId(userDetails));
-        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
+        Long branchId = getEffectiveBranchId(userDetails);
+        foodOrderService.cancel(id, branchId);
+        return foodOrderService.findDTOById(id, branchId);
     }
 
     @PostMapping("/{id}/reject")
@@ -122,8 +126,9 @@ public class FoodOrderRestController {
     public FoodOrderDTO reject(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the order to reject") @PathVariable Long id) {
-        foodOrderService.reject(id, getEffectiveBranchId(userDetails));
-        return foodOrderService.findDTOById(id, getEffectiveBranchId(userDetails));
+        Long branchId = getEffectiveBranchId(userDetails);
+        foodOrderService.reject(id, branchId);
+        return foodOrderService.findDTOById(id, branchId);
     }
 
     @DeleteMapping("/{id}")

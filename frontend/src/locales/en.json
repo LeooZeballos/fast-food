@@ -81,6 +81,8 @@
     "kds": "Kitchen KDS",
     "visualWorkflow": "Visual Order Workflow",
     "liveFeed": "Live Feed Active",
+    "prepTime": "Prep: {{minutes}}m",
+    "totalPrepTime": "Total Prep: {{minutes}}m",
     "offline": "Kitchen Feed Offline",
     "offlineMessage": "We can't reach the order system. The kitchen screen might be disconnected.",
     "columns": {

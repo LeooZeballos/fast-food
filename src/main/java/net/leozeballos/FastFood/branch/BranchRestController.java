@@ -9,6 +9,7 @@ import net.leozeballos.FastFood.address.Address;
 import net.leozeballos.FastFood.auth.CustomUserDetails;
 import net.leozeballos.FastFood.mapper.BranchMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -54,6 +55,7 @@ public class BranchRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new branch", description = "Registers a new branch in the system")
     @ApiResponse(responseCode = "201", description = "Branch created successfully")
@@ -70,6 +72,7 @@ public class BranchRestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a branch", description = "Updates the details of an existing branch")
     @ApiResponse(responseCode = "200", description = "Branch updated successfully")
     @ApiResponse(responseCode = "404", description = "Branch not found")
@@ -91,6 +94,7 @@ public class BranchRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a branch", description = "Removes a branch from the system")
     @ApiResponse(responseCode = "204", description = "Branch deleted successfully")

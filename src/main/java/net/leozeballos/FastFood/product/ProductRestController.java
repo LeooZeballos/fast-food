@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.mapper.ProductMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -40,6 +41,7 @@ public class ProductRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new product", description = "Registers a new individual food item in the system")
     @ApiResponse(responseCode = "201", description = "Product created successfully")
@@ -49,6 +51,7 @@ public class ProductRestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a product", description = "Updates an existing product's details")
     @ApiResponse(responseCode = "200", description = "Product updated successfully")
     @ApiResponse(responseCode = "404", description = "Product not found")
@@ -62,6 +65,7 @@ public class ProductRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a product", description = "Permanently removes a product from the system")
     @ApiResponse(responseCode = "204", description = "Product deleted successfully")
@@ -71,6 +75,7 @@ public class ProductRestController {
     }
 
     @PatchMapping("/{id}/disable")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Disable a product", description = "Sets the product status to inactive")
     public ProductDTO disable(@Parameter(description = "ID of the product to be disabled") @PathVariable Long id) {
         productService.disableItem(id);
@@ -78,6 +83,7 @@ public class ProductRestController {
     }
 
     @PatchMapping("/{id}/enable")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Enable a product", description = "Sets the product status to active")
     public ProductDTO enable(@Parameter(description = "ID of the product to be enabled") @PathVariable Long id) {
         productService.enableItem(id);

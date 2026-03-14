@@ -70,27 +70,21 @@ public class FoodOrderService {
 
     @Transactional
     public FoodOrder createOrder(CreateOrderDTO createOrderDTO) {
-        // Validate stock before creating the order
-        for (var itemDTO : createOrderDTO.items()) {
-            if (!inventoryService.isItemAvailable(createOrderDTO.branchId(), itemDTO.itemId(), itemDTO.quantity())) {
-                throw new IllegalStateException("Item not available in branch inventory: " + itemDTO.itemId());
-            }
-        }
-
         FoodOrder order = new FoodOrder();
         order.setState(FoodOrderState.CREATED);
         order.setBranch(branchService.findById(createOrderDTO.branchId()));
         
         List<FoodOrderDetail> details = createOrderDTO.items().stream()
                 .map(itemDTO -> {
+                    // Atomic: check AND decrement in one SQL statement
+                    inventoryService.atomicDecrementOrThrow(
+                        createOrderDTO.branchId(), itemDTO.itemId(), itemDTO.quantity());
+
                     FoodOrderDetail detail = new FoodOrderDetail();
                     var item = itemService.findById(itemDTO.itemId());
                     detail.setItem(item);
                     detail.setQuantity(itemDTO.quantity());
                     detail.setHistoricPrice(item.calculatePrice());
-                    
-                    // Decrement stock
-                    inventoryService.decrementStock(createOrderDTO.branchId(), itemDTO.itemId(), itemDTO.quantity());
                     
                     return detail;
                 })
@@ -203,14 +197,9 @@ public class FoodOrderService {
     }
 
     public List<FoodOrderDTO> findAllFoodOrdersByStateDTO(FoodOrderState state, Long branchId) {
-        List<FoodOrder> orders;
-        if (branchId == null) {
-             orders = foodOrderRepository.findAllWithDetails().stream()
-                .filter(o -> o.getState() == state)
-                .collect(Collectors.toList());
-        } else {
-            orders = foodOrderRepository.findAllByBranchIdAndStateWithDetails(branchId, state);
-        }
+        List<FoodOrder> orders = (branchId == null)
+                ? foodOrderRepository.findAllByStateWithDetails(state)
+                : foodOrderRepository.findAllByBranchIdAndStateWithDetails(branchId, state);
 
         return orders.stream()
                 .map(foodOrderMapper::toDTO)
@@ -218,8 +207,6 @@ public class FoodOrderService {
     }
 
     public List<FoodOrder> findAllFoodOrdersByState(FoodOrderState state) {
-        return foodOrderRepository.findAllWithDetails().stream()
-                .filter(o -> o.getState() == state)
-                .collect(Collectors.toList());
+        return foodOrderRepository.findAllByStateWithDetails(state);
     }
 }
