@@ -43,9 +43,9 @@ export const Login: React.FC = () => {
       {/* Catchy Animated Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {/* Animated Blobs */}
-        <div className="absolute top-[-10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-[-10%] -left-[10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-3xl animate-blob [animation-delay:2s]" />
-        <div className="absolute top-[20%] left-[10%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-3xl animate-blob [animation-delay:4s]" />
+        <div className="absolute top-[-10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-[-10%] -left-[10%] w-[50%] h-[50%] bg-secondary/10 dark:bg-secondary/20 rounded-full blur-3xl animate-blob [animation-delay:2s]" />
+        <div className="absolute top-[20%] left-[10%] w-[30%] h-[30%] bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl animate-blob [animation-delay:4s]" />
 
         {/* Floating Icons */}
         <div className="absolute top-20 left-[15%] opacity-10 animate-float">
@@ -95,17 +95,17 @@ export const Login: React.FC = () => {
             <BurgerIcon className="w-12 h-12" />
           </div>
           <div className="text-center mt-4">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight italic uppercase leading-none">
+            <h1 className="text-4xl font-black text-foreground tracking-tight italic uppercase leading-none">
               FastFood<span className="text-primary">OS</span>
             </h1>
-            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">{t('login.signInToContinue')}</p>
+            <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.3em] mt-2">{t('login.signInToContinue')}</p>
           </div>
         </div>
 
-        <Card className="border-2 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] rounded-[3rem] overflow-hidden bg-white/90 backdrop-blur-sm">
-          <CardHeader className="space-y-1 p-10 pb-6 bg-slate-50/50 border-b-2 border-slate-50/50">
+        <Card className="border-2 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] rounded-[3rem] overflow-hidden bg-card/90 backdrop-blur-sm">
+          <CardHeader className="space-y-1 p-10 pb-6 bg-muted/50 border-b-2 border-border/50">
             <CardTitle className="text-3xl font-black uppercase italic tracking-tighter text-primary leading-none">{t('login.welcomeBack')}</CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">{t('login.enterCredentials')}</CardDescription>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">{t('login.enterCredentials')}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-6 p-10">
@@ -116,7 +116,7 @@ export const Login: React.FC = () => {
                   placeholder="admin"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="rounded-2xl border-2 border-slate-100 bg-white focus-visible:ring-primary/10 h-14 text-lg font-medium px-6 shadow-sm focus:border-primary/20 transition-all"
+                  className="rounded-2xl border-2 border-border bg-card focus-visible:ring-primary/10 h-14 text-lg font-medium px-6 shadow-sm focus:border-primary/20 transition-all"
                   required
                 />
               </div>
@@ -128,7 +128,7 @@ export const Login: React.FC = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-2xl border-2 border-slate-100 bg-white focus-visible:ring-primary/10 h-14 text-lg font-medium px-6 shadow-sm focus:border-primary/20 transition-all"
+                  className="rounded-2xl border-2 border-border bg-card focus-visible:ring-primary/10 h-14 text-lg font-medium px-6 shadow-sm focus:border-primary/20 transition-all"
                   required
                 />
               </div>
@@ -142,13 +142,13 @@ export const Login: React.FC = () => {
                 <span className="relative z-10 flex items-center justify-center gap-3">
                   {isLoading ? t('login.signingIn') : t('login.signIn')}
                 </span>
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-card/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </Button>
             </CardFooter>
           </form>
         </Card>
         
-        <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] animate-pulse">
+        <p className="text-center text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] animate-pulse">
           {t('login.terminal')} v1.0
         </p>
       </div>

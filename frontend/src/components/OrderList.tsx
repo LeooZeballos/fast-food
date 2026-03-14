@@ -49,7 +49,7 @@ function TimeAgo({ timestamp }: { timestamp: string }) {
     <div className={cn(
       "flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md",
       minutes > 15 ? "text-destructive bg-destructive/10 animate-pulse" : 
-      minutes > 5 ? "text-secondary bg-secondary/10" : "text-primary/40 bg-slate-50"
+      minutes > 5 ? "text-secondary bg-secondary/10" : "text-primary/40 bg-muted/50"
     )}>
       <Clock className="h-3 w-3" />
       {minutes === 0 ? t('common.justNow') : t('common.minutesAgo', { count: minutes })}
@@ -72,20 +72,20 @@ function OrderCard({
 }) {
   const { t } = useTranslation();
   const config = {
-    "Created": { color: "bg-slate-500", icon: <History className="h-4 w-4" />, label: t('kitchen.actions.start').toUpperCase() },
+    "Created": { color: "bg-muted/500", icon: <History className="h-4 w-4" />, label: t('kitchen.actions.start').toUpperCase() },
     "Inpreparation": { color: "bg-blue-500", icon: <ChefHat className="h-4 w-4" />, label: t('kitchen.actions.ready').toUpperCase() },
     "Done": { color: "bg-orange-500", icon: <PackageCheck className="h-4 w-4" />, label: t('kitchen.states.ready') },
     "Paid": { color: "bg-green-600", icon: <CreditCard className="h-4 w-4" />, label: t('kitchen.states.paid') },
     "Cancelled": { color: "bg-destructive", icon: <Ban className="h-4 w-4" />, label: t('kitchen.states.void') },
     "Rejected": { color: "bg-destructive", icon: <RotateCcw className="h-4 w-4" />, label: t('kitchen.states.rej') },
-  }[order.formattedState] || { color: "bg-slate-500", icon: null, label: order.formattedState };
+  }[order.formattedState] || { color: "bg-muted/500", icon: null, label: order.formattedState };
 
   return (
-    <Card className="group border-2 bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all select-none flex flex-col relative mb-4">
+    <Card className="group border-2 bg-card rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all select-none flex flex-col relative mb-4">
       <CardHeader className="p-5 pb-0 space-y-3">
         <div className="flex justify-between items-start">
           <div className="space-y-0.5">
-            <p className="font-mono text-[9px] font-black text-slate-300">#{order.id}</p>
+            <p className="font-mono text-[9px] font-black text-muted-foreground/60">#{order.id}</p>
             <div className="flex items-center gap-1.5 text-primary">
               <Store className="h-2.5 w-2.5 text-secondary" />
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">{order.branchName}</span>
@@ -97,10 +97,10 @@ function OrderCard({
       
       <CardContent className="p-5 pt-3 flex-grow">
         <div className="space-y-3">
-          <p className="text-[11px] font-black text-slate-900 leading-tight uppercase italic line-clamp-3">
+          <p className="text-[11px] font-black text-foreground leading-tight uppercase italic line-clamp-3">
             {order.formattedFoodOrderDetails}
           </p>
-          <div className="flex justify-between items-center pt-3 border-t-2 border-slate-50">
+          <div className="flex justify-between items-center pt-3 border-t-2 border-border/50">
             <p className="text-lg font-black text-secondary tracking-tighter">{order.formattedTotal}</p>
             <Badge className={cn("rounded-lg px-2 py-0.5 font-black text-[8px] tracking-[0.15em] border-none text-white", config.color)}>
               {config.label}
@@ -175,8 +175,8 @@ export function OrderList() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 animate-pulse">
         {[1, 2, 3].map(i => (
           <div key={i} className="space-y-4">
-            <div className="h-12 bg-slate-100 rounded-2xl w-1/2" />
-            {[1, 2].map(j => <div key={j} className="h-48 bg-white border-2 rounded-[2rem]" />)}
+            <div className="h-12 bg-muted rounded-2xl w-1/2" />
+            {[1, 2].map(j => <div key={j} className="h-48 bg-card border-2 rounded-[2rem]" />)}
           </div>
         ))}
       </div>
@@ -195,24 +195,24 @@ export function OrderList() {
   }
 
   const columns = [
-    { id: "Created", label: t('kitchen.columns.new'), color: "text-slate-400", icon: <History className="h-5 w-5" /> },
+    { id: "Created", label: t('kitchen.columns.new'), color: "text-muted-foreground", icon: <History className="h-5 w-5" /> },
     { id: "Inpreparation", label: t('kitchen.columns.prep'), color: "text-blue-500", icon: <ChefHat className="h-5 w-5" /> },
     { id: "Done", label: t('kitchen.columns.ready'), color: "text-orange-500", icon: <PackageCheck className="h-5 w-5" /> },
   ];
 
   return (
     <div className="flex flex-col gap-10 mt-4 animate-in fade-in duration-700 mb-20">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-8 rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-card p-8 rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
         <div className="space-y-1">
           <h2 className="text-4xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-4">
             <ChefHat className="h-10 w-10 text-secondary" /> {t('kitchen.kds')}
           </h2>
-          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">{t('kitchen.visualWorkflow')}</p>
+          <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.2em]">{t('kitchen.visualWorkflow')}</p>
         </div>
-        <div className="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border-2">
+        <div className="flex items-center gap-3 bg-muted/50 px-4 py-2 rounded-2xl border-2">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('kitchen.liveFeed')}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{t('kitchen.liveFeed')}</span>
         </div>
       </div>
 
@@ -221,15 +221,15 @@ export function OrderList() {
           <div key={column.id} className="flex flex-col gap-6">
             <div className="flex items-center justify-between px-4">
               <div className="flex items-center gap-3">
-                <span className={cn("p-2 rounded-xl bg-white border-2", column.color)}>{column.icon}</span>
-                <h3 className="font-black italic uppercase tracking-tighter text-xl text-slate-900">{column.label}</h3>
+                <span className={cn("p-2 rounded-xl bg-card border-2", column.color)}>{column.icon}</span>
+                <h3 className="font-black italic uppercase tracking-tighter text-xl text-foreground">{column.label}</h3>
               </div>
-              <Badge variant="secondary" className="rounded-lg font-black text-xs px-2.5 py-0.5 bg-slate-100 text-slate-400">
+              <Badge variant="secondary" className="rounded-lg font-black text-xs px-2.5 py-0.5 bg-muted text-muted-foreground">
                 {orders?.filter(o => o.formattedState === column.id).length || 0}
               </Badge>
             </div>
             
-            <div className="flex flex-col min-h-[500px] bg-white rounded-[2.5rem] p-4 border-2 border-slate-100 shadow-sm relative">
+            <div className="flex flex-col min-h-[500px] bg-card rounded-[2.5rem] p-4 border-2 border-border shadow-sm relative">
               {orders?.filter(o => o.formattedState === column.id).map(order => (
                 <OrderCard key={order.id} order={order} onAction={actions} />
               ))}

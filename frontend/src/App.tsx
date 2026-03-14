@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
+import { useTranslation } from "react-i18next";
 import { OrderList } from "./components/OrderList";
 import { TakeOrder } from "./components/TakeOrder";
 import { AdminPanel } from "./components/AdminPanel";
@@ -18,6 +19,7 @@ export type View = "take-order" | "orders" | "admin";
 function AppContent() {
   const [activeView, setActiveView] = useState<View>(() => (localStorage.getItem("activeView") as View) || "take-order");
   const { isAuthenticated, isLoading } = useAuth();
+  const { i18n } = useTranslation();
 
   const handleViewChange = (view: View) => {
     setActiveView(view);
@@ -37,7 +39,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans animate-in fade-in duration-500 transition-colors duration-500">
+    <div key={i18n.language} className="min-h-screen bg-background flex flex-col font-sans animate-in fade-in duration-500 transition-colors duration-500">
       <Navbar activeView={activeView} onViewChange={handleViewChange} />
       
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -48,7 +50,7 @@ function AppContent() {
         </div>
       </main>
 
-      <footer id="sticky-footer" class="flex-shrink-0 py-4 bg-primary text-primary-foreground/50 mt-auto border-t-4 border-secondary">
+      <footer id="sticky-footer" className="flex-shrink-0 py-4 bg-primary text-primary-foreground/50 mt-auto border-t-4 border-secondary">
         <div className="container mx-auto text-center">
           <small>
             Copyright &copy; Leonel Zeballos -

@@ -38,17 +38,17 @@ export function ErrorState({
 
   return (
     <div className="flex items-center justify-center min-h-[400px] p-6 animate-in fade-in zoom-in-95 duration-500">
-      <Card className="max-w-md w-full border-2 border-dashed border-slate-200 bg-white/50 backdrop-blur-sm p-10 rounded-[3rem] text-center shadow-xl">
+      <Card className="max-w-md w-full border-2 border-dashed border-border bg-card/50 backdrop-blur-sm p-10 rounded-[3rem] text-center shadow-xl">
         <div className="flex flex-col items-center gap-6">
-          <div className="p-6 bg-white rounded-3xl shadow-lg border-2 border-slate-50 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+          <div className="p-6 bg-card rounded-3xl shadow-lg border-2 border-border/50 rotate-3 group-hover:rotate-0 transition-transform duration-500">
             {config.icon}
           </div>
           
           <div className="space-y-2">
-            <h3 className="text-2xl font-black uppercase italic tracking-tighter text-slate-900 leading-tight">
+            <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground leading-tight">
               {title || config.defaultTitle}
             </h3>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
               {message || config.defaultMessage}
             </p>
           </div>
@@ -66,9 +66,9 @@ export function ErrorState({
             <Button 
               variant="outline"
               onClick={() => window.location.reload()}
-              className="flex-1 h-14 border-2 border-slate-100 bg-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-slate-50 transition-all"
+              className="flex-1 h-14 border-2 border-border bg-card font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-muted/50 transition-all"
             >
-              <RefreshCcw className="mr-2 h-4 w-4 text-slate-400" />
+              <RefreshCcw className="mr-2 h-4 w-4 text-muted-foreground" />
               Reload Page
             </Button>
           </div>

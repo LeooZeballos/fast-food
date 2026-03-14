@@ -202,7 +202,7 @@ export function TakeOrder() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8 animate-pulse">
         {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-          <div key={i} className="h-80 bg-white border-2 rounded-[2.5rem]" />
+          <div key={i} className="h-80 bg-card border-2 rounded-[2.5rem]" />
         ))}
       </div>
     );
@@ -210,18 +210,18 @@ export function TakeOrder() {
 
   return (
     <div className="flex flex-col gap-8 mt-4 animate-in fade-in duration-700 pb-20">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-8 rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-card p-8 rounded-[2.5rem] border-2 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
         <div className="space-y-1">
           <h2 className="text-4xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-4">
             <UtensilsCrossed className="h-10 w-10 text-secondary" /> {t('takeOrder.posTerminal')}
           </h2>
-          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">{t('takeOrder.kitchenManagement')}</p>
+          <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.2em]">{t('takeOrder.kitchenManagement')}</p>
         </div>
         <div className="w-full lg:w-80">
           <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-2 block ml-1">{t('takeOrder.branch')}</label>
           <Select value={selectedBranch} onValueChange={setSelectedBranch}>
-            <SelectTrigger className="h-14 border-2 bg-slate-50 focus:ring-primary/10 rounded-2xl transition-all px-6 w-full">
+            <SelectTrigger data-testid="branch-select" className="h-14 border-2 bg-muted/50 focus:ring-primary/10 rounded-2xl transition-all px-6 w-full">
               <div className="flex items-center gap-3 w-full">
                 <Store className="h-5 w-5 text-secondary shrink-0" />
                 <SelectValue placeholder={t('takeOrder.selectLocation')} />
@@ -232,7 +232,7 @@ export function TakeOrder() {
                 <SelectItem key={b.id} value={b.id?.toString() || ""} className="py-3 pl-4 pr-10">
                   <div className="flex items-center gap-2">
                     <span className="font-black text-sm uppercase tracking-tight">{b.name}</span>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold ml-1">— {b.city}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold ml-1">— {b.city}</span>
                   </div>
                 </SelectItem>
               ))}
@@ -244,20 +244,20 @@ export function TakeOrder() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <div className="xl:col-span-8 space-y-8">
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/50 p-4 rounded-3xl border-2 border-dashed border-slate-200">
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-card/50 p-4 rounded-3xl border-2 border-dashed border-border">
               <div className="relative w-full md:w-96 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary transition-colors" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 group-focus-within:text-primary transition-colors" />
                 <Input 
                   placeholder={t('common.search')}
-                  className="pl-12 h-12 border-2 bg-white rounded-2xl focus-visible:ring-primary/10 text-lg font-medium"
+                  className="pl-12 h-12 border-2 bg-card rounded-2xl focus-visible:ring-primary/10 text-lg font-medium"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-primary"><X className="h-5 w-5" /></button>}
+                {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-primary"><X className="h-5 w-5" /></button>}
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-                <TabsList className="h-12 p-1.5 bg-slate-200/50 rounded-2xl">
+                <TabsList className="h-12 p-1.5 bg-muted rounded-2xl">
                   <TabsTrigger value="all" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.all')}</TabsTrigger>
                   <TabsTrigger value="products" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.products')}</TabsTrigger>
                   <TabsTrigger value="menus" className="px-6 rounded-xl font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.menus')}</TabsTrigger>
@@ -273,10 +273,10 @@ export function TakeOrder() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={cn(
                     "h-14 px-6 rounded-2xl flex items-center gap-3 transition-all border-2 shrink-0",
-                    activeCategory === cat.id ? "bg-secondary text-primary border-secondary" : "bg-white text-slate-400 border-slate-100 hover:border-primary/20 hover:text-primary"
+                    activeCategory === cat.id ? "bg-secondary text-primary border-secondary" : "bg-card text-muted-foreground border-border hover:border-primary/20 hover:text-primary"
                   )}
                 >
-                  <span className={cn(activeCategory === cat.id ? "text-primary" : "text-slate-300")}>{cat.icon}</span>
+                  <span className={cn(activeCategory === cat.id ? "text-primary" : "text-muted-foreground/60")}>{cat.icon}</span>
                   <span className="font-black uppercase text-[10px] tracking-widest italic">{cat.label}</span>
                 </Button>
               ))}
@@ -288,21 +288,22 @@ export function TakeOrder() {
               filteredItems.map(item => (
                 <Card 
                   key={`${item.type}-${item.id}`} 
-                  className="group border-2 bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col"
+                  data-testid="product-card"
+                  className="group border-2 bg-card rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col"
                   onClick={() => addToCart(item, item.type)}
                 >
                   <ItemImage icon={item.icon} type={item.type} className="h-48 w-full" />
                   <CardContent className="p-6 space-y-4 flex-grow flex flex-col">
                     <div className="space-y-1 flex-grow">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-300">{item.type}</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{item.type}</span>
                         {item.type === "MENU" && <span className="text-[10px] font-black text-secondary italic tracking-tighter uppercase">{t('takeOrder.cart.saveDiscount')} {(item as MenuDTO).formattedDiscount}</span>}
                       </div>
-                      <h3 className="font-black text-slate-900 group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic">
+                      <h3 className="font-black text-foreground group-hover:text-primary transition-colors text-lg leading-tight uppercase tracking-tighter italic">
                         {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
                       </h3>
                       {item.type === "MENU" && (
-                        <p className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed line-clamp-2 mt-2">
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase leading-relaxed line-clamp-2 mt-2">
                           {(item as MenuDTO).productsList}
                         </p>
                       )}
@@ -317,39 +318,39 @@ export function TakeOrder() {
                 </Card>
               ))
             ) : (
-              <div className="col-span-full py-24 bg-white rounded-[3rem] border-2 border-dashed border-slate-200 text-center">
-                <Utensils className="h-16 w-12 text-slate-200 mx-auto mb-6" />
-                <h3 className="text-2xl font-black uppercase tracking-tighter italic text-slate-900">{t('common.noResults')}</h3>
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-2">{t('common.noResultsAdjust')}</p>
+              <div className="col-span-full py-24 bg-card rounded-[3rem] border-2 border-dashed border-border text-center">
+                <Utensils className="h-16 w-12 text-muted-foreground/20 mx-auto mb-6" />
+                <h3 className="text-2xl font-black uppercase tracking-tighter italic text-foreground">{t('common.noResults')}</h3>
+                <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest mt-2">{t('common.noResultsAdjust')}</p>
               </div>
             )}
           </div>
         </div>
 
         <div className="xl:col-span-4 lg:sticky lg:top-8">
-          <Card className="border-2 shadow-2xl rounded-[2.5rem] overflow-hidden flex flex-col max-h-[calc(100vh-6rem)] py-0 bg-white select-none relative">
-            <CardHeader className="bg-slate-900 text-white p-8 shrink-0 relative overflow-hidden">
+          <Card className="border-2 shadow-2xl rounded-[2.5rem] overflow-hidden flex flex-col max-h-[calc(100vh-6rem)] py-0 bg-card select-none relative">
+            <CardHeader className="bg-primary text-primary-foreground p-8 shrink-0 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full -mr-16 -mt-16 blur-3xl" />
               <div className="flex justify-between items-center relative z-10">
                 <CardTitle className="flex items-center gap-4 uppercase font-black italic tracking-tighter text-3xl">
                   <Receipt className="h-8 w-8 text-secondary" /> {t('takeOrder.cart.ticket')}
                 </CardTitle>
                 <div className="text-right">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('takeOrder.cart.orderType')}</p>
+                  <p className="text-[10px] font-black text-primary-foreground/60 uppercase tracking-widest">{t('takeOrder.cart.orderType')}</p>
                   <p className="text-xs font-black text-secondary uppercase tracking-widest">{t('takeOrder.cart.dineIn')}</p>
                 </div>
               </div>
             </CardHeader>
             
-            <CardContent className="flex-grow overflow-y-auto p-0 scrollbar-hide bg-[#fdfdfd]">
+            <CardContent className="flex-grow overflow-y-auto p-0 scrollbar-hide bg-card">
               <div className="px-8 pt-8 pb-4 space-y-1">
                 {cart.length > 0 ? (
                   cart.map(item => (
-                    <div key={`${item.type}-${item.itemId}`} className="group flex items-center justify-between py-4 border-b border-slate-100 last:border-0 hover:bg-slate-50/50 -mx-2 px-2 rounded-xl transition-colors">
+                    <div key={`${item.type}-${item.itemId}`} className="group flex items-center justify-between py-4 border-b border-border last:border-0 hover:bg-muted/50 -mx-2 px-2 rounded-xl transition-colors">
                       <div className="flex-grow min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="text-[8px] font-black bg-primary/5 text-primary px-1.5 py-0.5 rounded uppercase tracking-tighter">{item.type[0]}</span>
-                          <p className="font-black text-slate-900 uppercase tracking-tighter italic truncate text-sm">
+                          <p className="font-black text-foreground uppercase tracking-tighter italic truncate text-sm">
                             {i18n.language === 'es' && item.nameEs ? item.nameEs : item.name}
                           </p>
                         </div>
@@ -358,24 +359,24 @@ export function TakeOrder() {
                         </p>
                       </div>
                       <div className="flex items-center gap-3 ml-4 shrink-0">
-                        <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+                        <div className="flex items-center bg-muted rounded-lg p-1 border border-border">
                           <button 
                             onClick={(e) => { e.stopPropagation(); updateQuantity(item.itemId, item.type, -1); }}
-                            className="h-6 w-6 flex items-center justify-center hover:bg-white rounded-md transition-colors text-slate-500"
+                            className="h-6 w-6 flex items-center justify-center hover:bg-card rounded-md transition-colors text-muted-foreground"
                           >
                             <Minus className="h-3 w-3" />
                           </button>
-                          <span className="w-6 text-center font-black text-xs text-slate-900">{item.quantity}</span>
+                          <span className="w-6 text-center font-black text-xs text-foreground">{item.quantity}</span>
                           <button 
                             onClick={(e) => { e.stopPropagation(); updateQuantity(item.itemId, item.type, 1); }}
-                            className="h-6 w-6 flex items-center justify-center hover:bg-white rounded-md transition-colors text-slate-500"
+                            className="h-6 w-6 flex items-center justify-center hover:bg-card rounded-md transition-colors text-muted-foreground"
                           >
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>
                         <button 
                           onClick={(e) => { e.stopPropagation(); removeFromCart(item.itemId, item.type); }}
-                          className="h-8 w-8 flex items-center justify-center text-slate-300 hover:text-destructive hover:bg-destructive/5 rounded-lg transition-all"
+                          className="h-8 w-8 flex items-center justify-center text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 rounded-lg transition-all"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -391,10 +392,10 @@ export function TakeOrder() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex flex-col p-8 pt-6 gap-6 bg-slate-50 border-t-2 border-slate-100 shrink-0">
+            <CardFooter className="flex flex-col p-8 pt-6 gap-6 bg-muted/50 border-t-2 border-border shrink-0">
               <div className="w-full space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('takeOrder.cart.totalDue')}</span>
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('takeOrder.cart.totalDue')}</span>
                   <span className="text-4xl font-black text-primary tracking-tighter leading-none">{formatPrice(total)}</span>
                 </div>
               </div>
@@ -402,13 +403,14 @@ export function TakeOrder() {
               <div className="flex gap-3 w-full">
                 <Button 
                   variant="outline" 
-                  className="flex-1 h-16 rounded-2xl border-2 font-black uppercase italic tracking-tighter text-slate-400 hover:text-destructive hover:bg-destructive/5 transition-all text-xs"
+                  className="flex-1 h-16 rounded-2xl border-2 font-black uppercase italic tracking-tighter text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all text-xs"
                   onClick={clearCart}
                   disabled={cart.length === 0}
                 >
                   {t('takeOrder.cart.voidTicket')}
                 </Button>
                 <Button 
+                  data-testid="place-order-button"
                   className="flex-[2] h-16 rounded-2xl font-black uppercase italic tracking-tighter text-lg shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary group relative overflow-hidden"
                   onClick={handleCheckout}
                   disabled={createOrderMutation.isPending || cart.length === 0}
@@ -416,7 +418,7 @@ export function TakeOrder() {
                   <span className="relative z-10 flex items-center justify-center gap-3">
                     {createOrderMutation.isPending ? t('takeOrder.cart.sending') : t('takeOrder.cart.placeOrder')}
                   </span>
-                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-card/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </Button>
               </div>
             </CardFooter>

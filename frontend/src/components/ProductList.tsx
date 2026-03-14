@@ -162,18 +162,18 @@ export function ProductList() {
   }
 
   return (
-    <Card className="w-full border-2 shadow-2xl rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-white">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 md:p-8 border-b-2 border-slate-50 bg-slate-50/50 gap-4 sm:gap-0">
+    <Card className="w-full border-2 shadow-2xl rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-card">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 md:p-8 border-b-2 border-border/50 bg-muted/50/50 gap-4 sm:gap-0">
         <div className="space-y-1">
           <CardTitle className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-3">
             <Package className="h-6 w-6 md:h-8 md:w-8 text-secondary" />
             {t('admin.products.title')}
           </CardTitle>
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{t('admin.products.subtitle')}</p>
+          <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">{t('admin.products.subtitle')}</p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button size="lg" className="w-full sm:w-auto rounded-xl md:rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest px-6 md:px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-all" onClick={handleCreate}>
+            <Button data-testid="new-product-button" size="lg" className="w-full sm:w-auto rounded-xl md:rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest px-6 md:px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-all" onClick={handleCreate}>
               <Plus className="mr-2 h-4 w-4 md:h-5 md:w-5 text-secondary" /> {t('admin.products.new')}
             </Button>
           </DialogTrigger>
@@ -189,30 +189,32 @@ export function ProductList() {
                 <Label htmlFor="name" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('admin.products.name')}</Label>
                 <Input
                   id="name"
+                  data-testid="product-name-input"
                   placeholder={t('admin.products.placeholder')}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
               <div className="space-y-2 md:space-y-3">
                 <Label htmlFor="price" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('common.price')} ($)</Label>
                 <Input
                   id="price"
+                  data-testid="product-price-input"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
-                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
               <div className="space-y-2 md:space-y-3">
                 <Label htmlFor="icon" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary ml-1">{t('admin.products.category')}</Label>
                 <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
-                  <SelectTrigger className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4">
+                  <SelectTrigger data-testid="product-icon-select" className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4">
                     <SelectValue placeholder={t('admin.products.selectIcon')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl">
@@ -228,10 +230,10 @@ export function ProductList() {
                 </Select>
               </div>
               <div className="flex gap-3 md:gap-4 pt-4">
-                <Button type="button" variant="ghost" className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
+                <Button type="button" variant="ghost" className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs text-muted-foreground hover:text-destructive" onClick={() => setIsOpen(false)}>
                   {t('common.cancel')}
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                <Button data-testid="create-product-submit" type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
                   {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {editingId ? t('common.saveChanges') : t('admin.products.new')}
                 </Button>
@@ -242,21 +244,21 @@ export function ProductList() {
       </CardHeader>
       <CardContent className="p-0 overflow-x-auto">
         <Table>
-          <TableHeader className="bg-slate-50/50">
-            <TableRow className="hover:bg-transparent border-b-2 border-slate-50">
-              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.name')}</TableHead>
-              <TableHead className="py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.price')}</TableHead>
-              <TableHead className="hidden sm:table-cell py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('common.status')}</TableHead>
-              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400 text-right">{t('common.actions')}</TableHead>
+          <TableHeader className="bg-muted/50/50">
+            <TableRow className="hover:bg-transparent border-b-2 border-border/50">
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('common.name')}</TableHead>
+              <TableHead className="py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('common.price')}</TableHead>
+              <TableHead className="hidden sm:table-cell py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('common.status')}</TableHead>
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground text-right">{t('common.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products?.map((product: ProductDTO) => (
-              <TableRow key={product.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
+              <TableRow key={product.id} className="group hover:bg-muted/50/50 transition-colors border-b-2 border-border/50 last:border-0">
                 <TableCell className="px-6 md:px-8 py-4 md:py-6">
                   <div className="flex items-center gap-3 md:gap-4">
                     <img src={getImageUrl(product.icon || "burger")} alt={product.name} className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-sm group-hover:scale-110 transition-transform duration-500" />
-                    <span className="font-black text-slate-900 uppercase tracking-tight italic text-sm md:text-lg">{product.name}</span>
+                    <span className="font-black text-foreground uppercase tracking-tight italic text-sm md:text-lg">{product.name}</span>
                   </div>
                 </TableCell>
                 <TableCell className="py-4 md:py-6 font-black text-secondary text-base md:text-xl tracking-tighter">{product.formattedPrice || `$${product.price.toFixed(2)}`}</TableCell>
@@ -271,7 +273,7 @@ export function ProductList() {
                     />
                     <span className={cn(
                       "text-[8px] md:text-[9px] font-black uppercase tracking-widest",
-                      product.active ? "text-green-500" : "text-slate-300"
+                      product.active ? "text-green-500" : "text-muted-foreground/60"
                     )}>
                       {product.active ? t('common.active') : t('common.disabled')}
                     </span>

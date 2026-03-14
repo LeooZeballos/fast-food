@@ -4,48 +4,77 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 160 84% 10%;
+    /* Base Colors - Light (Elegant Cream & Forest) */
+    --background: 45 30% 98%;
+    --foreground: 160 84% 5%;
+    
+    /* Component Tokens */
     --card: 0 0% 100%;
-    --card-foreground: 160 84% 10%;
+    --card-foreground: 160 84% 5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 160 84% 10%;
-    --primary: 160 84% 15%; /* Deep Forest Green */
-    --primary-foreground: 40 30% 98%;
-    --secondary: 38 92% 50%; /* Warm Gold */
-    --secondary-foreground: 160 84% 15%;
-    --muted: 158 22% 95%;
-    --muted-foreground: 160 20% 40%;
+    --popover-foreground: 160 84% 5%;
+    
+    /* Branding */
+    --primary: 160 84% 12%; /* Deep Forest Green */
+    --primary-foreground: 45 30% 98%;
+    --secondary: 38 92% 50%; /* Warm Mustard Gold */
+    --secondary-foreground: 160 84% 12%;
+    
+    /* Accents & States */
+    --muted: 160 20% 96%;
+    --muted-foreground: 160 15% 45%;
     --accent: 38 92% 50%;
-    --accent-foreground: 160 84% 15%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 40 30% 98%;
-    --border: 160 20% 90%;
-    --input: 160 20% 90%;
-    --ring: 160 84% 15%;
-    --radius: 0.75rem;
+    --accent-foreground: 160 84% 12%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 30% 98%;
+    
+    /* Borders & Inputs */
+    --border: 160 20% 92%;
+    --input: 160 20% 92%;
+    --ring: 160 84% 12%;
+    
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 160 84% 4%;
-    --foreground: 40 33% 98%;
-    --card: 160 84% 6%;
-    --card-foreground: 40 33% 98%;
-    --popover: 160 84% 6%;
-    --popover-foreground: 40 33% 98%;
-    --primary: 38 92% 50%; /* Warm Gold becomes primary in dark mode for better visibility */
-    --primary-foreground: 160 84% 4%;
-    --secondary: 160 84% 15%;
-    --secondary-foreground: 38 92% 50%;
-    --muted: 160 84% 12%;
-    --muted-foreground: 160 20% 60%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 160 84% 4%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 40 33% 98%;
-    --border: 160 84% 15%;
-    --input: 160 84% 15%;
-    --ring: 38 92% 50%;
+    /* Base Colors - Dark (Midnight Forest) */
+    --background: 160 50% 3%;
+    --foreground: 45 30% 98%;
+    
+    /* Component Tokens */
+    --card: 160 50% 5%;
+    --card-foreground: 45 30% 98%;
+    --popover: 160 50% 5%;
+    --popover-foreground: 45 30% 98%;
+    
+    /* Branding - Flipped for Dark Mode Impact */
+    --primary: 38 92% 55%; /* Gold becomes the standout */
+    --primary-foreground: 160 50% 3%;
+    --secondary: 160 84% 15%; /* Deep green recedes */
+    --secondary-foreground: 38 92% 55%;
+    
+    /* Accents & States */
+    --muted: 160 30% 10%;
+    --muted-foreground: 160 10% 65%;
+    --accent: 38 92% 55%;
+    --accent-foreground: 160 50% 3%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 30% 98%;
+    
+    /* Borders & Inputs */
+    --border: 160 30% 12%;
+    --input: 160 30% 12%;
+    --ring: 38 92% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 

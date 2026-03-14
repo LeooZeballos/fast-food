@@ -113,14 +113,14 @@ export function BranchList() {
   }
 
   return (
-    <Card className="w-full border-2 shadow-2xl rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-white">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 md:p-8 border-b-2 border-slate-50 bg-slate-50/50 gap-4 sm:gap-0">
+    <Card className="w-full border-2 shadow-2xl rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-card">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 md:p-8 border-b-2 border-border/50 bg-muted/50/50 gap-4 sm:gap-0">
         <div className="space-y-1">
           <CardTitle className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase text-primary flex items-center gap-3">
             <Store className="h-6 w-6 md:h-8 md:w-8 text-secondary" />
             {t('admin.branches.title')}
           </CardTitle>
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{t('admin.branches.subtitle')}</p>
+          <p className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">{t('admin.branches.subtitle')}</p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
@@ -144,7 +144,7 @@ export function BranchList() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
               <div className="space-y-2 md:space-y-3">
@@ -155,7 +155,7 @@ export function BranchList() {
                   value={formData.street}
                   onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                   required
-                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
               <div className="space-y-2 md:space-y-3">
@@ -166,11 +166,11 @@ export function BranchList() {
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   required
-                  className="h-12 md:h-14 border-2 bg-slate-50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
+                  className="h-12 md:h-14 border-2 bg-muted/50 rounded-xl md:rounded-2xl focus-visible:ring-primary/10 text-base md:text-lg font-medium px-4"
                 />
               </div>
               <div className="flex gap-3 md:gap-4 pt-4">
-                <Button type="button" variant="ghost" className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs text-slate-400 hover:text-destructive" onClick={() => setIsOpen(false)}>
+                <Button type="button" variant="ghost" className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs text-muted-foreground hover:text-destructive" onClick={() => setIsOpen(false)}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="flex-[2] h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs shadow-xl shadow-primary/20 hover:scale-105 transition-all">
@@ -184,19 +184,19 @@ export function BranchList() {
       </CardHeader>
       <CardContent className="p-0 overflow-x-auto">
         <Table>
-          <TableHeader className="bg-slate-50/50">
-            <TableRow className="hover:bg-transparent border-b-2 border-slate-50">
-              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('admin.branches.name')}</TableHead>
-              <TableHead className="py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('admin.branches.street')}</TableHead>
-              <TableHead className="hidden sm:table-cell py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400">{t('admin.branches.city')}</TableHead>
-              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-slate-400 text-right">{t('common.actions')}</TableHead>
+          <TableHeader className="bg-muted/50/50">
+            <TableRow className="hover:bg-transparent border-b-2 border-border/50">
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('admin.branches.name')}</TableHead>
+              <TableHead className="py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('admin.branches.street')}</TableHead>
+              <TableHead className="hidden sm:table-cell py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground">{t('admin.branches.city')}</TableHead>
+              <TableHead className="px-6 md:px-8 py-4 md:py-5 font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] text-muted-foreground text-right">{t('common.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {branches?.map((branch: BranchDTO) => (
-              <TableRow key={branch.id} className="group hover:bg-slate-50/50 transition-colors border-b-2 border-slate-50 last:border-0">
-                <TableCell className="px-6 md:px-8 py-4 md:py-6 font-black text-slate-900 uppercase tracking-tight italic text-sm md:text-lg">{branch.name}</TableCell>
-                <TableCell className="py-4 md:py-6 font-bold text-slate-500 uppercase text-[10px] md:text-xs">{branch.street}</TableCell>
+              <TableRow key={branch.id} className="group hover:bg-muted/50/50 transition-colors border-b-2 border-border/50 last:border-0">
+                <TableCell className="px-6 md:px-8 py-4 md:py-6 font-black text-foreground uppercase tracking-tight italic text-sm md:text-lg">{branch.name}</TableCell>
+                <TableCell className="py-4 md:py-6 font-bold text-muted-foreground/80 uppercase text-[10px] md:text-xs">{branch.street}</TableCell>
                 <TableCell className="hidden sm:table-cell py-4 md:py-6"><Badge variant="outline" className="font-black text-[8px] md:text-[10px] rounded-lg border-primary/20 text-primary uppercase px-2 tracking-widest">{branch.city}</Badge></TableCell>
                 <TableCell className="px-6 md:px-8 py-4 md:py-6 text-right whitespace-nowrap">
                   <div className="flex justify-end gap-1 md:gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
