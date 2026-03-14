@@ -31,6 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 function TimeAgo({ timestamp }: { timestamp: string }) {
   const { t } = useTranslation();
@@ -160,9 +161,17 @@ function OrderCard({
               <Button className="flex-grow h-11 bg-primary text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.start(order.id)}>
                 <Play className="mr-2 h-4 w-4 text-secondary" /> {t('kitchen.actions.start')}
               </Button>
-              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
-                <XCircle className="h-5 w-5" />
-              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20">
+                    <XCircle className="h-5 w-5" />
+                  </Button>
+                }
+                title={t('common.confirmTitle')}
+                description={t('common.confirmCancelOrder')}
+                onConfirm={() => order.id && onAction.cancel(order.id)}
+                destructive
+              />
             </div>
           )}
           {order.formattedState === "Inpreparation" && (
@@ -170,9 +179,17 @@ function OrderCard({
               <Button className="flex-grow h-11 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.finish(order.id)}>
                 <CheckCircle className="mr-2 h-4 w-4" /> {t('kitchen.actions.ready')}
               </Button>
-              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.cancel(order.id)}>
-                <XCircle className="h-5 w-5" />
-              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20">
+                    <XCircle className="h-5 w-5" />
+                  </Button>
+                }
+                title={t('common.confirmTitle')}
+                description={t('common.confirmCancelOrder')}
+                onConfirm={() => order.id && onAction.cancel(order.id)}
+                destructive
+              />
             </div>
           )}
           {order.formattedState === "Done" && (
@@ -180,9 +197,17 @@ function OrderCard({
               <Button className="flex-grow h-11 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-tighter italic rounded-xl group hover:scale-[1.02] active:scale-[0.98] transition-all text-xs" onClick={() => order.id && onAction.pay(order.id)}>
                 <CreditCard className="mr-2 h-4 w-4" /> {t('kitchen.actions.pay')}
               </Button>
-              <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20" onClick={() => order.id && onAction.reject(order.id)}>
-                <RotateCcw className="h-5 w-5" />
-              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="ghost" className="w-11 h-11 p-0 text-destructive hover:bg-destructive/5 rounded-xl border-2 border-transparent hover:border-destructive/20">
+                    <RotateCcw className="h-5 w-5" />
+                  </Button>
+                }
+                title={t('common.confirmTitle')}
+                description={t('common.confirmRejectOrder')}
+                onConfirm={() => order.id && onAction.reject(order.id)}
+                destructive
+              />
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.inventory;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
@@ -47,6 +48,7 @@ public class InventoryService {
      * @param quantity Quantity to decrement.
      * @throws IllegalStateException If stock is insufficient.
      */
+    @Timed(value = "inventory.decrement", description = "Time to atomically decrement stock")
     @Transactional
     public void atomicDecrementOrThrow(Long branchId, Long itemId, int quantity) {
         int affected = inventoryRepository.atomicDecrement(branchId, itemId, quantity);

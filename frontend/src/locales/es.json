@@ -30,7 +30,14 @@
     "noResultsAdjust": "Intenta ajustar tu búsqueda o filtros",
     "accessDenied": "Acceso Denegado",
     "adminOnly": "Esta sección está reservada únicamente para administradores del sistema.",
-    "outOfStock": "Agotado"
+    "outOfStock": "Agotado",
+    "confirmTitle": "¿Estás seguro?",
+    "confirmCancel": "Esta acción no se puede deshacer.",
+    "confirmDelete": "Esto eliminará permanentemente el elemento.",
+    "confirmCancelOrder": "Esto cancelará el pedido y restaurará el inventario.",
+    "confirmRejectOrder": "Esto rechazará el pedido y restaurará el inventario.",
+    "proceed": "Proceder",
+    "goBack": "Volver"
   },
   "nav": {
     "takeOrder": "Tomar Pedido",

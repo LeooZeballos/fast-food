@@ -30,7 +30,14 @@
     "noResultsAdjust": "Try adjusting your search or filters",
     "accessDenied": "Access Denied",
     "adminOnly": "This section is reserved for system administrators only.",
-    "outOfStock": "Out of Stock"
+    "outOfStock": "Out of Stock",
+    "confirmTitle": "Are you sure?",
+    "confirmCancel": "This action cannot be undone.",
+    "confirmDelete": "This will permanently delete the item.",
+    "confirmCancelOrder": "This will cancel the order and restore inventory.",
+    "confirmRejectOrder": "This will reject the order and restore inventory.",
+    "proceed": "Proceed",
+    "goBack": "Go back"
   },
   "nav": {
     "takeOrder": "Take Order",

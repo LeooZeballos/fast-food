@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.foodorder;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
@@ -70,6 +71,7 @@ public class FoodOrderService {
         }
     }
 
+    @Timed(value = "foodorder.create", description = "Time to create a food order")
     @Transactional
     public FoodOrder createOrder(CreateOrderDTO createOrderDTO) {
         FoodOrder order = new FoodOrder();
@@ -131,6 +133,7 @@ public class FoodOrderService {
         return stateMachine;
     }
 
+    @Timed(value = "foodorder.start_preparation", description = "Time to start preparation of a food order")
     @Transactional
     public StateMachine<FoodOrderState, FoodOrderEvent> startPreparation(Long id, Long branchId) {
         FoodOrder order = findById(id, branchId); // Access check

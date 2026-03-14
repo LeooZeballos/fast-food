@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.product;
 
+import io.micrometer.core.annotation.Timed;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.mapper.ProductMapper;
 import net.leozeballos.FastFood.menu.Menu;
@@ -62,11 +63,13 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }
 
+    @Timed(value = "product.save", description = "Time to save a product")
     @Transactional
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
+    @Timed(value = "product.delete", description = "Time to delete a product")
     @Transactional
     public void delete(Product product) {
         productRepository.delete(product);
@@ -94,6 +97,7 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Timed(value = "product.deleteById", description = "Time to delete a product by id")
     @Transactional
     public void deleteById(Long id) {
         if (!productRepository.existsById(id)) {

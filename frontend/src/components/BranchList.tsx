@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function BranchList() {
   const queryClient = useQueryClient();
@@ -208,14 +209,21 @@ export function BranchList() {
                     >
                       <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-10 w-10 md:h-12 md:w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-xl md:rounded-2xl"
-                      onClick={() => branch.id && deleteMutation.mutate(branch.id)}
-                    >
-                      <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                    </Button>
+                    <ConfirmDialog
+                      trigger={
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-10 w-10 md:h-12 md:w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-xl md:rounded-2xl"
+                        >
+                          <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                        </Button>
+                      }
+                      title={t('common.confirmTitle')}
+                      description={t('common.confirmDelete')}
+                      onConfirm={() => branch.id && deleteMutation.mutate(branch.id)}
+                      destructive
+                    />
                   </div>
                 </TableCell>
 

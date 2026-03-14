@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 
 import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 function MenuSkeleton() {
   return (
@@ -335,14 +336,21 @@ export function MenuList() {
                   >
                     <Edit2 className="h-5 w-5" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-12 w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-2xl shadow-sm"
-                    onClick={() => menu.id && deleteMutation.mutate(menu.id)}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                  <ConfirmDialog
+                    trigger={
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-12 w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-2xl shadow-sm"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    }
+                    title={t('common.confirmTitle')}
+                    description={t('common.confirmDelete')}
+                    onConfirm={() => menu.id && deleteMutation.mutate(menu.id)}
+                    destructive
+                  />
                 </div>
               </div>
             </CardContent>

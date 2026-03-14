@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import net.leozeballos.FastFood.branch.BranchRestController;
 import net.leozeballos.FastFood.branch.BranchService;
+import net.leozeballos.FastFood.inventory.InventoryRestController;
+import net.leozeballos.FastFood.inventory.InventoryService;
 import net.leozeballos.FastFood.mapper.BranchMapper;
 import net.leozeballos.FastFood.mapper.MenuMapper;
 import net.leozeballos.FastFood.mapper.ProductMapper;
@@ -23,9 +26,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.http.MediaType;
-
-@WebMvcTest({ProductRestController.class, MenuRestController.class, BranchRestController.class})
+@WebMvcTest({ProductRestController.class, MenuRestController.class, BranchRestController.class, InventoryRestController.class})
 @Import(SecurityConfig.class)
 @ActiveProfiles("test")
 public class SecurityIntegrationTest {
@@ -41,6 +42,9 @@ public class SecurityIntegrationTest {
 
     @MockBean
     private BranchService branchService;
+
+    @MockBean
+    private InventoryService inventoryService;
 
     @MockBean
     private ProductMapper productMapper;
@@ -100,5 +104,25 @@ public class SecurityIntegrationTest {
     void deleteBranch_asUser_returns403() throws Exception {
         mockMvc.perform(delete("/api/v1/branches/1").with(csrf()))
                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void updateInventory_asUser_returns403() throws Exception {
+        mockMvc.perform(post("/api/v1/inventory/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"stockQuantity\": 10}")
+                .with(csrf()))
+               .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateInventory_asAdmin_returnsOk() throws Exception {
+        mockMvc.perform(post("/api/v1/inventory/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"stockQuantity\": 10}")
+                .with(csrf()))
+               .andExpect(status().isOk());
     }
 }

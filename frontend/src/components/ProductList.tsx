@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 
 import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 function ProductSkeleton() {
   return (
@@ -161,7 +162,7 @@ export function ProductList() {
       shake: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop",
       coffee: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop",
     };
-    return images[icon] || fallbackImage;
+    return images[icon] || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop";
   };
 
   if (isLoading) {
@@ -322,14 +323,21 @@ export function ProductList() {
                   >
                     <Edit2 className="h-5 w-5" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-12 w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-2xl"
-                    onClick={() => product.id && deleteMutation.mutate(product.id)}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                  <ConfirmDialog
+                    trigger={
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-12 w-12 border-2 text-destructive hover:bg-destructive hover:text-white transition-all rounded-2xl"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    }
+                    title={t('common.confirmTitle')}
+                    description={t('common.confirmDelete')}
+                    onConfirm={() => product.id && deleteMutation.mutate(product.id)}
+                    destructive
+                  />
                 </div>
               </div>
             </CardContent>

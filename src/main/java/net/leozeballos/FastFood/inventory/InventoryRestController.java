@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.auth.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,19 +28,41 @@ public class InventoryRestController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "ID of the branch") @PathVariable Long branchId) {
         
-        // Security check: if user is not ADMIN and tries to access another branch, prevent it.
-        // For simplicity, we'll force the branchId to be the user's branchId if they are not ADMIN.
-        if (userDetails != null && !userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            branchId = userDetails.getBranchId();
+        Long effectiveBranchId = getEffectiveBranchId(userDetails);
+        if (effectiveBranchId != null && !effectiveBranchId.equals(branchId)) {
+            throw new AccessDeniedException("User does not have access to this branch's inventory");
         }
 
         return inventoryService.findByBranch(branchId);
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update stock", description = "Updates the quantity or availability of an item in a branch")
     @ApiResponse(responseCode = "200", description = "Stock updated successfully")
-    public Inventory updateStock(@RequestBody Inventory inventory) {
+    public Inventory updateStock(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody Inventory inventory) {
+        
+        Long branchId = (inventory.getBranch() != null) ? inventory.getBranch().getId() : null;
+        Long effectiveBranchId = getEffectiveBranchId(userDetails);
+        
+        if (effectiveBranchId != null && !effectiveBranchId.equals(branchId)) {
+            throw new AccessDeniedException("User does not have access to this branch's inventory");
+        }
+        
         return inventoryService.save(inventory);
+    }
+
+    private Long getEffectiveBranchId(CustomUserDetails userDetails) {
+        if (isAdmin(userDetails)) {
+            return null; // Admins see everything
+        }
+        return userDetails != null ? userDetails.getBranchId() : null;
+    }
+
+    private boolean isAdmin(CustomUserDetails userDetails) {
+        return userDetails != null && userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }
