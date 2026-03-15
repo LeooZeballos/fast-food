@@ -61,6 +61,8 @@ public class ProductRestController {
         Product product = productService.findById(id);
         product.setName(productData.getName());
         product.setPrice(productData.getPrice());
+        product.setIcon(productData.getIcon());
+        product.setImageUrl(productData.getImageUrl());
         return productMapper.toDTO(productService.save(product));
     }
 

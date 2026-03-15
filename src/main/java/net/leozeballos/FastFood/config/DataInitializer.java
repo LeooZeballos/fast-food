@@ -6,6 +6,7 @@ import net.leozeballos.FastFood.auth.User;
 import net.leozeballos.FastFood.auth.UserRepository;
 import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.branch.BranchRepository;
+import net.leozeballos.FastFood.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final BranchRepository branchRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.admin.initial-password:#{null}}")
@@ -38,6 +40,16 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        // Fix Onion Rings icon and imageUrl if needed
+        productRepository.findByName("Onion Rings").ifPresent(product -> {
+            if ("fries".equals(product.getIcon())) {
+                product.setIcon("onion-rings");
+                product.setImageUrl("https://images.unsplash.com/photo-1639024471283-03518883512d?q=80&w=800&auto=format&fit=crop");
+                productRepository.save(product);
+                log.info("Fixed Onion Rings icon and imageUrl");
+            }
+        });
+
         // Only initialize users if they don't exist
         if (userRepository.count() == 0) {
             List<Branch> allBranches = branchRepository.findAll();

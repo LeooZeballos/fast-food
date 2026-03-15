@@ -105,7 +105,7 @@ INSERT INTO item (id, item_type, name, name_es, icon, image_url, is_active, pric
 (2, 'PRODUCT', 'Cheese Deluxe', 'Queso Deluxe', 'burger', 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop', true, 10.00, 0),
 (3, 'PRODUCT', 'Bacon King', 'Rey Tocino', 'burger', 'https://images.unsplash.com/photo-1596662951482-0c4ba74a6df6?q=80&w=800&auto=format&fit=crop', true, 12.50, 0),
 (4, 'PRODUCT', 'French Fries (L)', 'Papas Fritas (G)', 'fries', 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=800&auto=format&fit=crop', true, 4.00, 0),
-(5, 'PRODUCT', 'Onion Rings', 'Aros de Cebolla', 'fries', 'https://images.unsplash.com/photo-1639146175535-99f4d7da77ec?auto=format&fit=crop&w=800&q=80', true, 4.50, 0),
+(5, 'PRODUCT', 'Onion Rings', 'Aros de Cebolla', 'onion-rings', 'https://images.unsplash.com/photo-1639024471283-03518883512d?auto=format&fit=crop&w=800&q=80', true, 4.50, 0),
 (6, 'PRODUCT', 'Coca-Cola 500ml', 'Coca-Cola 500ml', 'drink', 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop', true, 3.00, 0),
 (7, 'PRODUCT', 'Craft Beer', 'Cerveza Artesanal', 'beer', 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=800&auto=format&fit=crop', true, 6.00, 0),
 (8, 'PRODUCT', 'Vanilla Shake', 'Malteada de Vainilla', 'shake', 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop', true, 5.50, 0),

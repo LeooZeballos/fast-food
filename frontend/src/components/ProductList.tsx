@@ -151,12 +151,14 @@ export function ProductList() {
     { id: "beer", label: t('admin.products.icons.beer') },
     { id: "shake", label: t('admin.products.icons.shake') },
     { id: "coffee", label: t('admin.products.icons.coffee') },
+    { id: "onion-rings", label: "Onion Rings" },
   ];
 
   const getImageUrl = (icon: string) => {
     const images: Record<string, string> = {
       burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
       fries: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=800&auto=format&fit=crop",
+      "onion-rings": "https://images.unsplash.com/photo-1639024471283-03518883512d?q=80&w=800&auto=format&fit=crop",
       drink: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop",
       beer: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=800&auto=format&fit=crop",
       shake: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=800&auto=format&fit=crop",
