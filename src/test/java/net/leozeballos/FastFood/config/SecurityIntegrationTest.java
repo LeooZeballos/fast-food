@@ -3,7 +3,7 @@ package net.leozeballos.FastFood.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -34,25 +34,25 @@ public class SecurityIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ProductService productService;
 
-    @MockBean
+    @MockitoBean
     private MenuService menuService;
 
-    @MockBean
+    @MockitoBean
     private BranchService branchService;
 
-    @MockBean
+    @MockitoBean
     private InventoryService inventoryService;
 
-    @MockBean
+    @MockitoBean
     private ProductMapper productMapper;
 
-    @MockBean
+    @MockitoBean
     private MenuMapper menuMapper;
 
-    @MockBean
+    @MockitoBean
     private BranchMapper branchMapper;
 
     @Test
