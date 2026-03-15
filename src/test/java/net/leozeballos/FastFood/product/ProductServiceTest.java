@@ -2,6 +2,8 @@ package net.leozeballos.FastFood.product;
 
 import net.leozeballos.FastFood.mapper.ProductMapper;
 import net.leozeballos.FastFood.menu.MenuRepository;
+import net.leozeballos.FastFood.foodorder.FoodOrderRepository;
+import net.leozeballos.FastFood.util.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +23,8 @@ class ProductServiceTest {
 
     @Mock private ProductRepository productRepository;
     @Mock private MenuRepository menuRepository;
-    @Mock private net.leozeballos.FastFood.foodorder.FoodOrderRepository foodOrderRepository;
-    @Mock private net.leozeballos.FastFood.util.AuditService auditService;
+    @Mock private FoodOrderRepository foodOrderRepository;
+    @Mock private AuditService auditService;
     @Spy private ProductMapper productMapper;
     private ProductService underTest;
 

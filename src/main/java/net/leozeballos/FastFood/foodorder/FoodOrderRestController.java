@@ -4,14 +4,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.leozeballos.FastFood.auth.CustomUserDetails;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
-import net.leozeballos.FastFood.auth.CustomUserDetails;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -73,7 +81,7 @@ public class FoodOrderRestController {
         if (!isAdmin(userDetails)) {
             Long userBranchId = (userDetails != null) ? userDetails.getBranchId() : null;
             if (userBranchId == null || !userBranchId.equals(createOrderDTO.branchId())) {
-                throw new org.springframework.security.access.AccessDeniedException("User can only place orders for their assigned branch");
+                throw new AccessDeniedException("User can only place orders for their assigned branch");
             }
         }
 

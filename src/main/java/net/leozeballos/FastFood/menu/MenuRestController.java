@@ -4,11 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.mapper.MenuMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -42,7 +52,7 @@ public class MenuRestController {
     @Operation(summary = "Create a new menu", description = "Registers a new food menu in the system")
     @ApiResponse(responseCode = "201", description = "Menu created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
-    public MenuDTO create(@jakarta.validation.Valid @RequestBody MenuCreateDTO menuData) {
+    public MenuDTO create(@Valid @RequestBody MenuCreateDTO menuData) {
         Menu menu = menuMapper.toEntity(menuData);
         return menuMapper.toDTO(menuService.save(menu));
     }
@@ -54,7 +64,7 @@ public class MenuRestController {
     @ApiResponse(responseCode = "404", description = "Menu not found")
     public MenuDTO update(
             @Parameter(description = "ID of the menu to be updated") @PathVariable Long id,
-            @jakarta.validation.Valid @RequestBody MenuUpdateDTO menuData) {
+            @Valid @RequestBody MenuUpdateDTO menuData) {
         Menu menu = menuService.findById(id);
         menuMapper.updateEntity(menuData, menu);
         return menuMapper.toDTO(menuService.save(menu));

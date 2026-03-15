@@ -18,6 +18,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
+    private final net.leozeballos.FastFood.util.AuditService auditService;
 
     @Cacheable(value = "branches")
     public List<BranchDTO> findAllDTO() {
@@ -42,20 +43,26 @@ public class BranchService {
     }
 
     @CacheEvict(value = "branches", allEntries = true)
+    @Transactional
     public Branch save(Branch branch) {
-        return branchRepository.save(branch);
+        String action = (branch.getId() == null) ? "CREATE_BRANCH" : "UPDATE_BRANCH";
+        Branch saved = branchRepository.save(branch);
+        auditService.logAction(action, "ID=" + saved.getId() + ", Name=" + saved.getName());
+        return saved;
     }
 
     @CacheEvict(value = "branches", allEntries = true)
+    @Transactional
     public void delete(Branch branch) {
+        auditService.logAction("DELETE_BRANCH", "ID=" + branch.getId() + ", Name=" + branch.getName());
         branchRepository.delete(branch);
     }
 
     @CacheEvict(value = "branches", allEntries = true)
+    @Transactional
     public void deleteById(Long id) {
-        if (!branchRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Branch not found with id: " + id);
-        }
+        Branch branch = findById(id);
+        auditService.logAction("DELETE_BRANCH", "ID=" + id + ", Name=" + branch.getName());
         branchRepository.deleteById(id);
     }
 

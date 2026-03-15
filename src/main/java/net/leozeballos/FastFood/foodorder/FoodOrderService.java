@@ -16,6 +16,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.event.StateMachineEventResult;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class FoodOrderService {
     private final ItemService itemService;
     private final InventoryService inventoryService;
     private final FoodOrderMapper foodOrderMapper;
+    private final net.leozeballos.FastFood.util.AuditService auditService;
 
     public List<FoodOrderDTO> findAllDTO(Long branchId) {
         List<FoodOrder> orders = (branchId == null) 
@@ -99,7 +101,9 @@ public class FoodOrderService {
                 .collect(Collectors.toList());
         
         order.setFoodOrderDetails(details);
-        return foodOrderRepository.save(order);
+        FoodOrder saved = foodOrderRepository.save(order);
+        auditService.logAction("CREATE_ORDER", "ID=" + saved.getId() + ", BranchID=" + saved.getBranch().getId());
+        return saved;
     }
 
     @Transactional
@@ -116,17 +120,18 @@ public class FoodOrderService {
     }
 
     public void delete(FoodOrder order) {
+        auditService.logAction("DELETE_ORDER", "ID=" + order.getId());
         foodOrderRepository.delete(order);
     }
 
     public void deleteById(Long id, Long branchId) {
-        FoodOrder order = foodOrderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("FoodOrder not found with id: " + id));
-        checkBranchAccess(order, branchId);
+        FoodOrder order = findById(id, branchId);
+        auditService.logAction("DELETE_ORDER", "ID=" + id);
         foodOrderRepository.deleteById(id);
     }
 
     public void deleteAll() {
+        auditService.logAction("DELETE_ALL_ORDERS", "Executing mass deletion");
         foodOrderRepository.deleteAll();
     }
 
@@ -171,6 +176,7 @@ public class FoodOrderService {
     public StateMachine<FoodOrderState, FoodOrderEvent> cancel(Long id, Long branchId) {
         FoodOrder order = findById(id, branchId); // Access check
         restoreStockForOrder(order);
+        auditService.logAction("CANCEL_ORDER", "ID=" + id);
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.CANCEL);
         return stateMachine;
@@ -180,6 +186,7 @@ public class FoodOrderService {
     public StateMachine<FoodOrderState, FoodOrderEvent> reject(Long id, Long branchId) {
         FoodOrder order = findById(id, branchId); // Access check
         restoreStockForOrder(order);
+        auditService.logAction("REJECT_ORDER", "ID=" + id);
         StateMachine<FoodOrderState, FoodOrderEvent> stateMachine = build(id);
         sendEvent(id, stateMachine, FoodOrderEvent.REJECT);
         return stateMachine;
@@ -200,8 +207,16 @@ public class FoodOrderService {
         Message<FoodOrderEvent> msg = MessageBuilder.withPayload(event)
                 .setHeader(FOOD_ORDER_ID_HEADER, id)
                 .build();
+        
         stateMachine.sendEvent(Mono.just(msg)).subscribe(
-            result -> log.debug("Event {} sent for order {}", event, id),
+            result -> {
+                log.debug("Event {} sent for order {}", event, id);
+                if (result.getResultType() == StateMachineEventResult.ResultType.DENIED) {
+                    log.error("Event {} denied for order {}", event, id);
+                    // We can't easily throw an exception from inside subscribe to the outer method
+                    // but we can at least log it properly.
+                }
+            },
             error -> log.error("Error sending event {} for order {}: {}", event, id, error.getMessage())
         );
     }

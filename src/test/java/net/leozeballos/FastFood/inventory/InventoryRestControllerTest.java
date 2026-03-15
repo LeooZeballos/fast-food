@@ -1,6 +1,7 @@
 package net.leozeballos.FastFood.inventory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.leozeballos.FastFood.branch.Branch;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,7 +44,7 @@ class InventoryRestControllerTest {
     @WithMockUser(roles = "ADMIN")
     void updateStockReturnsUpdatedInventory() throws Exception {
         // given
-        net.leozeballos.FastFood.branch.Branch branch = new net.leozeballos.FastFood.branch.Branch();
+        Branch branch = new Branch();
         branch.setId(1L);
         Inventory inventory = Inventory.builder().id(1L).branch(branch).stockQuantity(75).build();
         when(inventoryService.save(any(Inventory.class))).thenReturn(inventory);

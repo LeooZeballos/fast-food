@@ -4,6 +4,12 @@ import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterceptor;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
+import net.leozeballos.FastFood.branch.BranchService;
+import net.leozeballos.FastFood.item.ItemService;
+import net.leozeballos.FastFood.inventory.InventoryService;
+import net.leozeballos.FastFood.branch.Branch;
+import net.leozeballos.FastFood.product.Product;
+import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +31,9 @@ class FoodOrderServiceTest {
     @Mock private FoodOrderRepository foodOrderRepository;
     @Mock private StateMachineFactory<FoodOrderState, FoodOrderEvent> stateMachineFactory;
     @Mock private FoodOrderStateChangeInterceptor foodOrderStateChangeInterceptor;
-    @Mock private net.leozeballos.FastFood.branch.BranchService branchService;
-    @Mock private net.leozeballos.FastFood.item.ItemService itemService;
-    @Mock private net.leozeballos.FastFood.inventory.InventoryService inventoryService;
+    @Mock private BranchService branchService;
+    @Mock private ItemService itemService;
+    @Mock private InventoryService inventoryService;
     @Spy private FoodOrderMapper foodOrderMapper;
     private FoodOrderService underTest;
 
@@ -120,14 +126,14 @@ class FoodOrderServiceTest {
     @Test
     void canConvertToDTO() {
         // given
-        net.leozeballos.FastFood.branch.Branch branch = new net.leozeballos.FastFood.branch.Branch();
+        Branch branch = new Branch();
         branch.setName("Main Branch");
         
-        net.leozeballos.FastFood.product.Product product = new net.leozeballos.FastFood.product.Product();
+        Product product = new Product();
         product.setPrice(10.0);
         product.setName("Product 1");
 
-        net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail detail = new net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail();
+        FoodOrderDetail detail = new FoodOrderDetail();
         detail.setId(1L);
         detail.setItem(product);
         detail.setQuantity(2);
