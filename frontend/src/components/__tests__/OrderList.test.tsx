@@ -28,6 +28,13 @@ vi.mock('../../api', async () => {
   };
 });
 
+vi.mock('../../AuthContext', () => ({
+  useAuth: () => ({
+    branchId: 1,
+    isAdmin: false,
+  }),
+}));
+
 const mockOrders = [
   {
     id: 1,

@@ -41,22 +41,49 @@ export function AdminPanel() {
       </div>
 
       <Tabs defaultValue="products" className="w-full">
-        <div className="flex justify-center mb-8 md:mb-12">
-          <TabsList className="grid grid-cols-4 w-full max-w-2xl h-12 md:h-14 bg-muted p-1.5 md:p-2 rounded-2xl md:rounded-[2rem] border-2 border-white shadow-inner">
-            <TabsTrigger data-testid="admin-tab-products" value="products" className="rounded-xl md:rounded-[1.5rem] font-black uppercase text-[9px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl">
-              <Package className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+        <div className="flex justify-center mb-10 md:mb-16 sticky top-4 z-30 px-4">
+          <TabsList className="flex h-auto p-1.5 md:p-2 bg-card/80 backdrop-blur-xl rounded-full border-2 border-primary/5 shadow-2xl shadow-primary/5 gap-1 md:gap-2 overflow-x-auto scrollbar-hide max-w-full sm:max-w-fit mx-auto">
+            <TabsTrigger 
+              data-testid="admin-tab-products" 
+              value="products" 
+              className="group px-5 md:px-8 py-2.5 md:py-3.5 rounded-full font-black uppercase text-[10px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl data-[state=active]:shadow-primary/40 hover:bg-muted/80 gap-2 md:gap-3 min-w-max"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/5 flex items-center justify-center transition-colors group-data-[state=active]:bg-white/20">
+                <Package className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
+              </div>
               {t('admin.tabs.products')}
             </TabsTrigger>
-            <TabsTrigger data-testid="admin-tab-menus" value="menus" className="rounded-xl md:rounded-[1.5rem] font-black uppercase text-[9px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl">
-              <Utensils className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+            
+            <TabsTrigger 
+              data-testid="admin-tab-menus" 
+              value="menus" 
+              className="group px-5 md:px-8 py-2.5 md:py-3.5 rounded-full font-black uppercase text-[10px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl data-[state=active]:shadow-primary/40 hover:bg-muted/80 gap-2 md:gap-3 min-w-max"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/5 flex items-center justify-center transition-colors group-data-[state=active]:bg-white/20">
+                <Utensils className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
+              </div>
               {t('admin.tabs.menus')}
             </TabsTrigger>
-            <TabsTrigger data-testid="admin-tab-branches" value="branches" className="rounded-xl md:rounded-[1.5rem] font-black uppercase text-[9px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl">
-              <Store className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+            
+            <TabsTrigger 
+              data-testid="admin-tab-branches" 
+              value="branches" 
+              className="group px-5 md:px-8 py-2.5 md:py-3.5 rounded-full font-black uppercase text-[10px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl data-[state=active]:shadow-primary/40 hover:bg-muted/80 gap-2 md:gap-3 min-w-max"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/5 flex items-center justify-center transition-colors group-data-[state=active]:bg-white/20">
+                <Store className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
+              </div>
               {t('admin.tabs.branches')}
             </TabsTrigger>
-            <TabsTrigger data-testid="admin-tab-audit" value="audit" className="rounded-xl md:rounded-[1.5rem] font-black uppercase text-[9px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl">
-              <History className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+            
+            <TabsTrigger 
+              data-testid="admin-tab-audit" 
+              value="audit" 
+              className="group px-5 md:px-8 py-2.5 md:py-3.5 rounded-full font-black uppercase text-[10px] md:text-[11px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl data-[state=active]:shadow-primary/40 hover:bg-muted/80 gap-2 md:gap-3 min-w-max"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/5 flex items-center justify-center transition-colors group-data-[state=active]:bg-white/20">
+                <History className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
+              </div>
               {t('admin.tabs.audit')}
             </TabsTrigger>
           </TabsList>

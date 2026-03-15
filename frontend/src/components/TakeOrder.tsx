@@ -255,7 +255,7 @@ export function TakeOrder() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-8">
           <div className="bg-card p-6 rounded-[2.5rem] border-2 shadow-sm space-y-6">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="relative flex-grow w-full group">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -274,28 +274,29 @@ export function TakeOrder() {
                 )}
               </div>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full md:w-auto">
-                <TabsList className="h-14 bg-muted p-1.5 rounded-2xl border-2 w-full">
-                  <TabsTrigger value="all" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('common.all')}</TabsTrigger>
-                  <TabsTrigger value="products" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.products')}</TabsTrigger>
-                  <TabsTrigger value="menus" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white">{t('takeOrder.tabs.menus')}</TabsTrigger>
+                <TabsList className="h-14 p-1.5 bg-muted/50 rounded-2xl border-2 w-full flex gap-1">
+                  <TabsTrigger value="all" className="flex-1 md:flex-none rounded-xl px-6 font-black uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg">{t('common.all')}</TabsTrigger>
+                  <TabsTrigger value="products" className="flex-1 md:flex-none rounded-xl px-6 font-black uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg">{t('takeOrder.tabs.products')}</TabsTrigger>
+                  <TabsTrigger value="menus" className="flex-1 md:flex-none rounded-xl px-6 font-black uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg">{t('takeOrder.tabs.menus')}</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
 
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
               {categories.map(cat => (
-                <Button
+                <button
                   key={cat.id}
-                  variant={activeCategory === cat.id ? "default" : "outline"}
                   onClick={() => setActiveCategory(cat.id)}
                   className={cn(
-                    "h-14 px-6 rounded-2xl flex items-center gap-3 transition-all border-2 shrink-0",
-                    activeCategory === cat.id ? "bg-secondary text-primary border-secondary" : "bg-card text-muted-foreground border-border hover:border-primary/20 hover:text-primary"
+                    "h-12 px-5 rounded-full flex items-center gap-2.5 transition-all border-2 shrink-0 font-black uppercase text-[9px] tracking-widest italic",
+                    activeCategory === cat.id 
+                      ? "bg-secondary text-primary border-secondary shadow-lg shadow-secondary/20 scale-105" 
+                      : "bg-card text-muted-foreground border-border hover:border-primary/20 hover:text-primary hover:bg-muted/50"
                   )}
                 >
-                  <span className={cn(activeCategory === cat.id ? "text-primary" : "text-muted-foreground/60")}>{cat.icon}</span>
-                  <span className="font-black uppercase text-[10px] tracking-widest italic">{cat.label}</span>
-                </Button>
+                  <span className={cn("transition-transform", activeCategory === cat.id ? "scale-110" : "opacity-60")}>{cat.icon}</span>
+                  {cat.label}
+                </button>
               ))}
             </div>
           </div>
