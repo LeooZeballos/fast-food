@@ -33,11 +33,14 @@ public class BranchRestController {
             if (auth.getPrincipal() instanceof CustomUserDetails userDetails) {
                 return Map.of(
                     "name", userDetails.getUsername(),
-                    "branchId", userDetails.getBranchId() != null ? userDetails.getBranchId() : "none"
+                    "branchId", userDetails.getBranchId() != null ? userDetails.getBranchId() : "none",
+                    "roles", userDetails.getAuthorities().stream()
+                        .map(a -> a.getAuthority().replace("ROLE_", ""))
+                        .toList()
                 );
             }
         }
-        return Map.of("name", principal != null ? principal.getName() : "anonymous", "branchId", "none");
+        return Map.of("name", principal != null ? principal.getName() : "anonymous", "branchId", "none", "roles", List.of());
     }
 
     @GetMapping
