@@ -16,14 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.access.StateMachineAccessor;
 import org.springframework.statemachine.config.StateMachineFactory;
-import org.springframework.statemachine.support.DefaultStateMachineContext;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +42,7 @@ class FoodOrderStockRestorationTest {
     @Mock private FoodOrderMapper foodOrderMapper;
     @Mock private AuditService auditService;
     @Mock private StateMachine<FoodOrderState, FoodOrderEvent> stateMachine;
+    @Mock private StateMachineAccessor<FoodOrderState, FoodOrderEvent> stateMachineAccessor;
 
     private FoodOrderService underTest;
 
@@ -74,10 +78,10 @@ class FoodOrderStockRestorationTest {
 
         when(foodOrderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(stateMachineFactory.getStateMachine(anyString())).thenReturn(stateMachine);
-        when(stateMachine.getStateMachineAccessor()).thenReturn(mock(org.springframework.statemachine.access.StateMachineAccessor.class));
-        when(stateMachine.startReactively()).thenReturn(reactor.core.publisher.Mono.empty());
-        when(stateMachine.stopReactively()).thenReturn(reactor.core.publisher.Mono.empty());
-        when(stateMachine.sendEvent(any(reactor.core.publisher.Mono.class))).thenReturn(reactor.core.publisher.Flux.empty());
+        when(stateMachine.getStateMachineAccessor()).thenReturn(stateMachineAccessor);
+        when(stateMachine.startReactively()).thenReturn(Mono.empty());
+        when(stateMachine.stopReactively()).thenReturn(Mono.empty());
+        when(stateMachine.sendEvent(ArgumentMatchers.<Mono<Message<FoodOrderEvent>>>any())).thenReturn(Flux.empty());
 
         // when
         underTest.cancel(orderId, null);
@@ -112,10 +116,10 @@ class FoodOrderStockRestorationTest {
 
         when(foodOrderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(stateMachineFactory.getStateMachine(anyString())).thenReturn(stateMachine);
-        when(stateMachine.getStateMachineAccessor()).thenReturn(mock(org.springframework.statemachine.access.StateMachineAccessor.class));
-        when(stateMachine.startReactively()).thenReturn(reactor.core.publisher.Mono.empty());
-        when(stateMachine.stopReactively()).thenReturn(reactor.core.publisher.Mono.empty());
-        when(stateMachine.sendEvent(any(reactor.core.publisher.Mono.class))).thenReturn(reactor.core.publisher.Flux.empty());
+        when(stateMachine.getStateMachineAccessor()).thenReturn(stateMachineAccessor);
+        when(stateMachine.startReactively()).thenReturn(Mono.empty());
+        when(stateMachine.stopReactively()).thenReturn(Mono.empty());
+        when(stateMachine.sendEvent(ArgumentMatchers.<Mono<Message<FoodOrderEvent>>>any())).thenReturn(Flux.empty());
 
         // when
         underTest.reject(orderId, null);

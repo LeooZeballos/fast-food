@@ -46,3 +46,5 @@ build/
 .backend.pid
 .env
 frontend/node_modules
+.gitnexus
+.claude

@@ -126,7 +126,7 @@ public class FoodOrderService {
     }
 
     public void deleteById(Long id, Long branchId) {
-        FoodOrder order = findById(id, branchId);
+        findById(id, branchId);
         auditService.logAction("DELETE_ORDER", "ID=" + id);
         foodOrderRepository.deleteById(id);
     }
