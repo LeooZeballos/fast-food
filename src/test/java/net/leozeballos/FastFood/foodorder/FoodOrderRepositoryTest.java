@@ -48,7 +48,7 @@ class FoodOrderRepositoryTest {
                 .build());
 
         // when
-        List<FoodOrder> result = underTest.findAllFoodOrdersByState(FoodOrderState.CREATED);
+        List<FoodOrder> result = underTest.findAllByBranchIdAndStateWithDetails(branch.getId(), FoodOrderState.CREATED);
 
         // then
         for (FoodOrder foodOrder : result) {assertThat(foodOrder.getState()).isEqualTo(FoodOrderState.CREATED);}

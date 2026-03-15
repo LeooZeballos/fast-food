@@ -1,26 +1,46 @@
 version: '3'
 services:
   app:
-    image: fastfood-api
+    build: .
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/fastfood
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/fastfood
+      - JDBC_DATABASE_USERNAME=postgres
+      - JDBC_DATABASE_PASSWORD=ENC(Z4pKhqpM3s+ZEWz5swKQNxqWEF72Ya4npvJnZUregFSnZ4y/lIP402qathoU1H0w)
+      - JASYPT_ENCRYPTOR_PASSWORD=fastfood-secret
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - fastfood_network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:80
+    depends_on:
+      - app
     networks:
       - fastfood_network
 
   db:
-    image: postgres:latest
+    image: postgres:16
     environment:
       - POSTGRES_DB=fastfood
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
     volumes:
       - fastfood_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - fastfood_network
 

@@ -25,7 +25,7 @@ public class FoodOrderStateChangeInterceptor extends StateMachineInterceptorAdap
             FoodOrderEvent> stateMachine, StateMachine<FoodOrderState, FoodOrderEvent> rootStateMachine) {
         Optional.ofNullable(message).ifPresent(msg -> Optional.ofNullable(msg.getHeaders().getOrDefault(FoodOrderService.FOOD_ORDER_ID_HEADER, -1L))
             .ifPresent(foodOrderId -> {
-                FoodOrder foodOrder = foodOrderRepository.getOne((Long) foodOrderId);
+                FoodOrder foodOrder = foodOrderRepository.getReferenceById((Long) foodOrderId);
                 foodOrder.setState(state.getId());
                 foodOrderRepository.save(foodOrder);
             }));

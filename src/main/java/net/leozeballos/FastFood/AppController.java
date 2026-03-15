@@ -1,15 +1,18 @@
 package net.leozeballos.FastFood;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
 
-@Controller
+@RestController
+@Tag(name = "General", description = "General application endpoints")
 public class AppController {
-    @RequestMapping("/")
-    public String viewHomePage(Model model) {
-        model.addAttribute("pageTitle", "Home");
-        return "index";
-    }
 
+    @GetMapping("/api/v1/test")
+    @Operation(summary = "Test API connectivity", description = "Returns the current status and version of the API")
+    public Map<String, String> test() {
+        return Map.of("status", "ok", "version", "v1");
+    }
 }

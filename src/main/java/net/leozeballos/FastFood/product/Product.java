@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.leozeballos.FastFood.item.Item;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.DecimalMin;
 
 @Getter
 @Setter
@@ -16,12 +18,14 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Builder
 @Entity
+@DiscriminatorValue("PRODUCT")
 public class Product extends Item {
 
     /**
      * The price of the product.
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
+    @DecimalMin(value = "0.0")
     private double price;
 
     public Product(String name, double price) {
@@ -49,14 +53,6 @@ public class Product extends Item {
     @Override
     public double calculatePrice() {
         return price;
-    }
-
-    /**
-     * Formats the Product's price. Example: $1.00
-     * @return String Product's price formatted
-     */
-    public String getFormattedPrice() {
-        return "$" + String.format("%.2f", price);
     }
 
 }

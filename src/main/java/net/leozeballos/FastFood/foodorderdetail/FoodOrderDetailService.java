@@ -1,6 +1,6 @@
 package net.leozeballos.FastFood.foodorderdetail;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +10,6 @@ public class FoodOrderDetailService {
 
     private final FoodOrderDetailRepository foodOrderDetailRepository;
 
-    @Autowired
     public FoodOrderDetailService(FoodOrderDetailRepository foodOrderDetailRepository) {
         this.foodOrderDetailRepository = foodOrderDetailRepository;
     }
@@ -20,14 +19,13 @@ public class FoodOrderDetailService {
     }
 
     public FoodOrderDetail findById(Long id) {
-        return foodOrderDetailRepository.findById(id).orElse(null);
+        return foodOrderDetailRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("FoodOrderDetail not found with id: " + id));
     }
 
     public FoodOrderDetail save(FoodOrderDetail foodOrderDetail) {
-        if (foodOrderDetail.getItem() != null) {
-            if (foodOrderDetail.getHistoricPrice() == 0) {
-                foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
-            }
+        if (foodOrderDetail.getHistoricPrice() == 0 && foodOrderDetail.getItem() != null) {
+            foodOrderDetail.setHistoricPrice(foodOrderDetail.getItem().calculatePrice());
         }
         return foodOrderDetailRepository.save(foodOrderDetail);
     }
@@ -37,6 +35,9 @@ public class FoodOrderDetailService {
     }
 
     public void deleteById(Long id) {
+        if (!foodOrderDetailRepository.existsById(id)) {
+            throw new ResourceNotFoundException("FoodOrderDetail not found with id: " + id);
+        }
         foodOrderDetailRepository.deleteById(id);
     }
 

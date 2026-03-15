@@ -1,11 +1,16 @@
 HELP.md
 target/
+*.log
+.DS_Store
+.pnpm-store/
+.pnpm-debug.log
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 /ComidaRapida.ldb
 /ComidaRapida.EAP
 /src/main/resources/application-local.properties
+.gemini/settings.json
 
 ### STS ###
 .apt_generated
@@ -34,3 +39,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### pnpm ###
+.pnpm-store
+.frontend.pid
+.backend.pid
+.env
+frontend/node_modules

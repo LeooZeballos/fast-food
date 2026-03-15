@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base Colors - Light (Elegant Cream & Forest) */
+    --background: 45 30% 98%;
+    --foreground: 160 84% 5%;
+    
+    /* Component Tokens */
+    --card: 0 0% 100%;
+    --card-foreground: 160 84% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 84% 5%;
+    
+    /* Branding */
+    --primary: 160 84% 12%; /* Deep Forest Green */
+    --primary-foreground: 45 30% 98%;
+    --secondary: 38 92% 50%; /* Warm Mustard Gold */
+    --secondary-foreground: 160 84% 12%;
+    
+    /* Accents & States */
+    --muted: 160 20% 96%;
+    --muted-foreground: 160 15% 45%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 160 84% 12%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 30% 98%;
+    
+    /* Borders & Inputs */
+    --border: 160 20% 92%;
+    --input: 160 20% 92%;
+    --ring: 160 84% 12%;
+    
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Base Colors - Dark (Midnight Forest) */
+    --background: 160 50% 3%;
+    --foreground: 45 30% 98%;
+    
+    /* Component Tokens */
+    --card: 160 50% 5%;
+    --card-foreground: 45 30% 98%;
+    --popover: 160 50% 5%;
+    --popover-foreground: 45 30% 98%;
+    
+    /* Branding - Flipped for Dark Mode Impact */
+    --primary: 38 92% 55%; /* Gold becomes the standout */
+    --primary-foreground: 160 50% 3%;
+    --secondary: 160 84% 15%; /* Deep green recedes */
+    --secondary-foreground: 38 92% 55%;
+    
+    /* Accents & States */
+    --muted: 160 30% 10%;
+    --muted-foreground: 160 10% 65%;
+    --accent: 38 92% 55%;
+    --accent-foreground: 160 50% 3%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 30% 98%;
+    
+    /* Borders & Inputs */
+    --border: 160 30% 12%;
+    --input: 160 30% 12%;
+    --ring: 38 92% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(-5deg); }
+  }
+
+  @keyframes blob {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 8s ease-in-out infinite;
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+}

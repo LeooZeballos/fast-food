@@ -78,89 +78,6 @@ class FoodOrderTest {
     }
 
     @Test
-    void getFormattedCreationTimestamp() {
-        // given
-        LocalDateTime creationTimestamp = LocalDateTime.now();
-        FoodOrder foodOrder = FoodOrder.builder().creationTimestamp(creationTimestamp).build();
-
-        // when
-        String actual = foodOrder.getFormattedCreationTimestamp();
-
-        // then
-        String expected = creationTimestamp.format(FoodOrder.DATE_TIME_FORMATTER);
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void getFormattedPaymentTimestamp() {
-        // given
-        LocalDateTime paymentTimestamp = LocalDateTime.now();
-        FoodOrder foodOrder = FoodOrder.builder().paymentTimestamp(paymentTimestamp).build();
-
-        // when
-        String actual = foodOrder.getFormattedPaymentTimestamp();
-
-        // then
-        String expected = paymentTimestamp.format(FoodOrder.DATE_TIME_FORMATTER);
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void getFormattedFoodOrderDetails() {
-        // given
-        FoodOrder foodOrder = FoodOrder.builder()
-                .foodOrderDetails(new ArrayList<>())
-                .build();
-        FoodOrderDetail foodOrderDetail1 = FoodOrderDetail.builder().quantity(2).item(Product.builder().price(10.0).build()).build();
-        FoodOrderDetail foodOrderDetail2 = FoodOrderDetail.builder().quantity(3).item(Product.builder().price(20.0).build()).build();
-        foodOrderDetail1.getItem().setName("name1");
-        foodOrderDetail2.getItem().setName("name2");
-        foodOrder.getFoodOrderDetails().add(foodOrderDetail1);
-        foodOrder.getFoodOrderDetails().add(foodOrderDetail2);
-
-        // when
-        String actual = foodOrder.getFormattedFoodOrderDetails();
-
-        // then
-        String expected = "2 x name1, 3 x name2";
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void getFormattedTotal() {
-        // given
-        FoodOrder foodOrder = FoodOrder.builder()
-                .foodOrderDetails(new ArrayList<>())
-                .build();
-        FoodOrderDetail foodOrderDetail1 = FoodOrderDetail.builder().quantity(2).item(Product.builder().price(10.0).build()).build();
-        FoodOrderDetail foodOrderDetail2 = FoodOrderDetail.builder().quantity(3).item(Product.builder().price(20.0).build()).build();
-        foodOrder.getFoodOrderDetails().add(foodOrderDetail1);
-        foodOrder.getFoodOrderDetails().add(foodOrderDetail2);
-
-        // when
-        String actual = foodOrder.getFormattedTotal();
-
-        // then
-        String expected = "$80,00";
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void getFormattedState() {
-        // given
-        FoodOrder foodOrder = FoodOrder.builder()
-                .state(FoodOrderState.CREATED)
-                .build();
-
-        // when
-        String actual = foodOrder.getFormattedState();
-
-        // then
-        String expected = "Created";
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
     void getId() {
         // given
         FoodOrder foodOrder = FoodOrder.builder().id(1L).build();
@@ -339,7 +256,7 @@ class FoodOrderTest {
         String actual = foodOrder.toString();
 
         // then
-        assertThat(actual).isEqualTo("FoodOrder(id=null, creationTimestamp=null, paymentTimestamp=null, state=null, branch=null)");
+        assertThat(actual).isEqualTo("FoodOrder(id=null, creationTimestamp=null, preparationStartTimestamp=null, paymentTimestamp=null, state=null, branch=null, version=null)");
     }
 
 }

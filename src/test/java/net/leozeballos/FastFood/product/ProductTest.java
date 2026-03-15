@@ -75,20 +75,6 @@ class ProductTest {
     }
 
     @Test
-    void canGetFormattedPrice() {
-        // given
-        Product product = Product.builder().build();
-        product.setName("Product");
-        product.setPrice(1.0);
-
-        // when
-        String result = product.getFormattedPrice();
-
-        // then
-        assertEquals("$1,00", result);
-    }
-
-    @Test
     void canGetPrice() {
         // given
         Product product = Product.builder().build();

@@ -1,26 +1,32 @@
 package net.leozeballos.FastFood.product;
 
+import net.leozeballos.FastFood.mapper.ProductMapper;
 import net.leozeballos.FastFood.menu.MenuRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
     @Mock private ProductRepository productRepository;
     @Mock private MenuRepository menuRepository;
+    @Spy private ProductMapper productMapper;
     private ProductService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new ProductService(productRepository, menuRepository);
+        underTest = new ProductService(productRepository, menuRepository, productMapper);
     }
 
     @Test
@@ -36,6 +42,8 @@ class ProductServiceTest {
     void canFindProductById() {
         // given
         Long id = 1L;
+        Product product = new Product();
+        when(productRepository.findById(id)).thenReturn(Optional.of(product));
 
         // when
         underTest.findById(id);
@@ -47,7 +55,7 @@ class ProductServiceTest {
     @Test
     void canSaveProduct() {
         // given
-        Product product = Product.builder().build();
+        Product product = new Product();
 
         // when
         underTest.save(product);
@@ -61,7 +69,7 @@ class ProductServiceTest {
     @Test
     void canDeleteProduct() {
         // given
-        Product product = Product.builder().build();
+        Product product = new Product();
 
         // when
         underTest.delete(product);
@@ -76,6 +84,7 @@ class ProductServiceTest {
     void canDeleteProductById() {
         // given
         Long id = 1L;
+        when(productRepository.existsById(id)).thenReturn(true);
 
         // when
         underTest.deleteById(id);
@@ -91,6 +100,25 @@ class ProductServiceTest {
 
         // then
         verify(productRepository).deleteAll();
+    }
+
+    @Test
+    void canConvertToDTO() {
+        // given
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Product 1");
+        product.setPrice(10.0);
+        product.enable();
+
+        // when
+        ProductDTO dto = productMapper.toDTO(product);
+
+        // then
+        assertThat(dto.id()).isEqualTo(1L);
+        assertThat(dto.name()).isEqualTo("Product 1");
+        assertThat(dto.price()).isEqualTo(10.0);
+        assertThat(dto.active()).isTrue();
     }
 
 }
