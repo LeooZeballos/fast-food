@@ -21,7 +21,7 @@ This file gives Claude Code the full context needed to work autonomously and cor
 - **Active Spring profiles:**
   - `dev` (default) — uses PostgreSQL
   - `test` — uses H2 in-memory DB
-- **Ports:** Backend on `4080`, Frontend dev on `5173`, Frontend built on `4000`.
+- **Ports:** Backend on `4080`, Frontend dev/preview on `4000`.
 - **Environment variables:**
   - `SPRING_DATASOURCE_URL`: `jdbc:postgresql://db:5432/fastfood`
   - `SPRING_DATASOURCE_USERNAME`: `postgres`
@@ -30,13 +30,13 @@ This file gives Claude Code the full context needed to work autonomously and cor
 ### Service Management
 
 ```bash
-./start-all.sh          # Start DB + Backend (4080) + Frontend (4000)
-./stop-all.sh           # Stop all services
+./scripts/start-all.sh          # Start DB + Backend (4080) + Frontend (4000)
+./scripts/stop-all.sh           # Stop all services
 .gemini/service-check.sh status   # Check service health
 
 # Individual services (background)
-nohup ./start-backend.sh > backend.log 2>&1 &
-nohup ./start-frontend.sh > frontend.log 2>&1 &
+nohup ./scripts/start-backend.sh > backend.log 2>&1 &
+nohup ./scripts/start-frontend.sh > frontend.log 2>&1 &
 tail -f backend.log     # Verify startup
 ```
 

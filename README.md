@@ -1,135 +1,111 @@
-# FastFood
+# FastFood 🍔
 
-[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-Visual%20Studio%20Code-blue?logo=visual-studio-code)](https://open.vscode.dev/LeooZeballos/fast-food) [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/issues) [![GitHub forks](https://img.shields.io/github/forks/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/network) [![GitHub stars](https://img.shields.io/github/stars/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/stargazers) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-Visual%20Studio%20Code-blue?logo=visual-studio-code)](https://open.vscode.dev/LeooZeballos/fast-food) [![GitHub issues](https://img.shields.io/github/issues/LeooZeballos/fast-food)](https://github.com/LeooZeballos/fast-food/issues) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Table of contents
-* [General info](#General-info)
-* [How to Install and Run the Project](#How-to-Install-and-Run-the-Project)
-* [Technologies](#Technologies)
-* [Features](#Features)
-* [License](#License)
+**FastFood** is a modern, full-stack fast food management application designed for efficiency and scalability. It features a decoupled architecture with a robust Spring Boot backend and a high-performance React frontend.
 
-## General info
-FastFood is a fast food application designed for efficient order management and effective administration of products, menus, and branches. Its development served as an opportunity for me to gain proficiency in utilizing Spring Boot, Spring JPA, and  Thymeleaf frameworks.
+## 🌟 Key Features
 
-To ensure a robust and scalable backend, I employed PostgreSQL as the chosen database management system, and Maven as the dependency manager for simplified project management. My primary objective in developing this application was to establish a codebase characterized by its simplicity, cleanliness, and adherence to sound architectural principles.
+*   **📦 Decoupled Architecture**: Independent Spring Boot 3.4.4 backend and Vite + React 19 frontend.
+*   **🌎 Bilingual Support**: Fully localized in **English** and **Spanish**.
+*   **📊 Order Management**: Real-time order lifecycle tracking (Take, Prepare, Complete, Cancel).
+*   **🏢 Multi-Branch Support**: Manage multiple restaurant locations.
+*   **🍔 Menu & Inventory**: Flexible menu creation and inventory tracking.
+*   **🎨 Modern UI**: Built with Tailwind CSS, Shadcn UI, and Lucide icons for a premium feel.
+*   **⚡ High Performance**: Optimized with Spring Virtual Threads and Caffeine caching.
 
-Throughout the codebase, I have diligently added comprehensive comments to enhance code comprehension and maintainability. I have strived to make the code as readable as possible, enabling easy collaboration and future development. In terms of testing, I employed JUnit and Mockito frameworks, conducting unit tests to validate the functionality of services, and integration tests to ensure smooth operation of controllers.
+---
 
-For the frontend aspect, Bootstrap was utilized, complemented by CSS for styling, resulting in a visually appealing and responsive user interface. By employing responsive design principles, I aimed to deliver an application that seamlessly adapts to different devices and screen sizes.
+## 🛠️ Technology Stack
 
-## How to Install and Run the Project
+### Backend
+*   **Java 17+** (with Virtual Threads support)
+*   **Spring Boot 3.4.4**
+*   **Spring Data JPA** & **Hibernate**
+*   **PostgreSQL** (with Flyway migrations)
+*   **Spring Actuator** (for monitoring)
+*   **JUnit 5** & **Mockito** (Testing)
 
-### Requirements
+### Frontend
+*   **React 19**
+*   **TypeScript**
+*   **Vite 6**
+*   **Tailwind CSS** & **Shadcn UI**
+*   **TanStack Query** (Data fetching)
+*   **i18next** (Localization)
+*   **Vitest** & **Playwright** (Testing)
 
-* Java 8 or higher
-* Apache Maven
-* PostgreSQL with a database named `fastfood`
+---
 
-### Steps
-1. Clone the repository
-```bash
-git clone https://github.com/LeooZeballos/fast-food.git
-```
-2. Open the project in your terminal and run the following command
+## 🚀 Getting Started
+
+### Prerequisites
+*   **Java 17** or higher
+*   **Node.js 18+** & **pnpm** (or npm/yarn)
+*   **Docker** & **Docker Compose**
+*   **PostgreSQL** (if running locally without Docker)
+
+### Quick Start with Scripts
+The project includes automated scripts to manage services in the background:
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/LeooZeballos/fast-food.git
+    cd fast-food
+    ```
+
+2.  **Start all services** (Database, Backend, and Frontend):
+    ```bash
+    ./scripts/start-all.sh
+    ```
+
+3.  **Access the application**:
+    *   **Frontend**: [http://localhost:4000](http://localhost:4000)
+    *   **Backend API**: [http://localhost:4080](http://localhost:4080)
+    *   **API Docs**: [http://localhost:4080/swagger-ui.html](http://localhost:4080/swagger-ui.html)
+
+4.  **Stop all services**:
+    ```bash
+    ./scripts/stop-all.sh
+    ```
+
+### Manual Setup
+
+#### Backend
 ```bash
 mvn spring-boot:run
 ```
-3. Open your browser and go to http://localhost:8080/
+*Configurable via `src/main/resources/application.properties`.*
 
-### Docker
-
-Alternatively, you can run the project using Docker. To do so, follow these steps:
-
-1. Clone the repository
+#### Frontend
 ```bash
-git clone https://github.com/LeooZeballos/fast-food.git
+cd frontend
+pnpm install
+pnpm dev
 ```
-2. Build the image for the API.
-```bash
-docker build -t fastfood-api .
-```
-2. Open the project in your terminal and run the following command
-```bash
-docker-compose up -d
-```
-3. Open your browser and go to http://localhost:8080/
 
-## Technologies
+---
 
-[![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com)
-[![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white)](https://maven.apache.org)
-[![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io)
-[![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=Spring&logoColor=white)](https://spring.io/projects/spring-data-jpa)
-[![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)](https://hibernate.org)
-[![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+## 🤖 AI Agent Ready
+This project is optimized for AI agents (like Gemini CLI or Claude). 
+Check [**AGENTS.md**](./AGENTS.md) for mandatory workflows, service management rules, and debugging capabilities.
 
-[![Thymeleaf](https://img.shields.io/badge/Thymeleaf-%23005C0F.svg?style=for-the-badge&logo=Thymeleaf&logoColor=white)](https://www.thymeleaf.org)
-[![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
-[![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+---
 
-[![JUnit](https://img.shields.io/badge/JUnit-25A162?style=for-the-badge&logo=JUnit&logoColor=white)](https://junit.org)
-[![Mockito](https://img.shields.io/badge/Mockito-DB4E02?style=for-the-badge&logo=Mockito&logoColor=white)](https://site.mockito.org)
+## 📸 Screenshots
 
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white)](https://www.docker.com)
-[![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=Docker&logoColor=white)](https://docs.docker.com/compose)
-## Features
-
-### Manage orders
+### Manage Orders
 ![Manage orders](./images/Manage%20orders.png)
 
-#### Take orders
+### Take Orders
 ![Take orders](./images/Take%20orders.png)
 
-#### Update orders (only for orders that have not been prepared)
-![Update orders](./images/Update%20orders.png)
-
-#### Start preparing orders
-![Start preparing orders](./images/Start%20preparing%20orders.png)
-
-#### Finish preparing orders or cancel orders
-![Finish preparing orders](./images/Finish%20preparing%20orders.png)
-
-#### Confirm payment or reject orders
-![Confirm payment](./images/Confirm%20payment.png)
-
-### Manage products
+### Manage Products
 ![Manage products](./images/Manage%20products.png)
-![Create new product](./images/Create%20new%20product.png)
-![Edit product](./images/Edit%20product.png)
 
-### Manage menus
-![Manage menus](./images/Manage%20menus.png)
-![Create new menu](./images/Create%20new%20menu.png)
-![Edit menu](./images/Edit%20menu.png)
+---
 
-### Manage branches
-![Manage branches](./images/Manage%20branches.png)
-![Create new branch](./images/Create%20new%20branch.png)
-![Edit branch](./images/Edit%20branch.png)
+## 📜 License
 
-## License
-
-MIT License
-
-Copyright (c) 2023 Leonel Zeballos
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+MIT License - Copyright (c) 2023-2026 Leonel Zeballos
 

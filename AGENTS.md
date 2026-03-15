@@ -6,12 +6,12 @@ This file contains mandatory rules for all AI agents working on this codebase.
 
 1. **Read before writing.** Always read a file with `read_file` before modifying it.
 2. **Service Management.** Use the provided scripts for managing services in the background:
-   - **Start all:** `./start-all.sh` (Starts DB, Backend on 4080, and Frontend on 4000)
-   - **Stop all:** `./stop-all.sh`
+   - **Start all:** `./scripts/start-all.sh` (Starts DB, Backend on 4080, and Frontend on 4000)
+   - **Stop all:** `./scripts/stop-all.sh`
    - **Check status:** `.gemini/service-check.sh status`
    If you need to start individual services in the background manually:
-   - **Backend:** `nohup ./start-backend.sh > backend.log 2>&1 &`
-   - **Frontend:** `nohup ./start-frontend.sh > frontend.log 2>&1 &`
+   - **Backend:** `nohup ./scripts/start-backend.sh > backend.log 2>&1 &`
+   - **Frontend:** `nohup ./scripts/start-frontend.sh > frontend.log 2>&1 &`
    ALWAYS check logs (`tail -f backend.log`) to ensure successful startup.
 3. **Test before you are DONE.** After ANY code modification, you MUST run tests. This is a non-negotiable requirement for completing any task.
    - For backend/core changes: `mvn clean test`
