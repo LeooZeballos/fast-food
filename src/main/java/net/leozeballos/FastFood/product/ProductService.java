@@ -1,10 +1,13 @@
 package net.leozeballos.FastFood.product;
 
 import io.micrometer.core.annotation.Timed;
+import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
+import net.leozeballos.FastFood.foodorder.FoodOrderRepository;
 import net.leozeballos.FastFood.mapper.ProductMapper;
 import net.leozeballos.FastFood.menu.Menu;
 import net.leozeballos.FastFood.menu.MenuRepository;
+import net.leozeballos.FastFood.util.AuditService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,19 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
+    private final FoodOrderRepository foodOrderRepository;
     private final ProductMapper productMapper;
-
-    public ProductService(ProductRepository productRepository, MenuRepository menuRepository, ProductMapper productMapper) {
-        this.productRepository = productRepository;
-        this.menuRepository = menuRepository;
-        this.productMapper = productMapper;
-    }
+    private final AuditService auditService;
 
     /**
      * Find all products as DTOs, without filters.
@@ -72,12 +72,19 @@ public class ProductService {
     @Timed(value = "product.delete", description = "Time to delete a product")
     @Transactional
     public void delete(Product product) {
+        auditService.logAction("DELETE_PRODUCT", "ID=" + product.getId() + ", Name=" + product.getName());
         productRepository.delete(product);
     }
 
     @Transactional
     public void disableItem(Long id) {
         Product product = findById(id);
+
+        // check if there are any active orders containing this product
+        long activeOrders = foodOrderRepository.countActiveOrdersByItemId(id);
+        if (activeOrders > 0) {
+            throw new IllegalStateException("Cannot disable product with " + activeOrders + " active orders. Please process or cancel them first.");
+        }
 
         // remove product from all menus that contain it
         ArrayList<Menu> menus = new ArrayList<>(menuRepository.findAll());
@@ -87,6 +94,7 @@ public class ProductService {
 
         // disable product
         product.disable();
+        auditService.logAction("DISABLE_PRODUCT", "ID=" + id + ", Name=" + product.getName());
         productRepository.save(product);
     }
 
@@ -94,15 +102,15 @@ public class ProductService {
     public void enableItem(Long id) {
         Product product = findById(id);
         product.enable();
+        auditService.logAction("ENABLE_PRODUCT", "ID=" + id + ", Name=" + product.getName());
         productRepository.save(product);
     }
 
     @Timed(value = "product.deleteById", description = "Time to delete a product by id")
     @Transactional
     public void deleteById(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Product not found with id: " + id);
-        }
+        Product product = findById(id);
+        auditService.logAction("DELETE_PRODUCT", "ID=" + id + ", Name=" + product.getName());
         productRepository.deleteById(id);
     }
 

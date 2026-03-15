@@ -40,9 +40,12 @@ class InventoryRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void updateStockReturnsUpdatedInventory() throws Exception {
         // given
-        Inventory inventory = Inventory.builder().id(1L).stockQuantity(75).build();
+        net.leozeballos.FastFood.branch.Branch branch = new net.leozeballos.FastFood.branch.Branch();
+        branch.setId(1L);
+        Inventory inventory = Inventory.builder().id(1L).branch(branch).stockQuantity(75).build();
         when(inventoryService.save(any(Inventory.class))).thenReturn(inventory);
 
         // when & then

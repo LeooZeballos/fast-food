@@ -41,7 +41,15 @@ public interface FoodOrderRepository extends JpaRepository<FoodOrder, Long> {
            "LEFT JOIN FETCH fo.branch b " +
            "LEFT JOIN FETCH fo.foodOrderDetails fod " +
            "LEFT JOIN FETCH fod.item i " +
-           "WHERE fo.state = net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState.CREATED AND fo.creationTimestamp < :cutoff")
+           "WHERE fo.state = FoodOrderState.CREATED AND fo.creationTimestamp < :cutoff")
     List<FoodOrder> findExpiredCreatedOrders(@Param("cutoff") LocalDateTime cutoff);
+
+    @Query("SELECT COUNT(fo) FROM FoodOrder fo " +
+           "JOIN fo.foodOrderDetails fod " +
+           "WHERE fod.item.id = :itemId " +
+           "AND fo.state NOT IN (FoodOrderState.PAID, " +
+           "                     FoodOrderState.CANCELLED, " +
+           "                     FoodOrderState.REJECTED)")
+    long countActiveOrdersByItemId(@Param("itemId") Long itemId);
 
 }

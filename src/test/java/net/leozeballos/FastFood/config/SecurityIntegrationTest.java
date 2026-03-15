@@ -107,11 +107,16 @@ public class SecurityIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void updateInventory_asUser_returns403() throws Exception {
+        // User with no branchId in CustomUserDetails (mocked) will have effectiveBranchId = null
+        // If we provide branchId=1, and effectiveBranchId is null, it should fail if getEffectiveBranchId returns non-null
+        // Wait, WithMockUser uses a simple User principal. InventoryRestController.getEffectiveBranchId expects CustomUserDetails.
+        // It might return null if it's not CustomUserDetails.
+        
         mockMvc.perform(post("/api/v1/inventory/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"stockQuantity\": 10}")
+                .content("{\"branch\": {\"id\": 1}, \"stockQuantity\": 10}")
                 .with(csrf()))
                .andExpect(status().isForbidden());
     }
@@ -121,7 +126,7 @@ public class SecurityIntegrationTest {
     void updateInventory_asAdmin_returnsOk() throws Exception {
         mockMvc.perform(post("/api/v1/inventory/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"stockQuantity\": 10}")
+                .content("{\"branch\": {\"id\": 1}, \"stockQuantity\": 10}")
                 .with(csrf()))
                .andExpect(status().isOk());
     }

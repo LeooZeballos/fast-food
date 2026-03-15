@@ -1,5 +1,6 @@
 package net.leozeballos.FastFood.branch;
 
+import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.mapper.BranchMapper;
 import org.springframework.cache.annotation.CacheEvict;
@@ -10,17 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
-
-    public BranchService(BranchRepository branchRepository, BranchMapper branchMapper) {
-        this.branchRepository = branchRepository;
-        this.branchMapper = branchMapper;
-    }
 
     @Cacheable(value = "branches")
     public List<BranchDTO> findAllDTO() {

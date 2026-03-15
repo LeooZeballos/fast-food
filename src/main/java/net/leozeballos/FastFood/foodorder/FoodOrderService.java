@@ -3,14 +3,18 @@ package net.leozeballos.FastFood.foodorder;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.leozeballos.FastFood.branch.BranchService;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderEvent;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderState;
 import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterceptor;
+import net.leozeballos.FastFood.inventory.InventoryService;
+import net.leozeballos.FastFood.item.ItemService;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
@@ -33,9 +37,9 @@ public class FoodOrderService {
     private final FoodOrderRepository foodOrderRepository;
     private final StateMachineFactory<FoodOrderState, FoodOrderEvent> stateMachineFactory;
     private final FoodOrderStateChangeInterceptor stateChangeInterceptor;
-    private final net.leozeballos.FastFood.branch.BranchService branchService;
-    private final net.leozeballos.FastFood.item.ItemService itemService;
-    private final net.leozeballos.FastFood.inventory.InventoryService inventoryService;
+    private final BranchService branchService;
+    private final ItemService itemService;
+    private final InventoryService inventoryService;
     private final FoodOrderMapper foodOrderMapper;
 
     public List<FoodOrderDTO> findAllDTO(Long branchId) {
@@ -67,7 +71,7 @@ public class FoodOrderService {
 
     private void checkBranchAccess(FoodOrder order, Long branchId) {
         if (branchId != null && !order.getBranch().getId().equals(branchId)) {
-            throw new org.springframework.security.access.AccessDeniedException("User does not have access to this branch's data");
+            throw new AccessDeniedException("User does not have access to this branch's data");
         }
     }
 

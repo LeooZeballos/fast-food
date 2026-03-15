@@ -37,7 +37,7 @@ public class InventoryRestController {
     }
 
     @PostMapping("/update")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Update stock", description = "Updates the quantity or availability of an item in a branch")
     @ApiResponse(responseCode = "200", description = "Stock updated successfully")
     public Inventory updateStock(
@@ -45,13 +45,40 @@ public class InventoryRestController {
             @RequestBody Inventory inventory) {
         
         Long branchId = (inventory.getBranch() != null) ? inventory.getBranch().getId() : null;
+        if (branchId == null) {
+            throw new IllegalArgumentException("Branch ID is required for inventory update");
+        }
+
         Long effectiveBranchId = getEffectiveBranchId(userDetails);
         
-        if (effectiveBranchId != null && !effectiveBranchId.equals(branchId)) {
-            throw new AccessDeniedException("User does not have access to this branch's inventory");
+        // If it's not an admin (effectiveBranchId != null), they must match the branch
+        if (effectiveBranchId != null) {
+            if (!effectiveBranchId.equals(branchId)) {
+                throw new AccessDeniedException("User does not have access to this branch's inventory");
+            }
+        } else if (!isAdmin(userDetails)) {
+            // If it's not an admin and has no branch assigned, they can't update anything
+            throw new AccessDeniedException("User has no branch assigned and is not an admin");
         }
         
         return inventoryService.save(inventory);
+    }
+
+    @PostMapping("/branch/{branchId}/restock")
+    @Operation(summary = "Restock item", description = "Increments the stock quantity for an item at a specific branch")
+    @ApiResponse(responseCode = "200", description = "Stock restocked successfully")
+    @ApiResponse(responseCode = "403", description = "Access denied")
+    public void restock(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(description = "ID of the branch") @PathVariable Long branchId,
+            @jakarta.validation.Valid @RequestBody RestockDTO restockData) {
+        
+        Long effectiveBranchId = getEffectiveBranchId(userDetails);
+        if (effectiveBranchId != null && !effectiveBranchId.equals(branchId)) {
+            throw new AccessDeniedException("User does not have access to restock this branch");
+        }
+
+        inventoryService.incrementStock(branchId, restockData.itemId(), restockData.quantity());
     }
 
     private Long getEffectiveBranchId(CustomUserDetails userDetails) {
@@ -62,7 +89,13 @@ public class InventoryRestController {
     }
 
     private boolean isAdmin(CustomUserDetails userDetails) {
-        return userDetails != null && userDetails.getAuthorities().stream()
+        if (userDetails != null) {
+            return userDetails.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        }
+        // Fallback for WithMockUser or other authentication types
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }

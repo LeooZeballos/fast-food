@@ -21,12 +21,14 @@ class ProductServiceTest {
 
     @Mock private ProductRepository productRepository;
     @Mock private MenuRepository menuRepository;
+    @Mock private net.leozeballos.FastFood.foodorder.FoodOrderRepository foodOrderRepository;
+    @Mock private net.leozeballos.FastFood.util.AuditService auditService;
     @Spy private ProductMapper productMapper;
     private ProductService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new ProductService(productRepository, menuRepository, productMapper);
+        underTest = new ProductService(productRepository, menuRepository, foodOrderRepository, productMapper, auditService);
     }
 
     @Test
@@ -84,7 +86,10 @@ class ProductServiceTest {
     void canDeleteProductById() {
         // given
         Long id = 1L;
-        when(productRepository.existsById(id)).thenReturn(true);
+        Product product = new Product();
+        product.setId(id);
+        product.setName("Test Product");
+        when(productRepository.findById(id)).thenReturn(Optional.of(product));
 
         // when
         underTest.deleteById(id);

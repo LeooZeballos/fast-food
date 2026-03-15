@@ -21,4 +21,19 @@ public class ProductMapper {
                 .active(product.isActive())
                 .build();
     }
+
+    public Product toEntity(ProductDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        Product product = new Product();
+        product.setId(dto.id());
+        product.setName(dto.name());
+        product.setNameEs(dto.nameEs());
+        product.setPrice(dto.price());
+        product.setIcon(dto.icon());
+        product.setImageUrl(dto.imageUrl());
+        product.setActive(dto.active());
+        return product;
+    }
 }

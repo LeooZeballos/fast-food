@@ -46,7 +46,8 @@ public class ProductRestController {
     @Operation(summary = "Create a new product", description = "Registers a new individual food item in the system")
     @ApiResponse(responseCode = "201", description = "Product created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
-    public ProductDTO create(@Valid @RequestBody Product product) {
+    public ProductDTO create(@Valid @RequestBody ProductDTO productDTO) {
+        Product product = productMapper.toEntity(productDTO);
         return productMapper.toDTO(productService.save(product));
     }
 
@@ -57,12 +58,14 @@ public class ProductRestController {
     @ApiResponse(responseCode = "404", description = "Product not found")
     public ProductDTO update(
             @Parameter(description = "ID of the product to be updated") @PathVariable Long id,
-            @Valid @RequestBody Product productData) {
+            @Valid @RequestBody ProductDTO productData) {
         Product product = productService.findById(id);
-        product.setName(productData.getName());
-        product.setPrice(productData.getPrice());
-        product.setIcon(productData.getIcon());
-        product.setImageUrl(productData.getImageUrl());
+        product.setName(productData.name());
+        product.setNameEs(productData.nameEs());
+        product.setPrice(productData.price());
+        product.setIcon(productData.icon());
+        product.setImageUrl(productData.imageUrl());
+        product.setActive(productData.active());
         return productMapper.toDTO(productService.save(product));
     }
 

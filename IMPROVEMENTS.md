@@ -14,14 +14,14 @@ This document tracks planned and implemented improvements across all skill domai
     - [x] Centralized price formatting using `FormattingUtils` with `es-ES` locale.
 - [x] **Inventory/Availability Awareness**: Validate item availability at the selected branch during order placement.
 - [x] **Kitchen Display System (KDS) Metrics**: Track and display time in preparation for each order (`preparationStartTimestamp`).
+- [x] **Discount Percentage Validation**: Added `@DecimalMin("0.0") @DecimalMax("100.0")` to `MenuCreateDTO` and `MenuUpdateDTO`.
+- [x] **Refund Stock on Cancel/Reject**: Verified that `FoodOrderService.cancel()` and `reject()` call `inventoryService.incrementStock()`. Added `FoodOrderStockRestorationTest` to verify.
+- [x] **Order Auto-Expiry (SLA Timeout)**: Implemented `FoodOrderExpiryService` with `@Scheduled` task to auto-cancel orders stuck in `CREATED` for >30 min.
+- [x] **Prevent Menu Modification Under Active Orders**: Added guard in `ProductService.disableItem()` to check for active orders using `foodOrderRepository.countActiveOrdersByItemId()`.
+- [x] **Missing Inventory Restock Endpoint**: Added `POST /api/v1/inventory/branch/{branchId}/restock` in `InventoryRestController` using `RestockDTO`.
 
 ### Pending
-- [ ] **Refund Stock on Cancel/Reject**: When an order is cancelled or rejected, the decremented inventory stock is **not restored**. `FoodOrderService.cancel()` and `reject()` must call `inventoryService.incrementStock()` for each order detail. This causes permanently inaccurate inventory counts over time. (`FoodOrderService.java:168-180`)
-- [ ] **Order Auto-Expiry (SLA Timeout)**: No automatic state transitions exist. Orders stuck in `CREATED` for too long (e.g., 30 min) should auto-cancel via a `@Scheduled` task. Add to `StateMachineConfig`.
 - [ ] **Low Stock Alerts / Reorder Thresholds**: `InventoryService.isItemAvailable()` checks stock but has no minimum-threshold warnings. Add a reorder-point field to `Inventory` and expose a low-stock notification endpoint.
-- [ ] **Prevent Menu Modification Under Active Orders**: `ProductService.disableItem()` removes a product from menus but orders already referencing those items remain open. Add a guard: disabling a product should check for open (non-terminal) orders containing it and warn or block.
-- [ ] **Discount Percentage Validation**: No validation that `discountPercentage` is between 0 and 100. A typo can create a menu with a 500% discount. Add `@DecimalMin("0.0") @DecimalMax("100.0")` to the menu DTO.
-- [ ] **Missing Inventory Restock Endpoint**: There is no API to increase stock (e.g., when new inventory arrives). Add `POST /api/v1/inventory/{branchId}/restock` for branch managers.
 
 ---
 
@@ -58,16 +58,17 @@ This document tracks planned and implemented improvements across all skill domai
 - [x] **Frontend Dependency Audit**: Patched `hono` Prototype Pollution vulnerability. `pnpm audit` reports no vulnerabilities.
 - [x] **CSRF Protection**: Cookie-based CSRF with `CookieCsrfTokenRepository` and full React/Axios integration.
 - [x] **Branch-Scoped Data Access**: Non-admin users can only access their own branch's data.
+- [x] **Missing `ROLE_ADMIN` Guard on DELETE Endpoints**: Verified that `ProductRestController`, `MenuRestController`, and `BranchRestController` all have `@PreAuthorize("hasRole('ADMIN')")` on their delete methods.
+- [x] **CORS Bypass via Redundant `WebConfig`**: Consolidated CORS configuration in `SecurityConfig`. `WebConfig` was already removed/not present in MVC layer.
+- [x] **Race Condition on Stock Decrement (Overselling)**: Implemented atomic `UPDATE` in `InventoryRepository.atomicDecrement()` and updated `FoodOrderService.createOrder()` to use it.
+- [x] **Optimistic Locking on `Inventory` Entity**: Added `@Version` to `Inventory.java`.
+- [x] **Unvalidated `Map<String, Object>` in `MenuRestController`**: Replaced with `MenuCreateDTO` and `MenuUpdateDTO` with Bean Validation.
 
 ### Pending — Critical
-- [ ] **Missing `ROLE_ADMIN` Guard on DELETE Endpoints**: `ProductRestController.delete()`, `MenuRestController.delete()`, and `BranchRestController.delete()` have **no role check**. Any authenticated user (including branch-level staff) can delete any product, menu, or branch. Add `@PreAuthorize("hasRole('ADMIN')")` to all three endpoints.
-- [ ] **CORS Bypass via Redundant `WebConfig`**: Two CORS configurations exist simultaneously — `SecurityConfig.corsConfigurationSource()` (explicit header allowlist) and `WebConfig` (sets `allowedHeaders("*")`). The `WebConfig` may silently override the header restrictions. Remove CORS from `WebConfig` and consolidate entirely in `SecurityConfig`.
 - [ ] **Inventory Update Missing Authorization**: `InventoryRestController`'s update endpoint has no branch ownership check. Any authenticated user can modify inventory for any branch. Apply the same `getEffectiveBranchId` pattern used in `FoodOrderRestController`.
-- [ ] **Race Condition on Stock Decrement (Overselling)**: In `FoodOrderService.createOrder()`, `isItemAvailable()` (L75) and `decrementStock()` (L93) are two separate DB calls. A concurrent request can consume the last unit between check and decrement. Resolve with a single atomic `UPDATE inventory SET stock = stock - ? WHERE branch_id = ? AND item_id = ? AND stock >= ?` query that checks affected rows.
 
 ### Pending — Medium
 - [ ] **Hardcoded Default Admin Credentials in `DataInitializer`**: The admin password (bcrypt of `"admin"`) is committed in source code and is a publicly known hash. On first run, read from an environment variable (`ADMIN_INITIAL_PASSWORD`) or generate a random password and print it to the logs.
-- [ ] **Unvalidated `Map<String, Object>` in `MenuRestController`**: Menu creation/update accepts a raw `Map<String, Object>` with no `@Valid` annotation. Replace with typed `MenuCreateDTO` / `MenuUpdateDTO` records with Bean Validation annotations (`@NotBlank`, `@Size`, `@DecimalMin`). Addresses OWASP A03.
 - [ ] **Missing Audit Logging**: Critical actions (delete product, delete branch, cancel order) are not logged with who performed them. Add an `AuditService` or use Spring `@EventListener` on domain events to write audit entries. Addresses OWASP A09.
 - [ ] **No Rate Limiting on `/login`**: The login endpoint can be brute-forced at full speed. Add rate limiting (e.g., Bucket4j) that throttles after N failed attempts per IP. Addresses OWASP A07.
 - [ ] **`open-in-view` Profile Mismatch**: `application.properties` sets `spring.jpa.open-in-view=false` but `application-dev.properties` overrides it to `true`. Code that works in dev (lazy loading in views) will silently break in production. Set `false` in all profiles.
@@ -99,7 +100,6 @@ This document tracks planned and implemented improvements across all skill domai
 - [ ] **Enhanced Observability (Micrometer + Tracing)**: No `@Timed` metrics on critical service methods. No distributed tracing correlation IDs. Add Micrometer timers to `FoodOrderService`, `InventoryService`, and `ProductService`. Integrate `micrometer-tracing` for request correlation.
 - [ ] **Request Size Limiting**: No `max-http-post-size` configured. A malicious client could POST a 1 GB order payload causing OOM. Add `server.tomcat.max-http-post-size=1048576` (1 MB) to `application.properties`.
 - [ ] **Cache Invalidation Strategy**: Current `@CacheEvict(allEntries = true)` clears the entire cache on every save/delete, causing cache thrashing under concurrent writes. Switch to key-based eviction: `@CacheEvict(value = "products", key = "#product.id")`.
-- [ ] **Optimistic Locking on `Inventory` Entity**: `@Version` is on `FoodOrder` but **not on `Inventory`**. Concurrent stock decrements can still race. Add `@Version private Long version;` to `Inventory.java`.
 
 ---
 
@@ -119,7 +119,6 @@ This document tracks planned and implemented improvements across all skill domai
 - [ ] **Missing Edge Cases in `FoodOrderServiceTest`**:
     - Creating an order with insufficient stock (should throw `IllegalStateException`)
     - Creating an order when item doesn't exist in inventory (should throw `ResourceNotFoundException`)
-    - Cancelling an order and verifying stock is restored (currently stock is **not** restored — test would document and enforce the fix)
 - [ ] **No State Machine Transition Tests**: `StateMachineConfig` defines which transitions are valid, but there are no tests verifying invalid transitions (e.g., `PAID → CREATED`) are rejected. Add integration tests for every valid transition and every invalid one.
 - [ ] **Frontend: `TakeOrder` Component Tests**: The most complex frontend component has zero tests. Add Vitest tests for:
     - Cart add/remove/quantity update logic
@@ -143,10 +142,11 @@ This document tracks planned and implemented improvements across all skill domai
 - [x] **Single-table JPA inheritance** for `Item` hierarchy (`Product` + `Menu`).
 - [x] **State machine pattern** for order lifecycle via Spring State Machine.
 - [x] **`getEffectiveBranchId` extracted to variable** in controller action methods (no longer called twice).
+- [x] **Controllers Accepting JPA Entities Directly**: Replaced entity usage with `ProductDTO` in `ProductRestController`.
+- [x] **Unvalidated `Map<String, Object>` in `MenuRestController`**: Replaced with `MenuCreateDTO` and `MenuUpdateDTO` with Bean Validation.
+- [x] **Inconsistent Mapper Usage**: `ProductService`, `MenuService`, and `BranchService` now all use dedicated mapper classes.
 
 ### Pending
-- [ ] **Controllers Accepting JPA Entities Directly**: `ProductRestController.create()` accepts `@RequestBody Product product` instead of a DTO. This leaks the entity contract to the API and allows clients to set internal fields (e.g., `id`). Create `ProductCreateDTO` / `ProductUpdateDTO` and map in the service layer — matching the pattern already used for `FoodOrder`.
-- [ ] **Inconsistent Mapper Usage**: `FoodOrderService` and `ProductService` use dedicated mapper classes, while `BranchService` and `MenuService` do inline mapping. `BranchMapper` partially exists. Create `MenuMapper` and use dedicated mappers everywhere for consistency.
 - [ ] **`FoodOrderService` Responsibility Split**: At 220+ lines, `FoodOrderService` mixes order creation, inventory management, and state machine orchestration. Extract a `FoodOrderStateMachineService` to own `build()` and `sendEvent()` logic, keeping `FoodOrderService` focused on business rules.
 - [ ] **Domain Events for Loose Coupling**: Order state changes (created, cancelled, paid) are handled inline in service methods. Adding notifications, audit logs, or webhooks requires modifying the service. Use `ApplicationEventPublisher` to emit `OrderCreatedEvent`, `OrderCancelledEvent`, etc., handled in dedicated `@EventListener` beans.
 - [ ] **`ItemService` as Unified Item Interface**: `ProductService` and `MenuService` implement overlapping item-level behavior independently. As item-level queries grow, consolidate shared concerns through `ItemService` to avoid duplication across both services.

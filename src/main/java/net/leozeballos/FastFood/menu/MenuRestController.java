@@ -41,20 +41,9 @@ public class MenuRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new menu", description = "Registers a new food menu in the system")
     @ApiResponse(responseCode = "201", description = "Menu created successfully")
-    public MenuDTO create(@RequestBody java.util.Map<String, Object> menuData) {
-        Menu menu = new Menu();
-        menu.setName((String) menuData.get("name"));
-        if (menuData.containsKey("discountPercentage")) {
-            double dp = ((Number) menuData.get("discountPercentage")).doubleValue();
-            menu.setDiscount(java.math.BigDecimal.valueOf(dp / 100.0));
-        } else {
-            menu.setDiscount(java.math.BigDecimal.ZERO);
-        }
-        if (menuData.containsKey("active")) {
-            menu.setActive((Boolean) menuData.get("active"));
-        } else {
-            menu.setActive(true);
-        }
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    public MenuDTO create(@jakarta.validation.Valid @RequestBody MenuCreateDTO menuData) {
+        Menu menu = menuMapper.toEntity(menuData);
         return menuMapper.toDTO(menuService.save(menu));
     }
 
@@ -65,15 +54,9 @@ public class MenuRestController {
     @ApiResponse(responseCode = "404", description = "Menu not found")
     public MenuDTO update(
             @Parameter(description = "ID of the menu to be updated") @PathVariable Long id,
-            @RequestBody java.util.Map<String, Object> menuData) {
+            @jakarta.validation.Valid @RequestBody MenuUpdateDTO menuData) {
         Menu menu = menuService.findById(id);
-        if (menuData.containsKey("name")) {
-            menu.setName((String) menuData.get("name"));
-        }
-        if (menuData.containsKey("discountPercentage")) {
-            double dp = ((Number) menuData.get("discountPercentage")).doubleValue();
-            menu.setDiscount(java.math.BigDecimal.valueOf(dp / 100.0));
-        }
+        menuMapper.updateEntity(menuData, menu);
         return menuMapper.toDTO(menuService.save(menu));
     }
 
