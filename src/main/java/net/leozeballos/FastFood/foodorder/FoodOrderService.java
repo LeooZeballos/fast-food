@@ -12,11 +12,12 @@ import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterc
 import net.leozeballos.FastFood.inventory.InventoryService;
 import net.leozeballos.FastFood.item.ItemService;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
+import net.leozeballos.FastFood.util.AuditService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.event.StateMachineEventResult;
+import org.springframework.statemachine.StateMachineEventResult;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class FoodOrderService {
     private final ItemService itemService;
     private final InventoryService inventoryService;
     private final FoodOrderMapper foodOrderMapper;
-    private final net.leozeballos.FastFood.util.AuditService auditService;
+    private final AuditService auditService;
 
     public List<FoodOrderDTO> findAllDTO(Long branchId) {
         List<FoodOrder> orders = (branchId == null) 

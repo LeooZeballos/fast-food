@@ -227,8 +227,21 @@ export type InventoryDTO = {
   };
 }
 
+export type AuditLogDTO = {
+  id: number;
+  username: string;
+  action: string;
+  details: string;
+  timestamp: string;
+}
+
 export const getInventoryByBranch = async (branchId: number) => {
   const response = await api.get<InventoryDTO[]>(`/inventory/branch/${branchId}`);
+  return response.data;
+};
+
+export const getAuditLogs = async () => {
+  const response = await api.get<AuditLogDTO[]>("/admin/audit-logs");
   return response.data;
 };
 

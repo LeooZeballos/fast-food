@@ -10,6 +10,7 @@ import net.leozeballos.FastFood.inventory.InventoryService;
 import net.leozeballos.FastFood.branch.Branch;
 import net.leozeballos.FastFood.product.Product;
 import net.leozeballos.FastFood.foodorderdetail.FoodOrderDetail;
+import net.leozeballos.FastFood.util.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.statemachine.config.StateMachineFactory;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +37,13 @@ class FoodOrderServiceTest {
     @Mock private BranchService branchService;
     @Mock private ItemService itemService;
     @Mock private InventoryService inventoryService;
+    @Mock private AuditService auditService;
     @Spy private FoodOrderMapper foodOrderMapper;
     private FoodOrderService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, inventoryService, foodOrderMapper);
+        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, inventoryService, foodOrderMapper, auditService);
     }
 
     @Test

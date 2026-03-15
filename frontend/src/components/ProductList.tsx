@@ -4,9 +4,9 @@ import type { ProductDTO } from "@/api";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Loader2, Package, Edit2, DollarSign, Info } from "lucide-react";
+import { Trash2, Plus, Loader2, Package, Edit2, Info } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,

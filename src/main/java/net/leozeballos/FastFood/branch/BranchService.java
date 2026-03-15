@@ -3,6 +3,7 @@ package net.leozeballos.FastFood.branch;
 import lombok.RequiredArgsConstructor;
 import net.leozeballos.FastFood.error.ResourceNotFoundException;
 import net.leozeballos.FastFood.mapper.BranchMapper;
+import net.leozeballos.FastFood.util.AuditService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
-    private final net.leozeballos.FastFood.util.AuditService auditService;
+    private final AuditService auditService;
 
     @Cacheable(value = "branches")
     public List<BranchDTO> findAllDTO() {

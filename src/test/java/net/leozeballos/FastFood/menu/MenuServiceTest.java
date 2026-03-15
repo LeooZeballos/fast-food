@@ -2,6 +2,7 @@ package net.leozeballos.FastFood.menu;
 
 import net.leozeballos.FastFood.mapper.MenuMapper;
 import net.leozeballos.FastFood.product.Product;
+import net.leozeballos.FastFood.util.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,9 +11,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,12 +24,13 @@ import static org.mockito.Mockito.when;
 class MenuServiceTest {
 
     @Mock private MenuRepository menuRepository;
+    @Mock private AuditService auditService;
     @Spy private MenuMapper menuMapper;
     private MenuService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new MenuService(menuRepository, menuMapper);
+        underTest = new MenuService(menuRepository, menuMapper, auditService);
     }
 
     @Test
@@ -55,6 +60,9 @@ class MenuServiceTest {
     void canSaveMenu() {
         // given
         Menu menu = new Menu();
+        menu.setId(1L);
+        menu.setName("Test Menu");
+        when(menuRepository.save(any(Menu.class))).thenReturn(menu);
 
         // when
         underTest.save(menu);
@@ -81,7 +89,10 @@ class MenuServiceTest {
     void canDeleteMenuById() {
         // given
         Long id = 1L;
-        when(menuRepository.existsById(id)).thenReturn(true);
+        Menu menu = new Menu();
+        menu.setId(id);
+        menu.setName("Test Menu");
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menu));
 
         // when
         underTest.deleteById(id);
@@ -102,17 +113,17 @@ class MenuServiceTest {
     @Test
     void canConvertToDTO() {
         // given
-        net.leozeballos.FastFood.product.Product product1 = new net.leozeballos.FastFood.product.Product();
+        Product product1 = new Product();
         product1.setName("Product 1");
         product1.setPrice(10.0);
         
-        net.leozeballos.FastFood.product.Product product2 = new net.leozeballos.FastFood.product.Product();
+        Product product2 = new Product();
         product2.setName("Product 2");
         product2.setPrice(20.0);
 
         Menu menu = new Menu();
-        menu.setDiscount(java.math.BigDecimal.valueOf(0.1));
-        menu.setItems(java.util.List.of(product1, product2));
+        menu.setDiscount(BigDecimal.valueOf(0.1));
+        menu.setItems(List.of(product1, product2));
         menu.setId(1L);
         menu.setName("Menu 1");
         menu.enable();

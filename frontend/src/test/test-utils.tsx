@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import type { ReactElement, ReactNode } from 'react';
+import { render, type RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const createTestQueryClient = () => new QueryClient({
@@ -10,7 +10,7 @@ const createTestQueryClient = () => new QueryClient({
   },
 });
 
-const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+const AllTheProviders = ({ children }: { children: ReactNode }) => {
   const queryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={queryClient}>

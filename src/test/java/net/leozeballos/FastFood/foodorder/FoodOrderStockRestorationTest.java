@@ -8,6 +8,7 @@ import net.leozeballos.FastFood.foodorderstatemachine.FoodOrderStateChangeInterc
 import net.leozeballos.FastFood.inventory.InventoryService;
 import net.leozeballos.FastFood.item.Item;
 import net.leozeballos.FastFood.item.ItemService;
+import net.leozeballos.FastFood.util.AuditService;
 import net.leozeballos.FastFood.branch.BranchService;
 import net.leozeballos.FastFood.mapper.FoodOrderMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,14 +37,16 @@ class FoodOrderStockRestorationTest {
     @Mock private ItemService itemService;
     @Mock private InventoryService inventoryService;
     @Mock private FoodOrderMapper foodOrderMapper;
+    @Mock private AuditService auditService;
     @Mock private StateMachine<FoodOrderState, FoodOrderEvent> stateMachine;
 
     private FoodOrderService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, inventoryService, foodOrderMapper);
+        underTest = new FoodOrderService(foodOrderRepository, stateMachineFactory, foodOrderStateChangeInterceptor, branchService, itemService, inventoryService, foodOrderMapper, auditService);
     }
+
 
     @Test
     void cancelOrderShouldRestoreStock() {

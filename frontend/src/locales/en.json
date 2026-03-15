@@ -117,7 +117,18 @@
     "tabs": {
       "products": "Products",
       "menus": "Menus",
-      "branches": "Branches"
+      "branches": "Branches",
+      "audit": "Audit"
+    },
+    "audit": {
+      "title": "System Audit Trail",
+      "description": "History of security and business critical actions",
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "details": "Details",
+      "no_logs": "No audit logs found",
+      "error_loading": "Error loading audit logs"
     },
     "branches": {
       "title": "Branches",

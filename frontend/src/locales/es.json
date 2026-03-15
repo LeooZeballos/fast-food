@@ -117,7 +117,18 @@
     "tabs": {
       "products": "Productos",
       "menus": "Menús",
-      "branches": "Sucursales"
+      "branches": "Sucursales",
+      "audit": "Auditoría"
+    },
+    "audit": {
+      "title": "Registro de Auditoría",
+      "description": "Historial de acciones críticas de seguridad y negocio",
+      "timestamp": "Fecha/Hora",
+      "user": "Usuario",
+      "action": "Acción",
+      "details": "Detalles",
+      "no_logs": "No se encontraron registros",
+      "error_loading": "Error al cargar los registros de auditoría"
     },
     "branches": {
       "title": "Sucursales",

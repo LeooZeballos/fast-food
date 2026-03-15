@@ -1,6 +1,7 @@
 package net.leozeballos.FastFood.branch;
 
 import net.leozeballos.FastFood.mapper.BranchMapper;
+import net.leozeballos.FastFood.util.AuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,12 +21,13 @@ import static org.mockito.Mockito.when;
 class BranchServiceTest {
 
     @Mock private BranchRepository branchRepository;
+    @Mock private AuditService auditService;
     @Spy private BranchMapper branchMapper;
     private BranchService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new BranchService(branchRepository, branchMapper);
+        underTest = new BranchService(branchRepository, branchMapper, auditService);
     }
 
     @Test
@@ -54,6 +57,9 @@ class BranchServiceTest {
     void canSaveBranch() {
         // given
         Branch branch = new Branch();
+        branch.setId(1L);
+        branch.setName("Test Branch");
+        when(branchRepository.save(any(Branch.class))).thenReturn(branch);
 
         // when
         underTest.save(branch);
@@ -66,6 +72,8 @@ class BranchServiceTest {
     void canDeleteBranch() {
         // given
         Branch branch = new Branch();
+        branch.setId(1L);
+        branch.setName("Test Branch");
 
         // when
         underTest.delete(branch);
@@ -80,7 +88,10 @@ class BranchServiceTest {
     void canDeleteBranchById() {
         // given
         Long id = 1L;
-        when(branchRepository.existsById(id)).thenReturn(true);
+        Branch branch = new Branch();
+        branch.setId(id);
+        branch.setName("Test Branch");
+        when(branchRepository.findById(id)).thenReturn(Optional.of(branch));
 
         // when
         underTest.deleteById(id);

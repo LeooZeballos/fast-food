@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, RefreshCcw, WifiOff, Home } from "lucide-react";
+import { AlertCircle, RefreshCcw, WifiOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface ErrorStateProps {
@@ -16,7 +16,7 @@ export function ErrorState({
   onRetry, 
   variant = "fetch" 
 }: ErrorStateProps) {
-  const { t } = useTranslation();
+  useTranslation();
 
   const config = {
     fetch: {
